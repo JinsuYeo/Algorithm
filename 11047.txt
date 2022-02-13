@@ -1,0 +1,33 @@
+#include <iostream>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+int n, m, c;
+priority_queue<int> q;
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> n >> m;
+    for (int i{}; i < n; i++) {
+        int t{};
+        cin >> t;
+        q.push(t);
+    }
+    
+    while (!q.empty()) {
+        c += m/q.top();
+        m %= q.top();
+        q.pop();
+    }
+    
+    cout << c;
+    
+    return 0;
+}
+
+// 그리디 알고리즘으로 구현.
+// 입력값들 priority_queue(=q)에 넣은 뒤(가장 큰 동전부터 사용하기 위해 우선순위 큐 사용), k(가치의 합) / q,top() 을 count에 더해주고(동전 사용 개수), k%=q.top()으로 동전으로 만들고 남은 값을 k에 할당해줌. q.pop()으로 사용한 동전 제거. q가 빌 때까지 반복.

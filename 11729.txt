@@ -1,0 +1,39 @@
+#include <iostream>
+#include <vector>
+#include <utility>
+
+using namespace std;
+
+int n;
+vector<pair<int, int>> v;
+
+void hanoi(int n, int from, int temp, int to) {
+    if (n == 1) {
+        v.push_back(make_pair(from, to));
+    } else {
+        hanoi(n-1, from, to, temp);
+        v.push_back(make_pair(from, to));
+        hanoi(n-1, temp, from, to);
+    }
+}
+
+int main()
+{
+    cin >> n;
+
+    hanoi(n, 1, 2, 3);
+    
+    cout << v.size() << "\n";
+    for (auto e: v) {
+        cout << e.first << " " << e.second << "\n";
+    }
+    
+    return 0;
+}
+
+// 학교 강의에서 하노이 탑 문제를 풀어본 적이 있어서 풀 수 있었음. 사실 그 때도 외워서 풀었는데 지금은 까먹어서 교재를 다시 보고 풀었음.
+// 그때는 가장 큰 원판 전의 모든 원판을 temp로 옮기고 마지막 원판을 to로 옮긴 후 temp로 옮겼던 원판들을 to로 옮긴다는 방식으로 외웠던 것 같음. 즉, from -> to, from -> temp, temp -> to를 순서대로 재귀함수 이용해 호출하면 풀린다고 외웠음. 재귀적으로 정확히 어떤 원리로 실행되는지는 시간이 많이 없어 일일이 따져보지 못했는데 이번 기회에 다시 공부해 볼 수 있었음.
+
+// -> 외웠던 것 잘 외웠던 것 같음. 그런데 더 쪼개서 생각할 수 있었음. ex) 가장 큰 원판을 to에 옮기기 위해 옮겨놨던 from -> temp(사실 상 to) 원판들은 쪼개보면 from -> to(사실상 temp), from -> temp(to), to(temp) -> temp(to)의 과정, 즉 전과 동일한 과정을 거침(코드로 구현해 놓은 재귀 함수와 동일한 과정). 따라서 재귀함수로 구현 가능한 것.
+
+// 참고)https://www.youtube.com/watch?v=Xu5GC_7YIeQ

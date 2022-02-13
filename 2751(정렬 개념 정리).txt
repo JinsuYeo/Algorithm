@@ -1,0 +1,401 @@
+#include <cstdio>
+#include <algorithm>
+
+using namespace std;
+
+int arr[1000000];
+
+bool compare(int a, int b) {
+    return a < b;
+}
+
+int main(int argc, const char * argv[]) {
+    int n{};
+    scanf("%d", &n);
+    
+    for(int i{}; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+    
+    sort(&arr[0], &arr[n], compare);
+
+    
+    for(int i{}; i < n; i++) {
+        printf("%d\n", arr[i]);
+    }
+    
+    return 0;
+}
+
+// 정렬 공부 필요. 처음에는 선택 정렬로 구현 했다가 시간 초과 나서 sort()함수로 구현.
+// sort() 함수도 사용 방법 몰라 찾아 봤었고 정렬 방법에 따른 시간 복잡도 등 공부하고, sort함수 사용하지 않고 직접 구현해서 풀어볼 것.
+
+// # 선택 정렬
+#include <cstdio>
+#include <algorithm>
+
+using namespace std;
+
+int arr[1000000];
+
+int main(int argc, const char * argv[]) {
+    int n{}, min{INT_MAX}, index{}, temp{};
+    scanf("%d", &n);
+    
+    for(int i{}; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+    
+    for(int i{}; i < n - 1; i++) {
+        min = INT_MAX;
+        for(int j{i}; j < n; j++) {
+            if(min > arr[j]) {
+                min = arr[j];
+                index = j;
+            }
+        }
+        temp = arr[i];
+        arr[i] = arr[index];
+        arr[index] = temp;
+    }
+
+    
+    for(int i{}; i < n; i++) {
+        printf("%d\n", arr[i]);
+    }
+    
+    return 0;
+}
+
+// 가장 작은 값을 선택해서 제일 앞으로 보내는 정렬 방법. 가장 원시적, 기초적 방법.
+// 데이터 n개일 때, n*(n-1)/2번 가량의 연산 수행됨. 시간 복잡도: O(n^2).
+// ex) 1 3 5 2 4   // 이 때 3과 2를 바꿔주는 것을 스와핑이라고 함.
+//     1 2 5 3 4 
+//     1 2 3 5 4
+//     1 2 3 4 5
+
+// # 버블 정렬
+#include <cstdio>
+#include <algorithm>
+
+using namespace std;
+
+int arr[1000000];
+
+int main(int argc, const char * argv[]) {
+    int n{}, temp{};
+    scanf("%d", &n);
+    
+    for(int i{}; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+    
+    for(int i{}; i < n - 1; i++) {
+        for(int j{}; j < n - 1 - i; j++) {
+            if(arr[j] > arr[j + 1]) {
+                temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+    
+    for(int i{}; i < n; i++) {
+        printf("%d\n", arr[i]);
+    }
+    
+    return 0;
+}
+
+// 직관적인 해결 방법으로, 바로 가까이에 있는 두 숫자끼리 비교해서 당장 더 작은 수를 앞으로 보내주는 것을 반복. 즉, 옆에 있는 값과 비교해서 더 작은 값을 반복적으로 앞으로 보내는 정렬 방법.
+// -> 구현 가장 쉽지만 가장 비효율적.
+// 1~n, 1~n-1, 1~n-2...1~2까지 비교. 뒤에 있는 원소가 밥복마다 하나씩 줄어듦. 밥복할 때 마다 가장 큰 숫자가 가장 마지막 자리에 가게 됨.
+//ex) 1 3 5 2 4
+//     1 3 5 2 4
+//     1 3 2 5 4
+//     1 3 2 4 5
+//     1 2 3 4 5
+// 데이터 개수 n개일 때, n*(n-1)/2번 연산. 시간복잡도 O(n^2)으로 선택정렬과 같으나 실제로는 더 느림 -> 버블 정렬은 매번 바꿔줘야 하지만 선택 정렬은 가장 작은 것 골라서 마지막에만 교체해줌. 가장 느린 정렬 방법임.
+
+// # 삽입 정렬
+#include <cstdio>
+#include <algorithm>
+
+using namespace std;
+
+int arr[1000000];
+
+int main(int argc, const char * argv[]) {
+    int n{}, j{}, temp{};
+    scanf("%d", &n);
+    
+    for(int i{}; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+    
+    for(int i{}; i < n - 1; i++) {
+        j = i;
+        while (j >= 0 && arr[j] > arr[j + 1]) {
+            temp = arr[j];
+            arr[j] = arr[j+1];
+            arr[j+1] = temp;
+            j--;
+        }
+    }
+    
+    for(int i{}; i < n; i++) {
+        printf("%d\n", arr[i]);
+    }
+    
+    return 0;
+}
+
+// 시간 복잡도 O(n^2)을 가짐.
+// 각 숫자를 적절한 위치에 삽입하는 방식으로 문제를 해결. (무조건 위치를 바꾸는(반복을 수행하는) 방식인 선택 정렬, 버블 정렬과 다르게) '필요할 때'만 위치를 바꾸게(반복을 수행하게) 됨. -> 선택, 버블 정렬과 시간 복잡도는 같으나 더 빠름. 구현, 생각 어려운 편.
+// ex) 1 3 5 2 4  // 앞에 원소들이 이미 정렬되었다고 가정함.
+//     1 3 5 2 4  // 1 3 5 부분은 다시 정렬할 필요 없이 2만 앞의 숫자와 비교해서 올바른 위치에 삽입해주면 됨(자리 바꿔주면 됨).
+//     1 3 2 5 4
+//     1 2 3 5 4  // 5는 3보다 크므로 3보다 앞인 1, 2 와 비교할 필요 x(1~3은 이미 정렬되었다고 가정하기 때문에).
+//     1 2 3 4 5
+// -> 기본적으로 정렬이 되어있다고 가정한다는 점에서 특정한 경우에 따라 굉장히 빠른 속도. 거의 정렬된 데이터 정렬 시 최고의 방법.
+
+
+// # 퀵 정렬
+#include <cstdio>
+#include <algorithm>
+
+using namespace std;
+
+int arr[1000000];
+
+void quickSort(int* arr, int start, int end) {
+    if(start < end) {
+        int key{start}, i{start+1}, j{end}, temp{};
+        while(i <= j) {
+            while(i <= end && arr[i] <= arr[key])
+                i++;
+            while(j > start && arr[j] >= arr[key])
+                j--;
+            
+            if(i > j) {
+                temp = arr[j];
+                arr[j] = arr[key];
+                arr[key] = temp;
+            } else {
+                temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+        quickSort(arr, start, j-1);
+        quickSort(arr, j+1, end);
+    }
+    return;
+}
+
+int main(int argc, const char * argv[]) {
+    int n{};
+    scanf("%d", &n);
+    
+    for(int i{}; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+    
+    quickSort(arr, 0, n-1);
+    
+    for(int i{}; i < n; i++) {
+        printf("%d\n", arr[i]);
+    }
+    
+    return 0;
+}
+
+// 대표적인 분할정복 알고리즘. 평균속도 O(n*logn). 하나의 큰 문제를 두개의 작은 문제로 분할하는 식으로 빠르게 정렬. 즉, 특정한 값을 기준으로 큰 숫자와 작은 숫자를 서로 교환한 뒤에 배열을 반으로 나눔.
+// 기준값 피벗(pivot)이 있음. 보통 첫번째 원소를 피벗 값으로 설정하고 사용한다.
+//ex) 1 3 5 2 4
+//    1 3 5 2 4 // 왼쪽부터 오른쪽으로 1보다 큰 수, 오른쪽부터 왼쪽으로 1보다 작은 수 찾았을 때, 1보다 큰 수 없으므로 1이 1과 교환된 후 1보다 작은수, 큰수로 나뉘어져 각각의 첫번째 값이 피벗이 됨. 여기서는 1보다 작은 수 없으니 3이 1보다 큰 수의 배열의 피벗이 되어 과정 반복한다.
+//   1 3 5 2 4 // 3보다 큰 수중 왼쪽에서 첫번째 수인 5와 3보다 작은 수 중 오른쪽에서 첫번째인 2가 교환된다.
+//   1 3 2 5 4 //3보다 오른쪽에서 왼쪽으로 탐색한 3보다 작은 수인 2가 왼쪽에서 오른쪽으로 3보다 큰 수인 5와 엇갈렸으므로, 2와 3을 바꿔준다.
+//   1 2 3 5 4 // 이 때 피벗이었던 3을 기준으로 왼쪽은 3보다 작은 수, 오른쪽은 3보다 큰수라는 특징 가진다. 다시 1(3의 왼쪽 수중 가장 왼쪽 수)과 5(3의 오른쪽 수 중 가장 왼쪽 수)를 피벗으로 이 과정을 반복한다.
+// 재귀함수로 구현하는 경우가 많으며, 퀵정렬의 최악 시간복잡도는 O(n^2)이다.
+// ex) 1 2 3 4 5 6처럼 이미 정렬된 경우. 이럴 떈 삼입정렬 사용하여 빠르게 처리가 가능하다.
+// -> 정렬할 데이터의 특성에 따라 적절한 정렬 알고리즘 사용하는 것이 중요.
+// 참고) 백준 2751번은 퀵정렬 사용해도 이러한 이유로 시간초과 발생함. 병합정렬이나 힙정렬을 사용해야 한다고 함.
+
+// # 병합 정렬
+#include <cstdio>
+
+int sorted[1000001];
+
+void merge(int arr[], int m, int middle, int n) {
+    int i = m;
+    int j = middle + 1;
+    int k = m;
+    while (i <= middle && j <= n) {
+        if(arr[i] <= arr[j]) {
+            sorted[k] = arr[i];
+            i++;
+        } else {
+            sorted[k] = arr[j];
+            j++;
+        }
+        k++;
+    }
+    if (i > middle) {
+        for(int t{j}; t <= n; t++) {
+            sorted[k] = arr[t];
+            k++;
+        }
+    } else {
+        for(int t{i}; t <= middle; t++) {
+            sorted[k] = arr[t];
+            k++;
+        }
+    }
+    
+    for(int t = m; t <= n; t++) {
+        arr[t] = sorted[t];
+    }
+}
+
+void mergeSort(int arr[], int m, int n) {
+    if(m < n) {
+        int middle = (m + n) / 2;
+        mergeSort(arr, m, middle);
+        mergeSort(arr, middle+1, n);
+        merge(arr, m, middle, n);
+    }
+}
+
+int main(int argc, const char * argv[]) {
+    int n{}, arr[1000001];
+    scanf("%d", &n);
+    
+    for(int i{}; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+    
+    mergeSort(arr, 0, n-1);
+    
+    for(int i{}; i < n; i++) {
+        printf("%d\n", arr[i]);
+    }
+    
+    return 0;
+}
+
+// 병합 정렬로 구현.
+// 병합정렬도 퀵정렬처럼 대표적인 분할정복 방법을 채택하는 알고리즘이며, 정확히 반절씩 나눈다는 점에서 최악의 경우에도 O(n*logn)을 보장함.
+// 일단 정확히 나누고 나중에 (2의 배수만큼)합쳐서 정렬.
+// 높이는 log n. 너비는 n이며 중요한 것은 합치는 순간에 정렬을 수행하는 것.
+// i, j, k의 인덱스를 사용하며 i와 j중 작은 값을 k로 가져감(i와 j를 이용하는 두배열이 정렬되었다고 가정). 하나씩 총 n개의 데이터를 읽어가는 과정만으로도 정렬이 수행됨. 즉, n번의 비교연산(너비가 n인 이유).
+
+
+
+// # 힙 정렬
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int arr[1000000];
+
+int main() {
+    int n{};
+    cin >> n;
+    for(int i{}; i < n; i++) {
+        cin >> arr[i];
+    }
+    
+    for(int i{1}; i < n; i++) {
+        int c{i};
+        do {
+            int root = (c-1)/2;
+            if(arr[root] < arr[c]) {
+                int temp = arr[root];
+                arr[root] = arr[c];
+                arr[c] = temp;
+            }
+            c = root;
+        }
+        while(c != 0);
+    }
+    
+    for(int i{n-1}; i >= 0; i--) {
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+        int root{};
+        int c{};
+        do {
+            c = root * 2 + 1;
+            if(c < i - 1 && arr[c] < arr[c+1]) c++;
+            if(c < i && arr[root] < arr[c]) {
+                temp = arr[root];
+                arr[root] = arr[c];
+                arr[c] = temp;
+            }
+            root = c;
+        } while (c < i);
+    }
+    
+    for (int i{}; i < n; i++) {
+        cout << arr[i] << "\n";
+    }
+    
+    return 0;
+}
+
+// 병합 정렬과 퀵 정렬만큼 빠른 정렬 알고리즘.
+// 힙트리 구조를 이용하는 정렬 방법임.
+// 일반적으로 n*log n의 시간 복잡도 가짐.
+// 힙은 최솟값이나 최댓값을 빠르게 찾아내기 위해 완전 이진 트리를 기반으로 하는 트리임.
+// 힙에는 최대힙과 최소힙이 존재하는데, 최대힙은 부모노드가 자식노드보다 큰 힙임.
+// 힙정렬을 위해서는 정해진 데이터를 힙구조를 가지도록 만들어줘야 함.
+// 힘정렬을 위해 힙생성 알고리즘(Heapify algorithm) 사용 -> 특정한 하나의 노드에 대해 수행 + 하나의 노드를 제외하고는 최대힙이 구성된 상태를 가정.
+// 힙생성 알고리즘으 특정한 노드의 두 자식 중에서 더 큰 자식과 자신의 위치를 바꾸는 알고리즘. 또한 위치를 바꾼 뒤에도 여전히 자식 존재하는 경우, 또 자식 중 더 큰 자식과 자신의 위치 바꾸어야 함.
+// 상향식, 하향식으로 구현 가능.
+// 힙 구조 완성되었다면 가장 위(root)에는 가장 큰 값이 있음(최대힙일 때). 이것을 가장 마지막 순서인 노드의 원소와 바꿔줌. -> 가장 큰 값이 마지막에 있게 됨. 그 후 마지막 값을 제외하고 남은 이진 트리에서 힙구조를 다시 만들어 줌. 이 과정을 반복하여 정렬.
+// 힙정렬은 병합 정렬과 다르게 별도로 추가적인 배열이 필요하지 않다는 점에서 메모리 측면에서 효율적임 + 항상 O(N*logN)을 보장함.
+// but 퀵정렬이 평균적으로 더 빠름.
+
+
+// # 계수 정렬
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int arr[3], cSort[1000001];
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int n{3}, range{1000000};
+//    cin >> n;
+    for(int i{1}; i <= n; i++) {
+        cin >> arr[i];
+    }
+    
+    for(int i{1}; i <= n; i++) {
+        cSort[arr[i]]++;
+    }
+    
+    for (int i{1}; i <= range; i++) {
+        if(cSort[i]) {
+            for(int j{}; j < cSort[i]; j++) {
+                cout << i << "\n";
+            }
+        }
+    }
+    
+    return 0;
+}
+
+// 범위 조건이 있는 경우에 한해서 굉장히 빠른 정렬 알고리즘.
+// O(n)의 시간 복잡도 가짐. 크기를 기준으로 세는 알고리즘임.
+// 수들이 입력됐을 떄, 각각의 크기를 가진 수들의 개수를 센 후, 개수만큼 각각의 수를 출력하는 정렬 알고리즘.
+// ex) 135543 들어오면 1 - 1개, 2 - 0개, 3 - 2개, 4 - 1개, 5 - 2개로 센 값을 저장한 후 각각의 수의 개수만큼 출력: 133455

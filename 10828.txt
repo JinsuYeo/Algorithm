@@ -1,0 +1,54 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+
+using namespace std;
+    
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int n{}, t{};
+    string s;
+    cin >> n;
+    
+    vector<int> v;
+    
+    for(int i{}; i < n; i++) {
+        cin >> s;
+        if(s == "push") {
+            cin >> t;
+            v.push_back(t);
+        }
+        if(s == "top") {
+            if(v.size()) {
+                cout << v.back() << "\n";
+            } else {
+                cout << -1 << "\n";
+            }
+        }
+        if(s == "size") cout << v.size() << "\n";
+        if(s == "pop") {
+            if(v.size() != 0) {
+                cout << v.back() << "\n";
+                v.pop_back();
+            } else {
+                cout << -1 <<"\n";
+            }
+        }
+        if(s == "empty") {
+            if(v.size()) {
+                cout << 0 << "\n";
+            } else cout << 1 << "\n";
+        }
+    }
+    
+    return 0;
+}
+
+// vector와 string 이용해서 스택 구현.
+// 스택과 큐는 컴퓨터 공학에서 가장 기본이 되는 자료구조임.
+// 말 그대로 자료를 표현하고 처리하는 방법에 관한 것. 스택은 택배 상하차 처럼 차례대로 쌓고 위에서부터 꺼내가는 방식이라고 생각하면 됨. 입구와 출구가 하나밖에 없는 상태로 표현(입구인 동시에 출구. 후입선출 구조).
+// <stack>을 include해서 사용 가능 or 직접 구현.

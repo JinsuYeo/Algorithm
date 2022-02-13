@@ -1,0 +1,33 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+    
+long long gcd(long long a, long long b) {
+    long long t = a % b;
+    while(t != 0) {
+        a = b;
+        b = t;
+        t = a % b;
+    }
+    return b;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    long long a{}, b{};
+    cin >> a >> b;
+    
+    cout << string(gcd(a, b), '1') << "\n";
+    
+    return 0;
+}
+
+// 2^63 이하의 수 입력 -> long long 형으로 처리.
+// 1로만 이루어진 수, 자릿수가 입력됨.
+// 자릿수를 1로 이루어진 수로 변형해서 유클리드 호제법 사용. -> 시간 초과남. 여러가지 시도했는데 안돼서 결국 답보고 풀었음.
+// 조금 더 생각해보거나 컨디션 좋을 때 풀었으면 풀 수도 있었을 것 같은데 아쉬움. 앞으로는 안될 것 같다고 포기하지 말고 한시간 정도는 고민해보기.
+// 답은 자릿수의 최대공약수만큼 1을 출력해주면 되는 것이었음. + long long 사용 지키기.

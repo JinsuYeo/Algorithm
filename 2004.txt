@@ -1,0 +1,33 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+  
+    int n{}, m{}, fcount{}, tcount{}, count{};
+    cin >> n >> m;
+    
+    for(long long i{5}; i <= n; i*=5) fcount += n/i;
+    for(long long i{5}; i <= m; i*=5) fcount -= m/i;
+    for(long long i{5}; i <= n-m; i*=5) fcount -= (n-m)/i;
+    
+    for(long long i{2}; i <= n; i*=2) tcount += n/i;
+    for(long long i{2}; i <= m; i*=2) tcount -= m/i;
+    for(long long i{2}; i <= n-m; i*=2) tcount -= (n-m)/i;
+    
+    count = tcount < fcount ? tcount : fcount;
+    
+    cout << count << "\n";
+    
+    return 0;
+}
+
+// nCm의 끝자리 0의 개수.
+// 입력값 <= 20억이라 O(n)도 시간 초과라 1676번 때처럼 이중 반복문 사용 불가능.
+// n!의 2, 5의 개수 - m!의 2, 5의 개수 - (n-m)!의 2, 5의 개수 계산해준 뒤 더 작은 값 출력하면 됨(5나 2 중 하나라도 부족하면 10을 만들 수 없음. 따라서 더 작은 값이 0의 개수 값이 됨).  <- 잘못 생각 했던게 4C2 는 4*3 / 2*1 로만 생각하고 (4*3*2*1) /  (2*1) * (2*1)이 원래 식이라는 것을 생각 못함.
+// 그래서 알고리즘은 생각했으나 시간 제한을 만족하도록 구현을 못함.
+// 다른 사람 코드 보고 푼 문제인데 아마 안봤으면 절대 못풀었을 것임. 답은 n/5 + n/25 + n/125... 처럼 1~n까지의 수 중 5의 n제곱을 만족하는 수로 n을 나눈 수의 합에서 m/5..., (n-m)/5...를 만족하는 수들을 빼준 결과 값과 2의 n제곱도 똑같이해서 나온 결과 값 중 작은 것 출력하는 것.

@@ -1,0 +1,31 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+  
+    int n{}, count{};
+    cin >> n;
+    
+    for(int i{1}; i <= n; i++) {
+        int t = i;
+        while(t){
+            if(t%5 == 0) {
+                count++;
+                t /= 5;
+            } else break;
+        }
+    }
+    
+    cout << count << "\n";
+    
+    return 0;
+}
+
+// n%10의 배수로 n크기 줄이며 0의 개수 찾으려 했는데 n의 크기가 너무 큼(500!). string으로 처리해보려 했지만 그래도 너무 커서 안됨 + 125~의 0의 개수는 31개이므로 자릿수를 끊어서 계산 하기도 힘들것 같음. 규칙 찾을 필요 있으나 못찾아서 다른 사람 코드 보고 풂.
+// 답은 0의 개수는 10의 n승의 개수이므로 소인수 분해 시 2와 5의 개수(2*5가 10이니까)를 찾으면 됨. 그 중에서도 5의 개수가 2보다 적을 것이니 5의 개수를 파악하면 됨. -> 1~n(1*2*3*4*...*n)까지의 수 중 5로 나누어떨어지는 수의 개수 찾아서 출력.

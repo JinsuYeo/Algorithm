@@ -1,0 +1,68 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+char visited[1001];
+int v, e, n, c;
+int p[1001];
+vector<int> arr[1001];
+
+void clear() {
+    for(int i{0}; i < 1001; i++) {
+        visited[i] = 0;
+        arr[i].clear();
+        c = 0;
+    }
+}
+
+void dfs(int start) {
+    if(visited[start] != 0)
+        return;
+    
+    visited[start] = true;
+    
+    for(int i{}; i < arr[start].size(); i++) {
+        int x = arr[start][i];
+        if(!visited[x])
+            dfs(x);
+    }
+}
+
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    clear();
+    cin >> n;
+    
+    for(int i{}; i < n; i++) {
+        cin >> v;
+        e = v;
+        for(int j{1}; j <= e; j++) {
+            cin >> p[j];
+        }
+        for(int j{1}; p[j] != 0; j++) {
+            arr[j].push_back(p[j]);
+            arr[p[j]].push_back(j);
+        }
+        for(int j{1}; j <= v; j++) {
+            if(!visited[j]){
+                dfs(j);
+                c++;
+            }
+        }
+        cout << c << "\n";
+        clear();
+    }
+    
+    
+    return 0;
+}
+
+// arr[n] 만들어 입력받고, vec[i].push_back(arr[i]), vec[arr[i]].push_back(i)으로 순열 사이클을 그래프로 만들어준 뒤, 연결 컴포넌트의 개수 세서 출력.
+//생각보다 쉽게 풀었으나 그래프 관련 문제인 것 몰랐다면 알고리즘 생각하기 쉽지 않았을 것 같음.

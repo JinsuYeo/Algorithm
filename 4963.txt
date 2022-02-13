@@ -1,0 +1,64 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cstring>
+
+using namespace std;
+
+int n, c;
+int arr[51][51];
+bool visited[51][51];
+vector<int> cv;
+
+void dfs(int i, int j){
+    visited[i][j] = 1;
+    
+    if(j > 1 && arr[i][j-1] == 1 && !visited[i][j-1]) dfs(i, j-1);
+    if(j < n && arr[i][j+1] == 1 && !visited[i][j+1]) dfs(i, j+1);
+    if(i > 1 && arr[i-1][j] == 1 && !visited[i-1][j]) dfs(i-1, j);
+    if(i < n && arr[i+1][j] == 1 && !visited[i+1][j]) dfs(i+1, j);
+    if(i > 1 && j > 1 && arr[i-1][j-1] == 1 && !visited[i-1][j-1]) dfs(i-1, j-1);
+    if(i > 1 && j < n && arr[i-1][j+1] == 1 && !visited[i-1][j+1]) dfs(i-1, j+1);
+    if(i < n && j > 1 && arr[i+1][j-1] == 1 && !visited[i+1][j-1]) dfs(i+1, j-1);
+    if(i < n && j < n && arr[i+1][j+1] == 1 && !visited[i+1][j+1]) dfs(i+1, j+1);
+}
+
+int main() {
+    n = 51;
+    c = 0;
+    
+    int x, y;
+    cin >> x >> y;
+    while (!(x == 0 && y == 0)) {
+        for(int i{1}; i <= y; i++) {
+            for(int j{1}; j <= x; j++) {
+                cin >> arr[i][j];
+            }
+        }
+        
+        for(int i{1}; i <= y; i++) {
+            for(int j{1}; j <= x; j++) {
+                if(!visited[i][j] && arr[i][j] == 1) {
+                    c++;
+                    dfs(i, j);
+                }
+            }
+        }
+    
+        cout << c << "\n";
+        
+        c = 0;
+        memset(visited, false, sizeof(visited));
+        memset(arr, false, sizeof(arr));
+        
+        cin >> x >> y;
+    }
+    
+    return 0;
+}
+
+// 2667번과 거의 동일한데 대각선으로 1이 있어도 연결되었다고만 수정하면 됨.
+// 즉 상하좌우말고 대각도 처리.
+
+// 이상하게 답이 안나와서 계속 고민했는데 n이 최댓값으로 설정이 안되어있었음.
+// 2667번 코드에서 수정하다보니 놓치는 부분이 계속 생겨서 아예 코드 처음부터 짤 때보다 오래 걸림. 다음부턴 코드 거의 비슷할 것 같더라도 새로 짜자.

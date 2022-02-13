@@ -1,0 +1,56 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#define END first
+#define START second
+
+using namespace std;
+
+typedef pair<int, int> pi;
+vector<pi> v;
+
+int n, c;
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> n;
+    for (int i{}; i < n ; i++) {
+        int a, b;
+        cin >> a >> b;
+        v.push_back({b, a});
+    }
+    
+    sort(v.begin(), v.end());
+    
+    int cur = v.at(0).END;
+    c = 1;
+    
+    for (int i{1}; i < v.size(); i++) {
+        if (cur <= v.at(i).START) {
+            cur = v.at(i).END;
+            c++;
+        }
+    }
+    
+    cout << c;
+    
+    return 0;
+}
+
+// vector에 pair로 입력받은 뒤, 시작 시간 기준으로 sort해줌. 첫번째 요소의 종료 시점과 같거나 큰 시작 시간을 가진 요소를 찾고 count++해줌. 끝날 때까지 반복하고 두번째 요소부터 다시 시작해서 반복.
+
+// 반례가 거의 다 맞길래 왜 틀리지 하고 한참 고민하다가 반례 찾음.
+// ex) 4 5
+//     6 11
+//     7 8
+//     8 9
+// 이런 경우 내가 생각한 알고리즘은 4 5 다음 6 11을 고르고 count의 최대는 2였을 것임(or 7 8, 8 9 로 count가 2).
+// 결국 알고리즘이 잘못됐다는 것 깨닫고 좀 더 고민하다가 하나를 고치면 다른 하나가 문제인 상황이 돼서 다른 사람이 어떻게 풀었나 봄.
+
+// 결국 답은 시작 시간이 아니라 종료 시간을 기준으로 정렬하는 것이었음. 그것과 첫 요소의 종료 시간과 다음 요소의 시작 시간을 비교해야 한다는 것 외에는 동일(+ 첫번째 요소의 반복 끝나고 두번째 요소부터 반복할 필요 없이 첫 요소부터 센 count가 정답임, 아마 내 알고리즘대로 풀었다면 맞아도 시간초과 났을 듯).
+
+// 그리디가 알고리즘 중 쉬운 것이라고 알고 있었는데 물론 구현은 쉬운 편인것 같긴하나 알고리즘을 생각을 못하겠음. 많이 풀어보면서 감을 잡아야겠음. 아예 비슷하게라도 알고리즘 생각 못하는건 그리디 문제들이 거의 처음인 듯.
+
+// 참조) https://cocoon1787.tistory.com/147

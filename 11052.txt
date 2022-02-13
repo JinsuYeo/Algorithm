@@ -1,0 +1,33 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+long dp[1001], arr[5001];
+
+int main(int argc, const char * argv[]) {
+    int n{};
+    cin >> n;
+    
+    for(int i{1}; i <= n; i++) {
+        cin >> arr[i];
+    }
+    
+    dp[1] = arr[1];
+    
+    for(int i{2}; i <= n; i++) {
+        dp[i] = arr[i];
+        for(int j{1}; j <= i; j++) {
+            dp[i] = max(dp[i], dp[i-j] + arr[j]);
+        }
+    }
+    
+    cout << dp[n] << endl;
+    
+    return 0;
+}
+
+// 4개의 카드가 주어졌을 때 1개만 고르는 경우, 2개중 최대값 고르는 경우 ... 4개중 최댓값 고르는 경우 생각해보니 2(개중 최댓값)은 1까지의 최댓값 + p1(1번 카드) or p2 중 최댓값이고, 3은  1까지 최댓값 + p2 or 2까지 최댓값 + p1 or p3중 최댓값 .... 의 규칙이 있었음.
+// 즉 dp[i] = max(dp[i-1] + arr[1], dp[i-2] + arr[2], dp[i-3] + arr[3] ... dp[1] + arr[i-1], arr[i])로 알고리즘 생각.
+// 헷갈려서 구현에 시간이 오래걸렸음. 많이 해보고 생각하면서 구현해봐야 빠르게 구현할 수 있을 듯.
+// 1시간, O(n^2).

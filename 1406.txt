@@ -1,0 +1,123 @@
+#include <iostream>
+#include <algorithm>
+#include <stack>
+#include <string>
+
+using namespace std;
+    
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    string s;
+    int n{};
+    stack<char> sl;
+    stack<char> sr;
+    
+    cin >> s >> n;
+    
+    for(int i{}; i < s.size(); i++)
+        sl.push(s.at(i));
+    
+    for(int i{}; i < n; i++) {
+        char t;
+        cin >> t;
+        if(t == 'P') {
+            char c;
+            cin >> c;
+            sl.push(c);
+        }
+        if(t == 'L') {
+            if(!sl.empty()) {
+                sr.push(sl.top());
+                sl.pop();
+            }
+        }
+        if(t == 'D') {
+            if(!sr.empty()){
+                sl.push(sr.top());
+                sr.pop();
+            }
+        }
+        if(t == 'B') {
+            if(!sl.empty()) {
+                sl.pop();
+            }
+        }
+    }
+    
+    while(!sl.empty()) {
+        sr.push(sl.top());
+        sl.pop();
+    }
+    
+    unsigned long t = sr.size();
+    for(int i{}; i != t; i++) {
+        cout << sr.top();
+        sr.pop();
+    }
+        
+    return 0;
+}
+
+// string으로 구현하려 했으나 에러 발생해서 실패. 구현하는 알고리즘은 맞게 생각한 것 같은데 자료구조를 잘못 사용한 것 같다. 입력 받고 삽입할 때 위치가 잘 맞지않아 실패했다.
+// 연결 리스트나 스택을 이용하여 구현하니 쉽게 풀었다. + c++ list의 .end()는 마지막 원소의 다음 노드를 가리키는 iterator 반환한다고 한다.
+
+// # 연결 리스트 사용
+#include <iostream>
+#include <algorithm>
+#include <list>
+#include <string>
+
+using namespace std;
+    
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    string s;
+    int n{};
+    cin >> s >> n;
+
+    list<char> l(s.begin(), s.end());
+    auto now = l.end();
+    
+    for(int i{}; i < n; i++) {
+        char t;
+        cin >> t;
+        if(t == 'P') {
+            char c;
+            cin >> c;
+            l.insert(now, c);
+        }
+        if(t == 'B') {
+            if(now != l.begin()) {
+                now = l.erase(--now);
+            }
+        }
+        if(t == 'D') {
+            if(now != l.end()){
+                now++;
+            }
+        }
+        if(t == 'L') {
+            if(now != l.begin()){
+                now--;
+            }
+        }
+    }
+    
+    for(auto c: l){
+        cout << c;
+    }
+        
+    return 0;
+}
+
+// 연결 리스트(c++ list) 이용해 구현.
+// list의 insert(itr, n)는 itr 위치에 n 삽입. 반환값 없음.
+// erase(itr)는 itr 위치의 값 삭제 후 삭제되기 전 itr 위치 오른쪽 값의 itr을 반환함.
+// ex) a (b) c -> a (c) 처럼 b가 삭제된 후 c의 위치 반환.
+// -> 보통 itr = list.erase(itr); 처럼 사용해 itr값 갱신해 주어야 함.

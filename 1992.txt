@@ -1,0 +1,51 @@
+#include <iostream>
+#include <cstdio>
+#include <array>
+#include <string>
+
+using namespace std;
+
+int n;
+array<array<int, 64>, 64> arr;
+string s;
+
+void check(int x, int y, int size) {
+    int num = arr[x][y];
+    for (int i{x}; i < x + size; i++) {
+        for (int j{y}; j < y + size; j++) {
+            if (arr[i][j] != num) {
+                s += "(";
+                check(x, y, size/2);
+                check(x, y + size/2, size/2);
+                check(x + size/2, y, size/2);
+                check(x + size/2, y + size/2, size/2);
+                s += ")";
+                return;
+            }
+        }
+    }
+    s += to_string(num);
+}
+
+int main()
+{
+    
+    
+    cin >> n;
+
+    for (int i{0}; i < n; i++) {
+        for (int j{0}; j < n; j++) {
+            scanf("%1d", &arr[i][j]);
+        }
+    }
+    
+    check(0, 0, n);
+    
+    cout << s;
+    
+    return 0;
+}
+
+// 1780번과 비슷한 문제. n*n 배열에 입력받고 같은 수로만 채워져있는 지 검사한 후 같다면 string에 그 숫자를 넣고 아니면 4분할로 나눠서 검사한 뒤 같으면 ()로 감싸서 왼쪽, 오른쪽 위 숫자와 왼쪽, 오른쪽 아래 숫자를 넣어줌. 이것을 반복하여 구현.
+
+// 분할 정복이  알고리즘 생각은 쉬운데 재귀 함수로 구현하기 생각보다 오래걸리는 듯 함. 특히 내가 재귀 함수로 구현하는 알고리즘을 잘 못 구현하는 듯. 작은 에러나도 찾기가 너무 힘듦. 처음부터 에러 안 생기도록 잘 생각해서 구현하고, 틀리면 하나씩 고치는게 아니라 전체적인 흐름을 보면서 전체적으로 고쳐야 할 듯.

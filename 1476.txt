@@ -1,0 +1,42 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int E, S, M, result;
+
+int main(void){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> E >> S >> M;
+    
+    bool flag{false};
+    int i{1};
+    while(!flag) {
+        int e{}, s{}, m{};
+        e = i%15 == 0 ? 15 : i%15;
+        s = i%28 == 0 ? 28 : i%28;
+        m = i%19 == 0 ? 19 : i%19;
+        if (e == E && s == S && m == M) {
+            result = i;
+            flag = true;
+        }
+        i++;
+    }
+    
+    cout << result;
+    
+    return 0;
+}
+
+// E, S, M을 이용해 연도를 나타냄. 1<=E<=15, 1<=S<=28, 1<=M<=19.
+// 1년은 1, 1, 1로 나타냄.
+// 1년 지날 때마다 세 수 모두 1씩 증가.
+// 어떤 수가 범위 넘어가면 1이 됨.
+// ex) 15 -> 15 15 15
+//.    16 -> 1 16 16
+
+// 이 때 E, S, M이 입력되고 우리가 아는 연도로 몇년인지 출력.
+
+// I = 0부터 1씩 증가하면서 i%15(== 0 이면 15)가 E인지, i%28(==0이면 28)이 S인지, i%19(==0이면 19)가 M인지 체크 후 모두 만족하면 i를 출력.

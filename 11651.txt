@@ -1,0 +1,52 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Point {
+public:
+    int x;
+    int y;
+    Point(): Point(0, 0){};
+    Point(int a, int b): x{a}, y{b}{};
+};
+
+ostream &operator<<(ostream& os, const Point &p) {
+    os << p.x << " " << p.y;
+    return os;
+}
+
+bool compare(Point &a, Point &b) {
+    if(a.y == b.y) return a.x < b.x;
+    else return a.y < b.y;
+    
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int n{}, x{}, y{};
+    cin >> n;
+    
+    vector<Point> p;
+    
+    for(int i{}; i < n; i++) {
+        cin >> x;
+        cin >> y;
+        Point point{x, y};
+        p.push_back(point);
+    }
+    
+    sort(p.begin(), p.end(), compare);
+    
+    for(int i{}; i < n; i++) {
+        cout << p.at(i) << "\n";
+    }
+    
+    return 0;
+}
+
+// 11650번과 거의 비슷해서 풀기 쉬웠음. sort() 함수에 사용된 compare 함수만 조금 바꿔줘서 구현함.

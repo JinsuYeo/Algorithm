@@ -1,0 +1,28 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int arr[5000000];
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int n{}, t{};
+    cin >> n >> t;
+    
+    for (int i{}; i < n; i++) {
+        cin >> arr[i];
+    }
+    
+    sort(arr, arr+n);
+    
+    cout << arr[t-1] << "\n";
+    
+   
+    return 0;
+}
+
+// sort함수로 구현 후 정렬된 배열 중 원하는 위치의 수 출력.

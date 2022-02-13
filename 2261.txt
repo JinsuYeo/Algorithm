@@ -1,0 +1,185 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cmath>
+#include <set>
+using namespace std;
+
+#define INF (1 << 30)
+#define X first
+#define Y second
+typedef pair<int, int> pi;
+
+int n, x, y;
+vector<pi> v;
+set<pi> s;
+
+int dist(pi a, pi b)
+{
+    int x_dist = (a.X - b.X) * (a.X - b.X);
+    int y_dist = (a.Y - b.Y) * (a.Y - b.Y);
+    return x_dist + y_dist;
+}
+
+int main() {
+
+    cin >> n;
+
+    for (int i = 0; i < n; ++i)
+    {
+        cin >> x >> y;
+        v.push_back({ x,y });
+    }
+
+    // X좌표 순으로 정렬
+    sort(v.begin(), v.end());
+    s.insert({ v[0].Y, v[0].X });
+    s.insert({ v[1].Y, v[1].X });
+
+    int mini = dist(v[0], v[1]);
+    int idx = 0;
+
+    for (int i = 2; i < n; ++i)
+    {
+        while (idx < i)
+        {
+            int d = v[i].X - v[idx].X;
+            if (d * d <= mini) break;
+            else // mini보다 거리가 멀 시 후보군에서 제외
+            {
+                s.erase({ v[idx].Y, v[idx].X });
+                idx++;
+            }
+        }
+
+        // 후보군 내의 점들과의 거리 중 가장 가까운 거리로 업데이트
+        auto start = s.lower_bound({ v[i].Y - sqrt(mini), -INF });
+        auto end = s.upper_bound({ v[i].Y + sqrt(mini), INF });
+        for (auto it = start; it != end; it++)
+            mini = min(mini, dist({ it->Y, it->X }, v[i]));
+        s.insert({ v[i].Y, v[i].X });
+    }
+    
+    cout << mini << '\n';
+}
+
+// (x1 - x2)^2 + (y1 - y2)^2가 가장 작은 값 출력.
+// O(n^2)이면 쉬울텐데 입력 개수가 100000개라 O(NlogN) 이하여야 통과 될 듯.
+
+// 분할 정복 -> 이분 탐색 사용해야 하나 했는데 만약 반을 나누었을 때 왼쪽 오른쪽 사이의 거리가 가장 짧다면? + 하나 찾는 것이 아니라 두 요소의 x, y를 비교해서 최솟값을 찾아야 함. 고민하다가 다른 사람의 코드를 보고 풀어야 겠다고 생각.
+
+// 두가지 코드를 봤는데 하나는 라인 스위핑 알고리즘, 하나는 분할 정복을 이용한 풀이였음.
+
+// 이 코드가 라인 스위핑 알고리즘을 사용한 풀이.
+// 이해하는게 최선이었음. 코드를 짜라고 하면 이렇게는 못짤 것 같음. 쉽게만 말하면 x로 정렬해서 0, 1번 인덱스의 거리를 min에 저장 후, 0과 2번의 x 거리가 min(즉, (x0-x1)^2+(y0-y1)^2)보다 작으면 y값을 기준으로 정렬된(set 이용해 자동으로) 좌표값들 이용해(start는 y값이 y의 거리^2 했을 때 min보다 크지 않으면서 최소인 값의 iterator, end는 y의 거리^2 했을 때 min보다 크지 않은 최대의 값의 iterator) v[i]와 비교하여 min을 최솟값으로 갱신. idx와 i 이용하여 n까지 반복.
+
+// 두번째 방법인 분할 정복은 직접 코드로 구현해보기.
+
+
+// 분할 정복 이용
+#include <iostream>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+#define X first
+#define Y second
+
+const int MAX = 1 << 30;
+
+typedef pair<int, int> pairii;
+vector<pairii> v;
+
+int dist(int low, int high){
+    int lowx = v[low].X;
+    int lowy = v[low].Y;
+    int highx = v[high].X;
+    int highy = v[high].Y;
+    
+    int distx = highx - lowx;
+    int disty = highy - lowy;
+    
+    return distx*distx + disty*disty;
+}
+
+int check(int low, int high) {
+    if (low == high) return MAX;
+    if (low + 1 >= high) return dist(low, high);
+    
+    int min = dist(low, high);
+    int mid = (low+high)/2;
+    int t{};
+    
+    if ((t = check(low, mid)) < min) {
+        min = t;
+    }
+    if ((t = check(mid+1, high)) < min) {
+        min = t;
+    }
+    
+    vector<pairii> v2;
+    int line = v[mid].X;
+    for (int i{mid}; i >= low; i--) {
+        int x = v[i].X;
+        int dis = line - x;
+        dis *= dis;
+        if (min <= dis) break;
+        else v2.push_back({v[i].Y, v[i].X});
+    }
+    for (int i{mid+1}; i <= high; i++) {
+        int x = v[i].X;
+        int dis = line - x;
+        dis *= dis;
+        if (min <= dis) break;
+        else v2.push_back({v[i].Y, v[i].X});
+    }
+    
+    int size = static_cast<int>(v2.size());
+    if (!size) return min;
+    
+    sort(v2.begin(), v2.end());
+    
+    for(int i{}; i < size; i++){
+        int ix = v2[i].Y, iy = v2[i].X;
+        for(int j{i+1}; j < size; j++){
+            int jx = v2[j].Y, jy = v2[j].X;
+            int distx = jx - ix, disty = jy - iy;
+            if(min <= disty * disty) break;
+            if(min <= distx * distx) continue;
+            
+            int dist = distx*distx + disty*disty;
+            if(dist < min)
+                min = dist;
+        }
+    }
+    
+    return min;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    for (int i{}; i < n; i++) {
+        int x, y;
+        cin >> x >> y;
+        v.push_back({x, y});
+    }
+    
+    sort(v.begin(), v.end());
+    
+    cout << check(0, n-1);
+    
+    return 0;
+}
+
+// 좌표 입력받아서 x를 기준으로 정렬한 뒤, 범위(범위는 입력값의 개수(== 벡터에 저장된 좌표의 개수))에서 가장 먼 점과 점의 거리 찾은 뒤 min에 저장, 이분할하여(0~mid, mid+1 ~n-1) 다시 각각 그 범위에서 가장 먼 거리 찾은 뒤 min에 저장... low==high or low + 1 >= high가 될 때까지 반복 . 범위가 0이되면 max를 리턴해서 최솟값에 영향 안가게 해주고(처음 함수 호출 시 범위는 입력 값의 개수(0~n-1)이므로 입력 개수가 2보다 크므로 영향 x)  범위가 1일 때 0과 1의 거리 리턴해줌. 재귀 호출 끝나면 이분할 되기 전의 범위로 돌아와서 범위의 중간 즉, 이분할 한 선과 각 좌표의 x값 비교해서 min값보다 작으면 vector에 저장. y값 기준으로 정렬한 뒤 vector에 저장된 좌표값끼리 거리를 구해서 min보다 작으면 갱신해줌.
+
+// 참조)
+// https://velog.io/@brol2/BOJ-2261%EB%B2%88-%EA%B0%80%EC%9E%A5-%EA%B0%80%EA%B9%8C%EC%9A%B4-%EB%91%90-%EC%A0%90
+
+// 이해하는건 생각보다 쉬웠는데 막상 구현하려 하니 생각해야 할 게 많았고 초기값 설정 같이 세세하게 신경써야 하는 부분이 많아서 거의 위 블로그의 코드를 보면서 구현한 것 같음.
+// 아직 구현이 어려운 문제들은 잘 못풀겠음. + 아직 초보라 맞왜틀을 많이 하는듯.
+
+// v에 입력값 삽입한 뒤 정렬안해서 계속 틀렸었음.

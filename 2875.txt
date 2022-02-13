@@ -1,0 +1,42 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int w, m, k;
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> w >> m >> k;
+    if (w/2 <= m) {
+        int t = w/2;
+        k -= w%2;
+        m -= t;
+        k -= m;
+        
+        while (k > 0) {
+            t--;
+            k -= 3;
+        }
+        cout << t;
+    } else {
+        int t = m;
+        w -= t*2;
+        k -= w;
+        
+        while (k > 0) {
+            t--;
+            k -= 3;
+        }
+        cout << t;
+    }
+    
+    return 0;
+}
+
+// 2명의 여학생, 1명의 남학생이 팀. 여: n명, 남: m명, k명은 제외해야 할 때 만들 수 있는 최대 팀 수.
+// 최대한 만든 뒤 남은 인원이 k명이 안되면 팀하나 해체하고 k -= 3 해줌. k가 0이거나 0보다 작아질 때 까지 반복.
+// 여자/2가 남자보다 적거나 같을 때,  여자/2가 최대 팀 수가 되고, 남자 - 팀의 수 했을 때 남는 남자를 k에서 빼줌. k가 0보다 클 때, 팀 하나 줄이고 k -= 3을 반복해줌.
+// 남자 수가 여자/2보다 크면 반대로.
