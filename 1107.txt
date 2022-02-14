@@ -1,0 +1,57 @@
+#include <iostream>
+#include <algorithm>
+#include <array>
+#include <cmath>
+
+using namespace std;
+
+int N, M, c;
+int MAX{1 << 31};
+
+array<int, 10> arr {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+int main(void){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N >> M;
+    for (int i{}; i < M; i++) {
+        int t{};
+        cin >> t;
+        arr[t] = -1;
+    }
+    
+    string s;
+    s = to_string(N);
+    c = abs(N-100);
+    if (c <= 3) {
+        cout << c;
+        return 0;
+    }
+    
+    for (int i{}; i <= 999999; i++) {
+        string temp = to_string(i);
+        bool flag = true;
+        for (int j{}; j < temp.length(); j++) {
+            if (arr[temp[j]-'0'] == -1) {
+                flag = false;
+            }
+        }
+        if (flag) {
+            c = min(c, int(abs(N-i) + to_string(i).length()));
+        }
+    }
+    
+    cout << c;
+    
+    return 0;
+}
+
+// 0~9, -, + 가 있는 리모컨이 있을 때, 고장난 버튼을 제외한 버튼만을 가지고 입력받은 N을 만들어야 함.
+N과 가장 가까운 수 만든 뒤 N을 만들 때까지 누른 +or -의 개수 + 가장 가까운 수의 자리수 세서 출력.
+
+// 고장난 수를 제외한 수로 입력값 N과 가장 가까운 수를 만다는 방법을 생각해보다가 이중 반복문으로 N에서 ++, --하면서 가지고 있는 수만으로 N을 만들수 있을 때까지 반복하며 count 세려 했음. 문자열 사용해서 N의 자리수 별로 갖고 있는 수 배열 사용해 비교. 아마 가능한 방법이긴 할 것 같은데, 구현이 너무 복잡해지기도 하고, 정답도 못맞춰서 다른 사람 코드 보고 풀기로 함.
+
+// 가장 가까운 수를 만드는게 아니라 0부터 max까지(500000을 만들 수 있는, 만약 9만으로 만들어야 한다면 999999가 가장 가까우므로 999999까지) 반복하면서 min값을 찾아 출력함. 훨씬 코드도 간단해지고 내가 생각했던 것과 시간복잡도도 차이가 안날 것 같음. 완전 탐색 문제는 그냥 0부터 max까지 반복하면서 목표를 달성 하는 문제인 듯.
+
+// + 배열의 0에서 9까지 초기화 하므로 각 자리의 수에 해당하는 배열 위치가 초기화되어 있으면 가지고 있는 수니까 그 방법 이용해 만들 수 있는 수인지 체크하는 것 굉장히 좋은 코드, 아이디어인 듯. 나중에 비슷한 문제 나오면 사용해보기.  -> line 35, 36.
