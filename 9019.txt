@@ -1,0 +1,103 @@
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <string>
+#include <queue>
+#include <vector>
+
+using namespace std;
+
+const int MAX = 10000;
+
+int T, N, M;
+bool visited[MAX];
+queue<pair<int, string>> q;
+
+string bfs(){
+    q.push(make_pair(N, ""));
+    visited[N] = true;
+    
+    while (!q.empty()) {
+        int x = q.front().first;
+        string result = q.front().second;
+        q.pop();
+        
+        if (x == M) {
+            return result;
+        }
+        
+        if (!visited[(x*2)%10000]) {
+            q.push(make_pair((x*2)%10000, result+"D"));
+            visited[(x*2)%10000] = true;
+        }
+        
+        if (!visited[x == 0 ? 9999 : x-1]) {
+            q.push(make_pair(x == 0 ? 9999 : x-1, result+"S"));
+            visited[x == 0 ? 9999 : x-1] = true;
+        }
+        
+        int temp{};
+        temp = (x%1000)*10;
+        temp += x/1000;
+        
+        if (!visited[temp]) {
+            q.push(make_pair(temp, result+"L"));
+            visited[temp] = true;
+        }
+        
+        temp = x/10;
+        temp += (x%10)*1000;
+        if (!visited[temp]) {
+            q.push(make_pair(temp, result+"R"));
+            visited[temp] = true;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> T;
+    
+    for(int i{}; i < T; i++) {
+        while (!q.empty()) {
+            q.pop();
+        }
+        memset(visited, false, sizeof(visited));
+        
+        cin >> N >> M;
+        
+        if (N == M) {
+            cout << "" << '\n';
+            continue;
+        }
+        
+        cout << bfs() << '\n';
+    }
+        
+    return 0;
+}
+
+// D, S, L, R을 사용하는 계산기.
+// 0~9999의 십진수 저장 가능.
+
+// D는 n을 2배로 바꿈. 9999보다 큰 경우 n%10000을 저장 -> n%= 10000;
+
+// S는 n-1을 저장함. n이 0 일 경우 9999를 저장함. -> n == 0 ? 9999 : n-1;
+
+// L은 각 자리수를 왼편으로 회전 시켜서 저장함.
+// -> 1234 -> 2341
+
+// R은 오른쪽으로 회전 -> 1234 -> 4123
+
+// 이 때, 입력받은 A를 B로 바꾸는 최소한의 명령어 생성해 출력.
+
+// BFS 사용, 문자열로 1234 -> 4123 같은 것 구현, 만약 L 했다면 R 추가 시 원점으로 되돌아 감. -> visited 이용해 방지. 숫자와 문자열을 pair로 큐에 저장해서 출력해야하는 result를 만듦(result = "" 에서 반복 진행될 때마다 조건 만족 시 result + "명령어"("D" 처럼)로 result 갱신해줌).
+
+// 처음에 시간 초과 발생.-> ios_base::sync_with_stdio(false);랑 cin.tie(NULL); 코드에 추가해주니 7~12퍼 정도에서 시간 초과 발생. 코드에 에러는 없다고 생각하고 코드 확인해보니 아마 string으로 L과 R 구현할 때 시간이 오래 걸리는 듯(특히 insert()가 선형 시간이라고 알고 있음). -> 더 빠른 방법 적으면서 생각해보니 1234%1000하면 234이고 1234/1000 하면 1임. 234*10 + 1 해주면 L 구현됨(1000에도 적용됨). R도 비슷하게 구현 가능함.
+
+// 문자열 부분 수정한 후 제출하니 정답 처리 됨.
+// 완전 탐색도 나름 적응해 가는 듯. 완전 탐색 문제 중 처음으로 정답률 20%대 문제 다른 사람 코드 안보고 맞춘듯. 앞에 풀었던 문제들과 비슷한 문제라 코드 짜기 전에 적으면서 생각한 다음 계획한 대로 구현하니 맞았음.
