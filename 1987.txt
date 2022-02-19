@@ -1,0 +1,67 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <map>
+
+using namespace std;
+
+int R, C;
+string s;
+bool visited[27];
+int result;
+
+typedef struct {
+    int y;
+    int x;
+} DIR;
+DIR dir[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+void dfs(int &&idx, int &&cnt){
+    int y{idx/C};
+    int x{idx%C};
+    
+    if (cnt > result) result = cnt;
+    
+    for (int i{}; i < 4; i++) {
+        int nexty = y + dir[i].y;
+        int nextx = x + dir[i].x;
+        if (nextx < 0 || nextx >= C || nexty < 0 || nexty >= R) continue;
+        if (!visited[s[nexty*C + nextx]-'A']) {
+            visited[s[nexty*C + nextx]-'A'] = true;
+            dfs(nexty*C + nextx, cnt+1);
+            visited[s[nexty*C + nextx]-'A'] = false;
+        }
+    }
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> R >> C;
+    for (int i{}; i < R; i++) {
+        string t;
+        cin >> t;
+        s += t;
+    }
+    
+    visited[s[0]-'A'] = true;
+    dfs(0, 1);
+    
+    cout << result << '\n';
+
+    return 0;
+}
+
+// 세로 R칸(y), 가로 C칸(x).
+// 각 칸에 알파벳 대문자 들어가고 좌측 상단(1, 1)에서 시작해서 상하좌우로 이동 가능. 이미 지나온 알파벳 있는 칸에는 갈 수 없음.
+// 이 때 최대로 갈 수 있는 칸 출력. 첫 칸도 포함.
+// 문자열과 map으로 구현했던 문제와 비슷.
+// string으로 입력받고 x = index%C, y = index/C.
+// 백트래킹(dfs 종료 후 전단계로 돌아가서 배열 등을 원상복귀해야 함).
+// -> 시간 초과. l-value 참조로 인자 받아 사용해봄. 그래도 시간 초과.
+// 뭔가 에러가 있는 것 같아서 디버깅해봤는데 딱히 문제는 없었음.
+// 반례 찾다가 답글에 어떤 사람이 set을 이용해 visited 처리해서 시간초과 낫다는 것 보고, map 대신 원시 배열 사용하여 사용된 알파벳을 체크하도록 바꿈. -> 정답 처리됨.
+// map이 구현이랑 보기 편하다는 장점 있지만, 원시 배열보다 시간 복잡도 느린듯. 아마 특히 erase().
+// 옛날에 썼던 문제는 erase() 사용할 필요가 없었음. 그래도 시도해봐서 경험은 쌓인 듯. + 비슷한 문제 풀어본 경험 잊지 않고 사용한 것은 좋았음.
