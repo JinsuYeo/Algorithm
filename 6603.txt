@@ -1,0 +1,50 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int K;
+vector<int> S;
+vector<int> result;
+
+
+void dfs(int idx, int size){
+    if (size == 6) {
+        for (int i{}; i < 6; i++) {
+            cout << result.at(i) << " ";
+        }
+        cout << '\n';
+        return;
+    }
+    
+    for (int i{idx}; i < K; i++) {
+        result.push_back(S.at(i));
+        dfs(i+1, size+1);
+        result.pop_back();
+    }
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    while (cin >> K) {
+        for (int i{}; i < K; i++) {
+            int t{};
+            cin >> t;
+            S.push_back(t);
+        }
+        dfs(0, 0);
+        cout << '\n';
+        S.clear();
+        result.clear();
+    }
+
+    return 0;
+}
+
+// 전에 풀었던 암호 만들기 문제와 비슷.
+// K개의 숫자 담는 벡터 만들어 입력값들 담고, K개 중 6개를 선택하는 모든 경우 출력함.
+// -> k개 중 1개 선택 후, 다음 k-1개 중 1개 선택, 또 다음 k-2개중 1개 선택... 을 모든 경우에 대해서 반복.
+// 재귀 함수안에 반복문을 넣어 구현.
