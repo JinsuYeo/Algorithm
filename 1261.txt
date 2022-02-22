@@ -1,0 +1,88 @@
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+typedef struct {
+    int x;
+    int y;
+} COORD;
+
+COORD dir[4] = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
+
+int N, M, C{1 << 30};
+int arr[101][101];
+bool visited[101][101];
+//priority_queue<pair<int, COORD>> q;
+priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> q;
+
+void bfs(){
+    q.push(make_pair(0, make_pair(1, 1)));
+    visited[1][1] = true;
+    while (!q.empty()) {
+        int x = q.top().second.first;
+        int y = q.top().second.second;
+        int count = q.top().first;
+        q.pop();
+  
+        if (y == N && x == M) {
+            C = count;
+            return;
+        }
+        
+        for (int i{}; i < 4; i++) {
+            int nextx = x + dir[i].x;
+            int nexty = y + dir[i].y;
+            
+            if (nextx < 1 || nextx > M || nexty < 1 || nexty > N) continue;
+            if (!visited[nexty][nextx] && arr[nexty][nextx] == 0) {
+                q.push(make_pair(count, make_pair(nextx, nexty)));
+                visited[nexty][nextx] = true;
+                continue;
+            }
+            if (!visited[nexty][nextx] && arr[nexty][nextx] == 1) {
+                q.push(make_pair(count+1, make_pair(nextx, nexty)));
+                visited[nexty][nextx] = true;
+            }
+        }
+    }
+}
+
+int main(void) {
+    cin >> M >> N;
+
+    for (int i{1}; i <= N; i++) {
+        for (int j{1}; j <= M; j++) {
+            scanf("%1d", &arr[i][j]);
+        }
+    }
+    
+    bfs();
+    
+    cout << C << '\n';
+    
+    return 0;
+}
+
+// N*M크기의 미로. 빈방(0), 벽(1).
+// 상하좌우로 이동 가능, 벽을 부수면 count세고 이동 가능. 최소한으로 벽을 부숴서 (1,1)에서 (N, M)으로 가는 경우를 찾아 벽을 부순 개수 출력.
+
+// bfs로 탐색, 좌표와 지나간 1의 개수 pair로 저장.
+// visited 처리를 하되 상하좌우 중 0이 있는 곳 먼저 가고, 1인 경우 나중에 방문. (N, M)에 도착 시 저장된 count중 가장 작은 값 찾아 출력.
+
+// -> flag 이용해 구현 했으나 틀림.
+// -> 반례 찾다가 반례는 결국 못찾고 우선순위 큐 사용하라는 답변 보고 flag로 0과 1에 우선순위 둔 부분을 우선순위 큐로 구현하면 되겠다 싶어 고쳐봄. -> 처음에 struct와 int의 pair로 큐를 구현했어서 우선순위 큐 만들 때 우선순위가 결정이 안되어서 컴파일 에러남. 연산자 오버로딩(<, ==) 했는데 제대로 작동 안됨. 아마 생각못한 부분이 있을 듯.
+// 결국 다른 사람 코드 보고 풀었는데, pair의 pair로 구현하고, vector를 기본으로 사용하는 우선순위 큐로 만든 뒤 정렬을 greater<>로 해서 구현함. 잘 익혀둘 것.
+// -> priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> q;
+// 참조) https://jaimemin.tistory.com/1049
+// 이 부분과 관련된 부분들 고쳐주니 정답 처리됨.
+
+// 정답 맞추고 보니 아마 0이 있을 때 1은 큐에 넣지 않는 방식으로 구현해서 0이 있어도 1로 갔을 때 최종적으로 지나간 1이 더 적은 경우가 반례였을 듯.
+// + 알고리즘 자체는 나름 생각 잘했으나, 이번에도 적절한 자료구조를 생각하지 못함. 우선순위 큐 이미 알고 있던 자료구조인데도 생각 못함.
+// 1보다 0에 먼저 가야하고 1의 순서가 나중이라는 것 생각했고, 우선순위 큐 이미 알고 있던 자료구조인데도 생각 못했고 + flag로 억지로 구현하려고 하니 반례가 생길 수 밖에 없었음.
+// + 우선순위 큐로 순서 정해서 bfs 돌려주니 가장 먼저 도착한 경우가 count를 가장 적게 센 경우이므로 count를 여러번 비교해서 최솟값 찾을 필요도 없어짐.
+// + 보통 flag 사용했던 경우는 자료구조를 잘못 생각한 경우이거나 더 나은 구현방법이 있었음. flag 사용해야 할 경우 다시 한번 전체적으로 생각해보기.
+// + 다익스트라 사용해서 한번 더 풀어보기.
