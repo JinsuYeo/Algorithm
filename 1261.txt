@@ -85,4 +85,130 @@ int main(void) {
 // 1보다 0에 먼저 가야하고 1의 순서가 나중이라는 것 생각했고, 우선순위 큐 이미 알고 있던 자료구조인데도 생각 못했고 + flag로 억지로 구현하려고 하니 반례가 생길 수 밖에 없었음.
 // + 우선순위 큐로 순서 정해서 bfs 돌려주니 가장 먼저 도착한 경우가 count를 가장 적게 센 경우이므로 count를 여러번 비교해서 최솟값 찾을 필요도 없어짐.
 // + 보통 flag 사용했던 경우는 자료구조를 잘못 생각한 경우이거나 더 나은 구현방법이 있었음. flag 사용해야 할 경우 다시 한번 전체적으로 생각해보기.
+// + greater<>은 원래 내림차 순 정렬되나, priority_queue는 원래부터 내림차 순 정렬이기 때문에 반대로 오름차 순 정렬되게 됨.
+
 // + 다익스트라 사용해서 한번 더 풀어보기.
+
+// 다익스트라 이용
+#include<iostream>
+#include<string>
+#include<queue>
+ 
+#define endl "\n"
+#define MAX 100
+using namespace std;
+ 
+int N, M, Answer;
+int MAP[MAX][MAX];
+int Dist[MAX][MAX];
+bool Visit[MAX][MAX];
+ 
+int dx[] = { 0, 0, 1, -1 };
+int dy[] = { 1, -1, 0, 0 };
+ 
+void Input()
+{
+    Answer = 987654321;
+    cin >> N >> M;
+    for (int i = 0; i < M; i++)
+    {
+        string Inp;
+        cin >> Inp;
+        for (int j = 0; j < Inp.length(); j++)
+        {
+            MAP[i][j] = Inp[j] - '0';
+            Dist[i][j] = 987654321;
+        }
+    }
+}
+ 
+void Print()
+{
+    cout << "#############################" << endl;
+    for (int i = 0; i < M; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            cout << Dist[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << "#############################" << endl;
+ 
+}
+ 
+void BFS(int a, int b)
+{
+    queue<pair<int, int>> Q;
+    Q.push(make_pair(a, b));
+    Dist[a][b] = 0;
+ 
+    while (Q.empty() == 0)
+    {
+        //Print();
+        int x = Q.front().first;
+        int y = Q.front().second;
+        Q.pop();
+            
+        for (int i = 0; i < 4; i++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+                
+            if (nx < 0 || ny < 0 || nx >= M || ny >= N) continue;
+            
+            if (MAP[nx][ny] == 1)
+            {
+                if (Dist[nx][ny] > Dist[x][y] + 1)
+                {
+                    Dist[nx][ny] = Dist[x][y] + 1;
+                    Q.push(make_pair(nx, ny));
+                }
+            }
+            else if (MAP[nx][ny] == 0)
+            {
+                if (Dist[nx][ny] > Dist[x][y])
+                {
+                    Dist[nx][ny] = Dist[x][y];
+                    Q.push(make_pair(nx, ny));
+                }
+            }
+        }
+    }
+}
+ 
+void Solution()
+{
+    BFS(0, 0);
+    cout << Dist[M-1][N-1] << endl;
+}
+ 
+void Solve()
+{
+    Input();
+    Solution();
+}
+ 
+int main(void)
+{
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+ 
+    //freopen("Input.txt", "r", stdin);
+    Solve();
+ 
+    return 0;
+}
+
+// 다익스트라 알고리즘
+// 다이나믹 프로그래밍을 활용한 대표적인 최단경로 탐색 알고리즘.
+// 특정한 한 정점에서 다른 모든 정점으로 가는 최단 경로 알려줌. 이 때, 음의 간선이 있어서는 안됨. -> 현실 세계에서는 음의 간선 존재하지 않기 때문에 다익스트라는 현실 세계에 사용하기 매우 적합한 알고리즘이라 할 수 있음.
+
+// 다익스트라 알고리즘이 다이나믹 프로그래밍 문제인 이유는 '최단 거리는 여러개의 최단 거리로 이루어져 있기 때문'. 즉, 작은 문제가 큰 문재의 부분 집합에 속함.
+// 참조) https://m.blog.naver.com/ndb796/221234424646
+
+// 코드는 백준 1261번 문제를 다익스트라 알고리즘으로 구현한 풀이 방법.
+// 참조) https://yabmoons.tistory.com/76
+// 이렇게 풀 수 있다는 것만 일단 알아두기.
+
