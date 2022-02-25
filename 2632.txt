@@ -1,0 +1,89 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int S, N, M;
+int result;
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> S >> M >> N;
+    vector<int> A(M), B(N);
+    for (int i{}; i < M; i++) {
+        cin >> A[i];
+    }
+    for (int i{}; i < N; i++) {
+        cin >> B[i];
+    }
+    
+    vector<int> v1(1, 0), v2(1, 0);
+    int low{}, high{};
+    int sum{};
+    while (low < A.size()) {
+        sum += A[high++];
+        if (sum <= S)
+            v1.push_back(sum);
+        else {
+            low++;
+            high = low;
+            sum = 0;
+        }
+        
+        if (high == A.size()) high = 0;
+        if ((!low && !high) || high+1 == low) {
+            low++;
+            high = low;
+            sum = 0;
+        }
+    }
+    
+    low = 0;
+    high = 0;
+    sum = 0;
+    while (low < B.size()) {
+        sum += B[high++];
+        if (sum <= S)
+            v2.push_back(sum);
+        else {
+            low++;
+            high = low;
+            sum = 0;
+        }
+        
+        if (high == B.size()) high = 0;
+        if ((!low && !high) || high+1 == low) {
+            low++;
+            high = low;
+            sum = 0;
+        }
+    }
+    
+    sort(v1.begin(), v1.end());
+    sort(v2.begin(), v2.end());
+    
+    for (int i{}; i < v1.size(); i++) {
+        int num = S - v1[i];
+        int low =  static_cast<int>(lower_bound(v2.begin(), v2.end(), num) - v2.begin());
+        int high = static_cast<int>(upper_bound(v2.begin(), v2.end(), num) - v2.begin());
+        
+        if(num == v2[low]) result += high - low;
+    }
+    
+    cout << result << "\n";
+    
+    return 0;
+}
+
+// 완전 탐색 연습 백준 2632번 피자 판매
+// 다른 사람 풀이 보고 풂.
+// A와 B의 가능한 모든 구간 합을 v1, v2에 각각 저장한 후, S-v1[i]가 v2에 몇개 있는지 lower_bound, upper_bound 확인 후 저장해 출력.
+
+// 처음에 코드 이해하기 어려웠는데, 구간합을 구하는 부분이 1806번이나 다른 문제에서 구간합 구할 때 사용한 투포인터 알고리즘과 다르게 구간합이 S보다 '작은' 경우를 모두 찾아야 하기 때문에 달라짐. + 피자는 원형이라 high가 M, N에 도달하면 끝나는 것이 아니라 0으로 돌아가서 시작점 바로 정까지 반복되어야함(ex)1 ~ N-1, 만약 2인 경우 원형으로 모두 돌아서 1까지 반복되어야 함. 즉, 2~N-1 -> 0~1.)
+
+// 즉, low가 1~N-1인 경우에서 high를 늘려가며 low~high의 합이 S보다 작은 경우를 모두 v1, v2에 저장해줌.
+
+// 투포인터와 중간에서 만나기를 모두 응용하여 구현하는 문제. 문제를 풀면서 투포인터에 대해 좀 더 생각해볼 수 있었음 + 최근에 푼 완전탐색 문제들 중 어려운 문제들은 아마 다음에 다시 봐도 풀기 어려울 듯. 시간 여유 있을 때, 별표 친 문제들 다시 보기.
