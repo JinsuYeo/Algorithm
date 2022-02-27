@@ -1,0 +1,51 @@
+#include <iostream>
+#include <string>
+#include <stack>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N;
+string s;
+stack<int> st;
+vector<int> v;
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> N;
+
+    for (int i{}; i < N; i++) {
+        int t{};
+        cin >> t;
+        v.push_back(t);
+    }
+
+    int i{ 1 };
+    st.push(0);
+    for (int j{}; j < v.size(); j++) {
+        while (st.top() != v[j] && i <= N){
+            st.push(i);
+            s += "+";
+            i++;
+        }
+        if (v[j] == st.top())
+        {
+            st.pop();
+            s += "-";
+        }
+    }
+
+    if (st.top() != 0) cout << "NO";
+    else {
+        for (auto c : s)
+            cout << c << "\n";
+    }
+
+    return 0;
+}
+
+// 입력 값들을 미리 벡터에 넣어놓고, 1~N까지 스택에 넣으면서 스택의 top이 벡터의 0~N-1번 인덱스와 같은지 비교해서 같지 않으면 +와 push, 같으면 -와 pop을 해주며 문자열과 스택을 처리. 마지막에 stack의 top이 0이면 문자열을 출력, 아니면 NO를 출력함.
+// stack에 미리 0을 채워둔 것은 채우지 않으면 stack.top()에서 오류나기 때문(비어있는 스택의 top을 참조).
