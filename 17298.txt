@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <stack>
+#include <algorithm>
+
+int N;
+
+using namespace std;
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N;
+    vector<int> v(N);
+    vector<int> result(N);
+    stack<int> s;
+    
+    for (int i{}; i < N; i++) {
+        cin >> v[i];
+    }
+    
+    for (int i{}; i < v.size(); i++) {
+        while (!s.empty() && v[s.top()] < v[i]) {
+            result[s.top()] = v[i];
+            s.pop();
+        }
+        s.push(i);
+    }
+    
+    for_each(result.begin(), result.end(), [](int x){
+        if (x == 0) {
+            cout << -1 << " ";
+        } else cout << x << " ";
+    });
+    
+    return 0;
+}
+
+
+// 입력값을 벡터에 저장 후 upper_bound() 이용해 자기보다 큰 수중 가장 가까운 수를 찾으려 했으나 upper_bound()는 정렬된 배열만 사용가능하다고 함. 답이 안나옴.
+// 이중 반복문으로 구현하고 이미 처리한 수보다 크고 그 수볻다 큰 수중 가장 가까운 수보다 작으면 그 수로 처리해주고 반복하려 했으나 시간초과 or 틀렸습니다 나옴.
+// 결국 다른 사람 코드보고 풂.
+// 인덱스를 스택에 push하고 i++하면서 v[i]가 스택에 저장된 인덱스 위치의 수(v[s.top()])보다 클 때를 찾아서 그 수를 result[s.top()]에 저장해주도 pop해줌. 이 과정을 반복.
+// 아마 시간 더 썼어도 혼자서 생각 못했을 듯. 스택의 응용 방법 하나 배웠다고 생각하고 비슷한 문제 나오면 생각할 수 있도록 할 것.
