@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;
+
+const int MAX = 1000001;
+
+int T, N;
+int prime[MAX];
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    memset(prime, 1, sizeof(prime));
+    prime[0] = 0;
+    prime[1] = 0;
+    for (int i{2}; i < MAX; i++) {
+        if(!prime[i]) continue;
+        for (int j{i+i}; j < MAX; j+=i) {
+            prime[j] = 0;
+        }
+    }
+    
+    cin >> T;
+    for (int t{}; t < T; t++) {
+        int count{};
+        cin >> N;
+        
+        vector<int> v;
+        for (int i{2}; i <= N; i++) {
+            if (prime[i]) {
+                v.push_back(i);
+            }
+        }
+        
+        for (int i{}; i < v.size(); i++) {
+            int target = N - v[i];
+            auto result = lower_bound(v.begin(), v.end(), target) - v.begin();
+            
+            if (v[result] == target) {
+                count++;
+                v[result] = N;
+            }
+        }
+        
+        cout << count << "\n";
+    }
+    
+    return 0;
+}
+
+// 수학 연습 백준 17103번 골드바흐 파티션
+// 1000000이하의 소수를 에라토스테네스의 체 이용해 구한 뒤 벡터에 저장.
+// 이중반복문 이용해 한 소수 골랐을 때, N - 소수가 소수인(벡터에 존재하는) 수라면 count++해줌. 벡터 모두 반복한 후 count 출력.
+// 처음에 lower_bound(), upper_bound() 사용했던게 생각나 비슷하게 구현하려다가 생각해보니 find()로도 충분할 것 같아 사용해봄.
+// 이미 사용한 수는 지워줘야 해서 erase() 사용.
+// -> 시간초과.
+// 알고보니 find가 O(N)이어서 그냥 lower_bound()이용해 구현(O(logN)), 한번 사용한 소수도 erase()가 아니라 N을 저장하여 제거(0이 소수 아니므로 N저장하면 N-N(== // 0)이 소수가 될 수 없음).
+// -> 정답처리.
