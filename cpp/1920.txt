@@ -1,0 +1,42 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
+using namespace std;
+
+int N, M;
+unordered_map<int, int> A;
+vector<int> B;
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N;
+    for (int i{}; i < N; i++) {
+        int t{};
+        cin >> t;
+        A.insert(make_pair(t, t));
+    }
+    
+    cin >> M;
+    for (int i{}; i < M; i++) {
+        int t{};
+        cin >> t;
+        B.push_back(t);
+    }
+    
+    for (auto b: B) {
+        if(A[b]) cout << 1 << " ";
+        else cout << 0 << " ";
+    }
+    
+    return 0;
+}
+
+
+// unordered_map(map과 달리 정렬되지 않는 대신 효율 증가)과 vector 이용해 풀음.
+
+//N과 M이 100000이하라 1초 내에 돌아가게 하기 위해 map 사용, 처음엔 A, B 모두 map 사용했다가 자동 정렬되어서 출력 순서 안맞음.
+//하나 벡터로 수정하기 전에 unordered_map 사용해 보았는데 순서가 삽입순서가 아니었음. 
