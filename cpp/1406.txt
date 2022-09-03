@@ -117,7 +117,11 @@ int main() {
 }
 
 // 연결 리스트(c++ list) 이용해 구현.
-// list의 insert(itr, n)는 itr 위치에 n 삽입. 반환값 없음.
+// list의 insert(itr, n)는 itr 위치에 n 삽입. 반환값 없음. itr는 기존의 itr 그대로 가리킴. Ex) 10 (20) 30 에서 15 삽입 시 -> 10 15 (20) 30 으로 20 그대로 가리킴.
 // erase(itr)는 itr 위치의 값 삭제 후 삭제되기 전 itr 위치 오른쪽 값의 itr을 반환함.
 // ex) a (b) c -> a (c) 처럼 b가 삭제된 후 c의 위치 반환.
 // -> 보통 itr = list.erase(itr); 처럼 사용해 itr값 갱신해 주어야 함.
+
+// list가 아니라 vector나 string 이용할 경우 insert후 insert한 위치 ~ end까지의 iterator가 무효화됨.
+// 따라서 erase 처럼 itr 갱신 필요.
+// but string이나 vector 사용 시 insert가 O(n)이라 그런지 시간초과 발생(list의 경우 O(1)의 시간복잡도).
