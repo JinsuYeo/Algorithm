@@ -1,0 +1,38 @@
+#include <iostream>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+struct compare{
+    bool operator() (const string& a, const string& b) const {
+        if(a.length() == b.length()) return a < b;
+        return a.length() < b.length();
+    }
+};
+
+int N;
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N;
+     
+    set<string, compare> s;
+    for (int i{}; i < N; i++) {
+        string n{};
+        cin >> n;
+        s.insert(n);
+    }
+         
+    for(auto str : s) {
+        cout << str << '\n';
+    }
+    
+    return 0;
+}
+
+// c++ sort 함수의 compare 함수를 구현하여 해결하려 하였으나, 중복된 단어 허용 x.
+// -> set으로 구현하려 하였으나 정렬이 잘 안되었음.
+// -> 구글링해보니 set의 정렬은 구조체 이용해 functor로 해야하는 듯. -> functor 구현하여 정렬 + 중복 제거.
