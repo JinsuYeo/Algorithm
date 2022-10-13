@@ -1,0 +1,56 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+int T, N, M;
+int c{};
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> T;
+    for (int i{}; i < T; i++) {
+        c = 0;
+        cin >> N >> M;
+        int r{};
+        queue<pair<int, int>> q;
+        priority_queue<int> pq;
+        for(int j{}; j < N; j++) {
+            int t{};
+            cin >> t;
+            if(j == M) {
+                r = t;
+                q.push(make_pair(t, 1));
+            }
+            q.push(make_pair(t, 0));
+            pq.push(t);
+        }
+
+        while (!pq.empty()) {
+            if(pq.top() == q.front().first) {
+                if(r == q.front().first && q.front().second == 1) {
+                    c++;
+                    break;
+                }
+                pq.pop();
+                q.pop();
+                c++;
+            } else {
+                pair<int, int> t = q.front();
+                q.pop();
+                q.push(t);
+            }
+        }
+        cout << c << '\n';
+    }
+
+    return 0;
+}
+
+// 우선순위 큐 이용해 우선순위 순서대로 입력받고, 큐에 입력 순서대로 입력받은 후, 인쇄되는 순서 알아내야 하는 문서에만 pair의 second 이용해 1로 마킹해놓음.
+// 그 후, 반복문과 조건문 이용해 큐의 첫번째 문서가 우선순위 큐의 top에 있는 수일 경우 두 큐 모두에서 pop하고, count++ 해줌. 만약 큐의 첫번째 수가 마킹된 수일 경우 반복문 break -> c++ 한 결과 출력.
+//  만약 우선순위가 가장 높은 수가 큐의 첫번째 수가 아닐경우 pop -> push하여 맨뒤로 보내줌. 이 과정 반복하여 해결.
