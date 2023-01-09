@@ -1,0 +1,98 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <string>
+#include <algorithm>
+#include <sstream>
+
+using namespace std;
+
+int T;
+int c{};
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> T;
+    
+    for (int i = 0; i < T; i++) {
+        string s;
+        int n;
+        cin >> s >> n;
+        bool order = true;
+        
+        deque<int> v;
+        
+        string tstr;
+        cin >> tstr;
+        tstr.erase(0, 1);
+        tstr.erase(tstr.length() - 1, 1);
+        stringstream ss(tstr);
+        string t;
+        
+        while (getline(ss, t, ',')) {
+            v.push_back(stoi(t));
+        }
+        
+        int flag = 1;
+        for(int j = 0; j < s.length(); j++) {
+
+            if(s.at(j) == 'R') {
+                order = !order;
+            }
+            if(s.at(j) == 'D') {
+                if (v.empty()) {
+                    cout << "error\n";
+                    flag = 0;
+                    break;
+                }
+                else {
+                    if (order) {
+                        v.pop_front();
+                    }
+                    if(!order){
+                        v.pop_back();
+                    }
+                    
+                }
+            }
+        }
+
+        if(flag) {
+            if(order) {
+                cout << '[';
+                for (int j = 0; j < v.size(); j++) {
+                    if(j == v.size()-1) cout << v[j];
+                    else cout << v[j] << ',';
+                }
+                cout << "]\n";
+            }
+            if(!order) {
+                cout << '[';
+                for (int j = v.size()-1; j >= 0; j--) {
+                    if(j == 0) cout << v[j];
+                    else cout << v[j] << ',';
+                }
+                cout << "]\n";
+            }
+        }
+        
+        v.clear();
+    }
+
+
+    
+
+    return 0;
+}
+
+// R -> 배열 순서 뒤집음.
+// D -> 배열 첫번째 수 버림(배열 비어있는데 D 사용 시 에러 발생).
+// 함수 조합돼서 여러번 사용 가능.
+
+// 배열 -> 100000개 가능, 따라서 reverse()로 배열 순서 뒤집을 경우 O(N^2)이기 때문에 시간초과 될 것임(1억보다 큼 -> 1초 초과할 것임).
+
+// swap() 사용하여 구현하면 O(N)으로 뒤집을 수 있을 것임 -> swqp()과 deque 사용해 구현.
+// + 배열 입력받을 때 숫자만 추출 필요 -> 숫자 크기가 1~100 이므로 10을 1,0으로 입력받을 가능성 있음. 따라서 sstream과 erase() 이용해 '[', ']' 제거 및 ','기준으로 파싱함.
+// -> 시간 초과남. 이유는 문자열(RD로 이루어진)의 길이도 100000까지 가능하기 때문에 swap()으로 구현하더라도 결국 O(N^2)이기 때문.
+// 결국 다른 사람 코드를 보고 힌트를 얻어서 구현(order 변수 이용해 배열이 정방향인지 역방향인지 체크 후 경우에 따라 처리).
