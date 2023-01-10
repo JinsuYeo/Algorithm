@@ -48,3 +48,68 @@ int main(void) {
 // K개의 숫자 담는 벡터 만들어 입력값들 담고, K개 중 6개를 선택하는 모든 경우 출력함.
 // -> k개 중 1개 선택 후, 다음 k-1개 중 1개 선택, 또 다음 k-2개중 1개 선택... 을 모든 경우에 대해서 반복.
 // 재귀 함수안에 반복문을 넣어 구현.
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <string>
+#include <algorithm>
+#include <sstream>
+
+using namespace std;
+
+vector<int> S;
+
+void dfs(int i, vector<int> v) {
+    v.push_back(S[i]);
+    
+    if(v.size() == 6) {
+        for (auto el : v) {
+            cout << el << ' ';
+        }
+        cout << '\n';
+        return;
+    }
+    
+    for (int j = i+1; j < S.size(); j++) {
+        dfs(j, v);
+    }
+    
+    v.pop_back();
+        
+    return;
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    string s;
+    
+    while (getline(cin, s)) {
+        if(s == "0") return 0;
+        
+        stringstream ss(s);
+        string t;
+        while (getline(ss, t, ' ')) {
+            S.push_back(stoi(t));
+        }
+        
+        vector<int> v;
+        for(int i = 1; i <= S.size()-6; i++){
+            dfs(i, v);
+        }
+        
+        v.clear();
+        
+        cout << '\n';
+        S.clear();
+    }
+
+    return 0;
+}
+
+// 다시 풀어봄.
+// 6 < K < 13개의 원소를 가지는 집합 S가 있을 때, S에서 6개의 원소 뽑는 경우 모두 출력.
+
+// for loop안에서 재귀 호출. S의 index를 재귀 함수의 인자로 보내고 index+1 부터 S의 마지막 원소까지 돌면서 출력할 벡터의 길이가 6이 되도록 원소 추가하면서 재귀 호출. 길이 6되면 출력 후 리턴. 리턴하기 전 벡터에서 원소 빼줌(백트래킹).
