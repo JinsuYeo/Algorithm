@@ -75,3 +75,38 @@ int main(void){
 // -> 1은 1개, 2는 2개, 3은 4개부터 시작해서 4는 1+2+4 = 7, 5는 2+4+7=13... 의 규칙을 따름. DP로 구현.
 
 // 재귀 함수 이용해서 완전 탐색으로도 풀 수 있음. arr[]에 저장 안하고 풀면 완전 탐색.
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+int N;
+vector<int> dp(11);
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N;
+    
+    dp[0] = 1;
+    dp[1] = 1;
+    dp[2] = 2;
+    
+    for(int i = 3; i < 11; i++) {
+        dp[i] = dp[i-3] + dp[i-2] + dp[i-1];
+    }
+    
+    for (int i = 0; i < N; i++) {
+        int t;
+        cin >> t;
+        cout << dp[t] << '\n';
+    }
+    
+    return 0;
+}
+
+// 규칙 찾은 후, dp로 구현.
