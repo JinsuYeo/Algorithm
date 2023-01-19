@@ -1,0 +1,49 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <stdlib.h>
+
+#define MAX 15
+
+using namespace std;
+
+
+int N;
+int result;
+int col[MAX];
+
+bool check(int row) {
+    for(int y = 0; y < row; y++) {
+        if(col[row] == col[y] || abs(col[row] - col[y]) == row - y) return false;
+    }
+    return true;
+}
+
+void nQueen(int x) {
+    if(x == N) result++;
+    else {
+        for (int y = 0; y < N; y++) {
+            col[x] = y;
+            if(check(x)) nQueen(x+1);
+        }
+    }
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N;
+   
+    nQueen(0);
+    
+    cout << result;
+    
+    return 0;
+}
+
+// 첫 행부터 시작. 하나 놨을 때 안되는 곳 표시(visited 배열 이용). 그 후 남은 행 순서대로 반복. -> N개의 퀸 놓을 수 있을 때 count++
+// 그래프로 구현 -> 무한 루프 -> 행 별로 처리 -> 결과 나오지 않음.
+// 결국 다른 사람 코드 보고 풂. 알고리즘 아이디어는 얼추 맞는 것 같지만 구현이 잘못됨(visited로 체크 시, 한 퀸의 결로들 지울 때, 중복된 칸도 모두 지워짐). + 퀸은 행마다 하나 이상 놓을 수 없고 N*N의 행렬이 있을 경우 N개 놓을 수 있으려면 각 행에 하나씩 놓ㅎ을 수 있어야만 함.
+// https://cryptosalamander.tistory.com/58 참고.
