@@ -41,3 +41,44 @@ int main() {
 }
 
 // 1은 소수x, 1이면 그대로, 2이면 count++(소수 개수 +1). n%t(2~n-1)가 0이 되면 그대로, 아니면 count++. <- flag이용해서 체크.
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N;
+int result;
+int arr[1001];
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    for(int i = 2; i <= 1000; i++) {
+        arr[i] = i;
+    }
+    
+    for(int i = 2; i <= 1000; i++) {
+        if(arr[i] == 0) continue;
+        for (int j = i*2; j <= 1000; j+=i) {
+            arr[j] = 0;
+        }
+    }
+    
+    cin >> N;
+    
+    for (int i = 0; i < N; i++) {
+        int t;
+        cin >> t;
+        if(arr[t]) result++;
+    }
+    
+    cout << result;
+    
+    return 0;
+}
+
+// 에라토스테네스의 체 알고리즘 이용해 소수 찾고 입력된 수가 소수인지 체크하여 소수이면 출력.
