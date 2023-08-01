@@ -1,0 +1,29 @@
+class Solution {
+    public int[] solution(int brown, int yellow) {
+
+        int w, h;
+        int area = brown + yellow;
+
+        w = 10000;
+        h = 1;
+
+        for (int i = w; i >= 1; i--) {
+            for (int j = h; j <= i; j++) {
+                if (i*j == yellow) {
+                    if ((i+2)*(j+2) == area) {
+                        w = i;
+                        h = j;
+                        break;
+                    }
+                }
+            }
+        }
+
+        int[] answer = {w+2, h+2};
+
+        return answer;
+    }
+}
+
+// Java, 완전 탐색
+// 시간 초과 때문에 w를 10000으로 했음(연산 횟수 10000*10000 이면 약 1초 걸릴 것이라 생각) -> area%w가 0이 아니면 넘어가는 로직 사용했으면 더 나았을 듯.
