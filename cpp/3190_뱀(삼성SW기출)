@@ -9,6 +9,7 @@
 #define DOWN 3
 #define RIGHT 4
 #define WALL 5
+#define DUMMY -2
 
 using namespace std;
 
@@ -23,8 +24,8 @@ struct rotation {
 
 body head = {1, 1};
 body tail = {1, 1};
-int dirX[] = {5, -1, 0, 1, 0};
-int dirY[] = {5, 0, -1, 0, 1};
+int dirX[] = {DUMMY, -1, 0, 1, 0};
+int dirY[] = {DUMMY, 0, -1, 0, 1};
 
 int map[102][102];
 queue<rotation> q;
