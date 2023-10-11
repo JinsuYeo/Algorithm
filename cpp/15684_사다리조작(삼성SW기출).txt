@@ -1,0 +1,74 @@
+#include <iostream>
+#include <algorithm>
+#include <math.h>
+
+using namespace std;
+
+int N, M, H;
+int res = 1 << 30;
+
+int map[11][31];
+
+bool check() {
+	for (int i = 1; i <= N; i++) {
+		int curi = i;
+		int j = 1;
+		while(j <= H) {
+			if (map[curi][j]) {
+				curi = map[curi][j];
+			}
+			j++;
+		}
+		if (curi != i) return false;
+	}
+	return true;
+}
+
+void bf(int I, int J, int count) {
+
+	if (count > 3) return;
+
+	if (check()) {
+		res = min(count, res);
+		return;
+	}
+
+	for (int i = I; i < N; i++) {
+		for (int j = i == I ? J : 1; j <= H; j++) {
+			if (!map[i][j] && !map[i+1][j]) {
+				map[i][j] = i + 1;
+				map[i + 1][j] = i;
+				bf(i, j + 1, count + 1);
+				map[i][j] = 0;
+				map[i + 1][j] = 0;
+			}
+		}
+	}
+}
+
+int main() {
+
+	iostream::sync_with_stdio(false);
+	cin.tie(NULL);
+
+	cin >> N >> M >> H;
+
+	for (int i = 0; i < M; i++) {
+		int a, b;
+		cin >> a >> b;
+		map[b][a] = b + 1;
+		map[b + 1][a] = b;
+	}
+
+	bf(1, 1, 0);
+	res = res <= 3 ? res : -1;
+	cout << res;
+
+	return 0;
+}
+
+// matrix로 사다리 저장 후 i에서 i로 가는지 체크하는 로직 DFS로 구현.
+// 세로선 순서대로 가로선 놓을 수 있는 위치를 모두 체크하면서 가로선 놓을 수 있는지 체크 ->놓을 수 있다면 놓으면서 가로선을 놓을 수 있는 모든 경우를 체크(BF)
+//
+// 출력 조건(count > 3 이면 실패로 처리) 확인하지 못해 시간 초과.
+// 문제가 길 경우 입출력 조건도 꼼꼼히 읽고 조건 체크해둘 것.
