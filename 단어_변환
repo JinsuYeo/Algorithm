@@ -1,0 +1,62 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+struct word {
+    string str;
+    int count;
+};
+
+int res = 0;
+string be;
+string ta;
+vector<string> words;
+int visited[51];
+
+queue<word> q;
+
+void bfs() {
+    
+    q.push({be, 0});
+    
+    while(!q.empty()) {
+        
+        string str = q.front().str;
+        int count = q.front().count;
+        q.pop();
+        
+        if(str == ta) {
+            res = count;
+            return;
+        }
+        
+        for(int i = 0; i < words.size(); i++) {
+            string tg = words[i];
+            
+            int n = 0;
+            for(int j = 0; j < tg.length(); j++) {
+                if(tg[j] != str[j]) n++;
+            }
+            
+            if(n == 1 && !visited[i]) {
+                q.push({tg, count+1});
+                visited[i] = 1;
+            }
+        }
+        
+    }
+}
+
+int solution(string B, string T, vector<string> W) {
+    be = B;
+    ta = T;
+    words = W;
+
+    bfs();
+    
+    return res;
+}
