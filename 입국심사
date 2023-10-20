@@ -1,0 +1,38 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+long long solution(int n, vector<int> times) {
+    long long answer;
+    
+    sort(times.begin(), times.end());
+    
+    long long tmin = times[0];
+    long long tmax = static_cast<long long>(n)*times[times.size()-1];
+    
+    while(tmin <= tmax) {
+        
+        long long mid = (tmin + tmax)/2;
+        long long count = 0;
+        
+        for(int i = 0; i < times.size(); i++) {
+            count += mid/(long long)times[i];
+        }
+        
+        if(count >= n) {
+            tmax = mid - 1;
+            answer = mid;
+        } else {
+            tmin = mid + 1;
+        }
+    }
+    
+    
+    return answer;
+}
+
+// 풀이 방법 생각 못함.
+// 자료형 주의할 것.
