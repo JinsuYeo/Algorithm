@@ -1,0 +1,66 @@
+#include <iostream>
+#include <cstdio>
+#include <array>
+#include <string>
+
+using namespace std;
+
+int n;
+array<array<char, 6561>, 6561> arr;
+
+void draw(int x, int y, int size) {
+    if (size == 3) {
+        for (int i{x}; i < x + size; i++) {
+            for (int j{y}; j < y + size; j++) {
+                if(i == x + 1 && j == y + 1) {
+                    arr[i][j] = ' ';
+                    continue;
+                }
+                arr[i][j] = '*';
+            }
+        }
+        return;
+    }
+    draw(x, y, size/3);
+    draw(x + size/3, y, size/3);
+    draw(x + size*2/3, y, size/3);
+    draw(x, y + size/3, size/3);
+    draw(x + size*2/3, y + size/3, size/3);
+    draw(x, y + size*2/3, size/3);
+    draw(x + size/3, y + size*2/3, size/3);
+    draw(x + size*2/3, y + size*2/3, size/3);
+    
+}
+
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> n;
+    
+    for (int i{}; i < n; i++) {
+        arr[i].fill(' ');
+    }
+    
+    draw(0, 0, n);
+    
+    for (int i{}; i < n; i++) {
+        for (int j{}; j < n; j++) {
+            cout << arr[i][j];
+        }
+        cout << "\n";
+    }
+    
+    return 0;
+}
+
+// n(3^k)이 입력으로 들어옴(3^1<=n<=3^8).
+// n*n 가운데가 빈 정사각형 모형의 패턴 만들어야 함.
+
+// 3*3 패턴 만들고 그것 이용해 9*9 만들고 그것 이용해 27*27 만들고 ... 반복.
+
+// 처음에 string 이용하려다 줄바꿈이 문제기도 하고 배열로 만들어 출력하는게 편할 것 같아서 char형 2차원 배열 만들고 재귀 함수 이용해서 가운데가 빈 정사각형 배열 만들어 출력.
+// 재귀함수는 사이즈가 큰 곳에서 작은 곳(size/3) 호출 -> 작은 곳 호출 -> ... size가 3일 때까지 반복.
+// 재귀 함수 구현이 좀 익숙해 진 듯.

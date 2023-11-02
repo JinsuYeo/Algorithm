@@ -1,0 +1,53 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int dpl[1001], dpr[1001], arr[1001], maxarr[1001];
+
+int main(int argc, const char * argv[]) {
+    int n{}, result{1};
+    cin >> n;
+    for (int i {1}; i <= n; i++) {
+        cin >> arr[i];
+    }
+    
+    dpl[1] = 1;
+    maxarr[1] = 1;
+    dpr[n] = 1;
+    maxarr[n] = 1;
+    
+    for(int i {2}; i <= n; i++) {
+        dpl[i] = 1;
+        for(int j{1}; j <= i-1; j++) {
+            if(arr[j] < arr[i] && dpl[i] < dpl[j] + 1) {
+                dpl[i] = dpl[j] + 1;
+            }
+        }
+        maxarr[i] = dpl[i];
+    }
+    
+    for(int i{n-1}; i >= 1; i--) {
+        dpr[i] = 1;
+        for(int k{n}; k > i; k--) {
+            if(arr[k] < arr[i] && dpr[i] < dpr[k] + 1) {
+                dpr[i] = dpr[k] + 1;
+            }
+        }
+        maxarr[i] += dpr[i]-1;
+    }
+    
+    for(int i{1}; i <= n; i++) {
+        if(result < maxarr[i]) {
+            result = maxarr[i];
+        }
+        
+    }
+    
+    cout << result << endl;
+    
+    return 0;
+}
+
+// 왼쪽 dp 배열과 오른쪽 dp 배열로 나누어 동적 프로그래밍으로 처리. 각각 더한 뒤 -1(자기 자신 두번 포함되지 않도록) 해주어 수열의 길이를 max 배열에 저장 후 마지막에 그 중 가장 큰 값을 찾아 출력함.
+// 반례가 많아 힘들었음(초기조건 설정 잘할 것(배열 초기화 등)) + 디버깅 때 작성한 출력문 때문에 틀렸다고 나와 찾기 힘들었음. 문제에서 요구한 기능을 하는 코드가 아니면 넣지 말 것.

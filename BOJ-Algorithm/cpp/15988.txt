@@ -1,0 +1,37 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+const int MAX = 1000001;
+const int MOD = 1000000009;
+
+int T, N;
+int dp[MAX];
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    dp[1] = 1;
+    dp[2] = 2;
+    dp[3] = 4;
+    for (int i{4}; i < MAX; i++) {
+        dp[i] = (((dp[i-3] + dp[i-2]) % MOD) + dp[i-1]) % MOD;
+    }
+    
+    cin >> T;
+    for (int i{}; i < T; i++) {
+        cin >> N;
+        cout << dp[N] << '\n';
+    }
+    
+    return 0;
+}
+
+// DP 연습 백준 15988번 1, 2, 3 더하기 3
+
+// 적으면서 규칙 찾아보니
+// DP[i] = DP[i-3] + DP[i-2] + DP[i-1]; 이었음. 처음에 이렇게 제출했다가 틀려서 문제 확인하니 MOD 안해주어서 틀렸었음.
+// -> MOD 고쳐주니 정답처리됨.

@@ -1,0 +1,52 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int N, M;
+vector<int> v;
+int cnt;
+
+void dfs(int idx, int cur){
+    if (cur == M && idx > -1) {
+        cnt++;
+    }
+    
+    if (idx + 1 >= N || cur > M) {
+        return;
+    }
+    
+    if (idx == -1) {
+        for (int i{idx+1}; i < N; i++) {
+            int next = cur + v.at(i);
+            dfs(i, next);
+        }
+    } else {
+        int next = cur + v.at(idx+1);
+        dfs(idx+1, next);
+    }
+    
+    return;
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N >> M;
+    for (int i{}; i < N; i++) {
+        int t{};
+        cin >> t;
+        v.push_back(t);
+    }
+
+    dfs(-1, 0);
+    
+    cout << cnt << '\n';
+    
+    return 0;
+}
+
+// 백준 1182번과 비슷하나 수열 중 연속된 수들의 합이 목표와 같을 때만 count해주어야 함.
+// 1182번 풀 때 구현한 재귀함수에서 조건만 추가해서 구현(연속된 수열만 체크, 범위 넘어가거나 수들의 합이 목표보다 크면 리턴)

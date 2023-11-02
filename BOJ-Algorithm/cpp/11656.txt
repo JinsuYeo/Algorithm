@@ -1,0 +1,38 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+
+using namespace std;
+    
+bool compare(string a, string b) {
+    return a < b;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    string s;
+    vector<string> v;
+    
+    cin >> s;
+    string t = s;
+    for(int i{}; i < s.length(); i++) {
+        v.push_back(t);
+        if(s.size()){
+            t.erase(t.begin());
+        }
+    }
+    
+    sort(v.begin(), v.end(), compare);
+    
+    for (int i{}; i < v.size(); i++) {
+        cout << v.at(i) << "\n";
+    }
+    
+    return 0;
+}
+
+// erase() 메서드로 문자열의 첫번쨰 문자 하나씩 지우면서 벡터에 삽입한 뒤, sort 함수로 정렬 후 출력.

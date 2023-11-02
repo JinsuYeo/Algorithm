@@ -1,0 +1,38 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+   
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int a{}, b{};
+    cin >> a >> b;
+    
+    vector<int> v;
+    
+    while(a/b) {
+        v.push_back(a%b);
+        a /= b;
+    }
+    v.push_back(a%b);
+    
+    reverse(v.begin(), v.end());
+    
+    for(int i{}; i < v.size(); i++) {
+        if(v.at(i) < 10) {
+            cout << v.at(i);
+        } else {
+            cout << char(v.at(i)+'A'-10);
+        }
+    }
+    cout << "\n";
+    
+    return 0;
+}
+
+// a를 b로 나눈 값이 0일 때까지 반복. a%b를 벡터에 차례대로 저장한 뒤 마지막에 순서 reverse해서 출력,
+// algorithm 인클루드 했는지 확인하기.

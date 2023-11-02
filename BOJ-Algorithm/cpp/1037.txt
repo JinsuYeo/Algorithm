@@ -1,0 +1,36 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <stdlib.h>
+
+using namespace std;
+
+int N, c;
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> c;
+    vector<int> A(c);
+    
+    if(c == 1) {
+        int t;
+        cin >> t;
+        N = t*t;
+    } else {
+        for(int i = 0; i < c; i++) {
+            cin >> A[i];
+        }
+        sort(A.begin(), A.end());
+        N = A[0] * A[A.size()-1];
+    }
+    
+    cout << N;
+    
+    return 0;
+}
+
+// 인자가 1개일 경우 -> 인자*인자가 N
+// 인자가 2개 이상일 경우 -> 가장 작은 인자*가장 큰 인자가 N이 될 것
+// -> 입력된 값들 정렬 후 조건에 따라 계산 -> 통과

@@ -1,0 +1,21 @@
+#include <iostream>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    string s1, s2, s3, s4;
+    cin >> s1 >> s2 >> s3 >> s4;
+    
+    cout << stol(s1 + s2) + stol(s3 + s4) << "\n";
+    
+    return 0;
+}
+
+// string 헤더 파일의 stoi(), to_string() 함수들로 문자열 -> 숫자 자료형, 숫자 자료형 -> string 변환 가능.
+// 처음에 stoi()로 구현했으나 범위가 1000000 이하의 자연수라 오버플로 발생 -> stol()로 바꿔주니 정답 처리 되었음.

@@ -1,0 +1,100 @@
+#include <iostream>
+#include <algorithm>
+#include <string>
+
+#define UP 0
+#define RIGHT 1
+#define DOWN 2
+#define LEFT 3
+
+#define O -1
+#define X 0
+#define WALL 1
+
+using namespace std;
+
+int N, M;
+int r, c, d;
+int map[52][52];
+
+int dirX[4] = { -1, 0, 1, 0 };
+int dirY[4] = { 0, 1, 0, -1 };
+
+int findBack(int dir) {
+	int nextDir = dir-2 >= 0 ? dir-2 : dir+2;
+	return nextDir;
+}
+
+int rotation(int dir) {
+	int nextDir = dir - 1 >= 0 ? dir - 1 : dir + 3;
+	return nextDir;
+}
+
+bool isX(int x, int y) {
+
+	for (int i = 0; i < 4; i++) {
+		int nx = x + dirX[i];
+		int ny = y + dirY[i];
+		if (map[nx][ny] == X) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void dfs(int x, int y, int dir, int count) {
+	
+	if (map[x][y] == X) {
+		map[x][y] = O;
+		dfs(x, y, dir, count + 1);
+	}
+
+	if (!isX(x, y)) {
+		int nextDir = findBack(dir);
+		int nx = x + dirX[nextDir];
+		int ny = y + dirY[nextDir];
+
+		if (map[nx][ny] == WALL) {
+			cout << count;
+			exit(0);
+		}
+
+		dfs(nx, ny, dir, count);
+	}
+	
+	int nextDir = rotation(dir);
+	int nx = x + dirX[nextDir];
+	int ny = y + dirY[nextDir];
+
+	if (map[nx][ny] == X) dfs(nx, ny, nextDir, count);
+	dfs(x, y, nextDir, count);
+}
+
+int main() {
+
+	iostream::sync_with_stdio(false);
+	cin.tie(NULL);
+
+	cin >> N >> M;
+
+	cin >> r >> c >> d;
+
+	for (int i = 0; i <= N+1; i++) {
+		for (int j = 0; j <= M+1; j++) {
+			if (i == 0 || i == N + 1 || j == 0 || j == M + 1) {
+				map[i][j] = WALL;
+				continue;
+			}
+			cin >> map[i][j];
+		}
+	}
+
+	dfs(r+1, c+1, d, 0);
+
+	cout << -1;
+
+	return 0;
+}
+
+// DFS 사용해 구현.

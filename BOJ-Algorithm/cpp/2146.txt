@@ -1,0 +1,114 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <utility>
+#include <cstring>
+
+using namespace std;
+
+int n, c, result;
+int arr[101][101];
+int visited[101][101];
+queue<pair<int, int>> isIsland;
+queue<pair<int, int>> isCoast;
+
+int checki[4] = {0, 0, -1, 1};
+int checkj[4] = {-1, 1, 0, 0};
+
+void ibfs(){
+    long s = isIsland.size();
+    while(s) {
+        int x, y;
+        x = isIsland.front().first;
+        y = isIsland.front().second;
+        isIsland.pop();
+        s--;
+        for(int i{}; i < 4; i++) {
+            int ci = x + checki[i];
+            int cj = y + checkj[i];
+            
+            if(ci >= 1 && ci <= n && cj >= 1 && cj <= n && !visited[ci][cj]) {
+                if(arr[ci][cj] == 1) {
+                    isIsland.push(pair<int, int> {ci, cj});
+                    visited[ci][cj] = 1;
+                }
+                if (arr[ci][cj] == 0) {
+                    isCoast.push(pair<int, int> {x, y});
+                }
+            }
+        }
+    }
+}
+
+void cbfs(){
+    long s = isCoast.size();
+    while(s) {
+        int x, y;
+        x = isCoast.front().first;
+        y = isCoast.front().second;
+        isCoast.pop();
+        s--;
+        for(int i{}; i < 4; i++) {
+            int ci = x + checki[i];
+            int cj = y + checkj[i];
+            
+            if(ci >= 1 && ci <= n && cj >= 1 && cj <= n && !visited[ci][cj]) {
+                if(arr[ci][cj] == 0) {
+                    isCoast.push(pair<int, int> {ci, cj});
+                    visited[ci][cj] = 1;
+                }
+                if(arr[ci][cj] == 1) {
+                    if(c < result || result == 0) result = c;
+                }
+            }
+        }
+    }
+}
+
+
+
+int main() {
+    cin >> n;
+    
+    for(int i{1}; i <= n; i++) {
+        for (int j{1}; j <= n; j++) {
+            cin >> arr[i][j];
+        }
+    }
+
+    for (int i{1}; i <= n; i++) {
+        for (int j{1}; j <= n; j++) {
+            if(!visited[i][j] && arr[i][j] == 1) {
+                visited[i][j] = 1;
+                isIsland.push(pair<int, int>{i, j});
+                while(!isIsland.empty()){
+                    ibfs();
+                }
+                while (!isCoast.empty()) {
+                    c++;
+                    cbfs();
+                }
+                c = 0;
+                memset(visited, false, sizeof(visited));
+            }
+        }
+    }
+    
+    cout << result - 1 <<"\n";
+     
+    return 0;
+}
+
+// 1에서 0을 찾아서 bfs.
+// count 세서 출력.
+
+// 0에서 0을 찾아서 가다가 1을 만나면 리턴, but 같은 섬을 찾는다면?
+
+// 같은 섬을 모두 visited 처리하고 나서 0을 찾음. 그리고 visited 아닌 1을 찾을 때 까지 count 세줌.
+// 이것을 섬마다 반복.
+
+// 섬 중에서 상하좌우 중 0이 있는 곳 찾아서 큐에 넣고 bfs 실행.
+
+// bfs 두개 만들어서 섬과 해안 찾을 수 있게 해줌.
+
+// 틀렸다고 나오길래 반례 찾다가 visited 초기화 안해주어서 틀렸다는 것 알아냄. 시간 복잡도만 신경 쓰다가 중요한 것 못봄. visited 초기화 안해주면 visited 처리 된 곳에서 다른 섬으로 가는 경로가 가장 짧을 때 이미 visited 되어서 처리 못해줌. visited 초기화하면 섬 별로 반복이 아니라 1이 있는 곳 모두 반복해야 해서 안했는데 시간 신경쓰다가 더 큰 문제를 못봄. 시간 복잡도 얼추 계산해보고 n^2도 처리 될것 같으면 더 쉬운 방법으로 풀어도 될 듯. 시간 널널하면 최대한 활용하기. 100^4 해줘도 시간 괜찮았을 듯.

@@ -1,0 +1,53 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cstdio>
+
+using namespace std;
+
+int n, c;
+int arr[26][26];
+bool visited[26][26];
+vector<int> cv;
+
+void dfs(int i, int j){
+    visited[i][j] = 1;
+    c++;
+    if(j > 1 && arr[i][j-1] == 1 && !visited[i][j-1]) dfs(i, j-1);
+    if(j < n && arr[i][j+1] == 1 && !visited[i][j+1]) dfs(i, j+1);
+    if(i > 1 && arr[i-1][j] == 1 && !visited[i-1][j]) dfs(i-1, j);
+    if(i < n && arr[i+1][j] == 1 && !visited[i+1][j]) dfs(i+1, j);
+}
+
+int main() {
+    cin >> n;
+    for(int i{1}; i <= n; i++) {
+        for(int j{1}; j <= n; j++) {
+            scanf("%1d", &arr[i][j]);
+        }
+    }
+    
+    for(int i{1}; i <= n; i++) {
+        for(int j{1}; j <= n; j++) {
+            if(!visited[i][j] && arr[i][j] == 1) {
+                dfs(i, j);
+                cv.push_back(c);
+                c = 0;
+            }
+        }
+    }
+    
+    sort(cv.begin(), cv.end());
+    
+    cout << cv.size() << "\n";
+    for(int i{}; i < cv.size(); i++) {
+        cout << cv.at(i) << "\n";
+    }
+   
+    return 0;
+}
+
+// arr[n][n]만들고 한 숫자씩 입력밭아서 넣어주고, arr[i][j]에서 dfs 시작해서(arr[i][j] == 1) arr[i][j+1], arr[i][j-1], arr[i-1][j], arr[i+1][j](즉 arr[i][j]의 상하좌우)가 1이고 방문되지 않았다면 count++해주고 그곳으로 이동해서 dfs해줌. 반복.
+
+// 맞는데 계속틀려서 반례 찾다가 i-1, j-1이 1보다 작거나 i+1, j+1이 n보다 큰 경우 처리해야 한다는 것 깨닫고 처리해서 정답.
+// 차라라 index가 0부터 입력받았으면 처리 했을텐데 index 1부터 입력받고 index 0은 어차피 0이니 상관없다고 생각하고 처리 안했는데 n+1은 범위가 초과될 수 있다는 것 생각 못했음 -> arr[30][30]처럼 널널하게 선언하면 정답처리 되는 것 확인함. 범위 넘어가는 것 등의 찾기 어려운 에러 만들지 않게 코드 처음 쓸 때부터 주의할 것 + 앞으로는 반례 직접 찾아보기.

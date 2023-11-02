@@ -1,0 +1,45 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+
+using namespace std;
+    
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int n{};
+    string s;
+    cin >> n;
+    
+    vector<char> stack;
+    vector<string> v;
+    
+    for(int i{}; i < n; i++) {
+        cin >> s;
+        v.push_back(s);
+    }
+    
+    for(int i{}; i < n; i++) {
+        for (int j{}; j < v.at(i).length(); j++) {
+            if(v.at(i).at(j) == '(')
+                stack.push_back(v.at(i).at(j));
+            else if(v.at(i).at(j) == ')' && stack.size() != 0 && stack.back() == '(')
+                stack.pop_back();
+            else if(v.at(i).at(j) == ')' && (stack.size() == 0 || stack.back() != '('))
+                stack.push_back(v.at(i).at(j));
+        }
+        if(stack.size()) cout << "NO" << "\n";
+        else if(!stack.size()) cout << "YES" << "\n";
+        
+        stack.clear();
+    }
+    
+    
+    return 0;
+}
+
+// stack처럼 '('가 들어오면 쌓고 ')'가 들어오면 뺀다고 가정(스택 사이즈가 0이거나 스택의 마지막에 ')'가 있다면 ')'도 쌓음).
+// stack의 사이즈가 0이 아니면(스택이 empty아니면) NO, empty면 YES 출력.

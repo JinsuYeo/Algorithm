@@ -1,0 +1,71 @@
+#include <iostream>
+#include <algorithm>
+#include <math.h>
+#include <string>
+
+using namespace std;
+
+int N, M;
+int map[501][501];
+bool visited[501][501];
+bool back = false;
+int res = 0;
+
+int dirX[4] = { -1, 1, 0, 0 };
+int dirY[4] = { 0, 0, -1, 1 };
+
+void dfs(int x, int y, int length, int sum, string str) {
+	if (length == 4) {
+		res = max(res, sum);
+		//if(res == sum) cout << str << " " << sum << '\n';
+		return;
+	}
+
+	visited[x][y] = true;
+
+	for (int i = 0; i < 4; i++) {
+		int nextX = x + dirX[i];
+		int nextY = y + dirY[i];
+		if (nextX < 1 || nextX > N || nextY < 1 || nextY > M) {
+			continue;
+		}
+
+		if (visited[nextX][nextY] && length == 3 && !back) {
+			back = true;
+			dfs(nextX, nextY, length, sum, str + to_string(nextX) + to_string(nextY) + " ");
+			back = false;
+		}
+		if (!visited[nextX][nextY]) dfs(nextX, nextY, length + 1, sum + map[nextX][nextY], str + to_string(nextX) + to_string(nextY) + " ");
+	}
+
+	if(!back) visited[x][y] = false;
+}
+
+int main() {
+
+	iostream::sync_with_stdio(false);
+	cin.tie(NULL);
+
+	cin >> N >> M;
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= M; j++) {
+			cin >> map[i][j];
+		}
+	}
+
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= M; j++) {
+			dfs(i, j, 1, map[i][j], to_string(i) + to_string(j) + " ");
+		}
+	}
+
+	cout << res;
+
+	return 0;
+}
+
+// 모든 좌표 돌며 DFS로 왔던 방향을 제외하고 길이 4가 되도록 탐색하며 총합을 구하도록 구현.
+//
+// 틀려서 디버깅하다가 ㅜ모양의 폴리오미노 체크 불가한 것 발견. -> 길이 3일 때 길이 유지한 채 뒤로 한칸 돌아가도록 구현.
+// 코드 변경할 때 사이드 이펙트 고려하지 않아 디버깅에 시간 너무 많이 걸림(DFS 호출 시 인자값, 재귀 함수 호출 순서 고려 X -> 함수가 2번 호출되는 것 고려 못했음).
+// 코드 변경 시 다시 노트에 적으며 구현 방법과 코드 흐름 생각할 것.  

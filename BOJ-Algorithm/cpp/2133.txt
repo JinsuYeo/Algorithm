@@ -1,0 +1,30 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int dp[31];
+
+int main(int argc, const char * argv[]) {
+    int n{};
+    cin >> n;
+   
+    dp[0] = 1;
+    dp[1] = 0;
+    dp[2] = 3;
+    for(int i{3}; i <= n; i++) {
+        dp[i] = dp[i-2]*3;
+        for (int j{4}; j <= i; j+=2) {
+            dp[i] += dp[i-j]*2;
+        }
+    }
+
+    cout << dp[n] << endl;
+    
+    return 0;
+}
+
+// 타일 채우기 비슷한 것을 풀어봐서 알고리즘 생각은 쉬운 편이었으나 그림 힌트를 안봤으면 놓치는 부분 있었을 것 같음.
+// dp = dp[i-2] * 3;이고, 그 후, i-4, i-6, i-8... 의 위치의 개수 * 2를 dp[i]에 더해주어 해결했음. 마찬가지로 구현에 생각보다 오래걸렸고 반복문 설정을 좀 더 집중해서 해볼 것.
+// + 이번에도 디버깅하려고 추가한 출력문 땜ㄴ에 에러나서 시간 좀 씀. 주의하기.
+// 30분. O(n^2)

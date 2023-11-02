@@ -1,0 +1,53 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <array>
+
+using namespace std;
+
+vector<int> have;
+
+int n, m, s;
+long long mid, high, low, result;
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> n;
+    for (int i{1}; i <= n; i++) {
+        int t{};
+        cin >> t;
+        have.push_back(t);
+    }
+    
+    sort(have.begin(), have.end());
+    
+    cin >> m;
+    
+    for (int i{}; i < m; i++) {
+        int t{};
+        cin >> t;
+        cout << upper_bound(have.begin(), have.end(), t) - lower_bound(have.begin(), have.end(), t) << " ";
+    }
+    
+        
+    return 0;
+}
+
+// 10815번과 비슷하지만 중복 요소 개수 찾아야 하기 때문에 set사용 불가.
+// multiset은 되지만 multiset::find()는 O(N)이라 시간 초과됨.
+
+// 10816번에서 구현한 이분 탐색에서 count 세는 것만 바꿔주고 이것 저것 시도해보았는데 결국 다 시간 초과됨.
+
+// arr에 따로 개수 저장할까 했지만 음수의 개수 처리하기 힘들 것 같아 시도 못했고, 어차피 O(N)일 것임.
+// std::count 사용해봤지만 이것도 O(N).
+// erase()도 마찬가지.
+
+// 결국 다른 사람 코드 보고 풀었음. 더 빨리 볼 걸 하는 생각이 들었음.
+
+// -> upper_bound()와 lower_bound 이용하는 문제였음. iterator와 찾을 요소가 인자로 들어가는데, 각각 찾는 수 초과하는 수의 첫번 째 위치, 찾는 수 이상의 수의 첫번 째 위치를 반환함.
+// 따라서 upper_bound() - lower_bound() 하면 찾는 수의 개수 파악 가능함.
+
+// + 이산 수학에서 배웠던 lower bound와 upper bound의 개념과 알고리즘의 동작이 살짝 다른 것 같은데 그냥 서로 이름만 같고 별개의 개념인지 아니면 다른 이유가 있는 지 알아보고 싶은데 알 방법이 없음.

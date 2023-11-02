@@ -1,0 +1,46 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+const int MAX = 100001;
+const int MOD = 9901;
+
+int T, result;
+int arr[MAX][3];
+int dp[MAX][3];
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> T;
+    
+    for (int i{}; i < 3; i++)
+        dp[1][i] = 1;
+    
+    for (int i{2}; i <= T; i++) {
+        dp[i][0] = (((dp[i-1][1] + dp[i-1][2]) % MOD) + dp[i-1][0]) % MOD;
+        dp[i][1] = (dp[i-1][0] + dp[i-1][2]) % MOD;
+        dp[i][2] = (dp[i-1][0] + dp[i-1][1]) % MOD;
+    }
+    
+    for (int i{}; i < 3; i++) {
+        result = (((dp[T][1] + dp[T][2]) % MOD) + dp[T][0]) % MOD;
+    }
+    
+    cout << result << '\n';
+    
+    return 0;
+}
+
+// DP 연습 백준 1309번 동물원
+
+// 규칙 생각해보려 했으나 발견 결국 못하고 다른 사람 풀이 보고 풂.
+// 한 행에 들어갈 수 있는 경우의 수로 생각
+// -> x x, o x, x o(각 조건을 0, 1, 2라고 했을 때)
+// 한 행에 0이 오면 다음 행에는 0, 1, 2 모두 가능, 2나 3이 오면, 0, 3과 0, 2가 각각 가능함.
+// 이것을 dp 알고리즘으로 구현하면 dp[i][0] = dp[i-1][0] + dp[i-1][1] + dp[i-1][2] 처럼 되고 각 조건을 구현하고 mod연산 구현해주면 정답처리됨.
+
+// 풀이 보고나니 1149번(RGB 거리)와 비슷한 문제였음. dp[i]를 정의할 수 있어야 하는데 이 문제의 경우 그것이 어려웠음. 풀이 보고도 처음에 이해가 잘 안됐으니 시간을 많이 들였어도 풀지 못했을 듯. 이런 방법이 있다는 것 기억하기(dp[][]로 초기조건 정의 할 수 있게 생각하기, 한 행을 묶어서 생각하기 등).

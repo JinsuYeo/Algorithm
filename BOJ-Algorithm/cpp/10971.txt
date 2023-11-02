@@ -1,0 +1,61 @@
+#include <iostream>
+#include <algorithm>
+#include <array>
+#include <vector>
+
+using namespace std;
+
+vector<int> v;
+bool visited[11];
+array<array<int, 11>, 11> arr;
+
+int N, result{1 << 30}, min_v{}, des;
+
+void dfs(int start, int cost, int n) {
+    visited[start] = true;
+    min_v += cost;
+    if (n == N) {
+        if (arr[start][des] != 0) {
+            result = min(result, min_v + arr[start][des]);
+        }
+        return;
+    }
+    
+    for (int i{}; i < N; i++) {
+        if(!arr[start][i]) continue;
+            
+        if (!visited[i]) {
+            dfs(i, arr[start][i], n+1);
+            visited[i] = false;
+            min_v -= arr[start][i];
+        }
+    }
+}
+
+int main(void){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N;
+    for (int i{}; i < N; i++) {
+        for (int j{}; j < N; j++) {
+            cin >> arr[i][j];
+        }
+    }
+    
+    for (int i{}; i < N; i++) {
+        des = i;
+        dfs(i, 0, 1);
+        visited[i] = false;
+    }
+    
+    cout << result << '\n';
+    
+    return 0;
+}
+
+// DFS로 최소 비용 탐색. 쉽다고 생각해서 이번엔 메모하면서 안풀고 바로 구현했는데 , n==N인 경우(모든 정점 방문한 경우) result를 최솟값으로 갱신하는 부분에서 arr[start][des] != 0 인지(마지막 정점에서 시작점으로 길이 있는지)를 체크 안해서 틀렸었음.
+
+// 재귀함수 구현할 때 내가 생각한대로 함수가 진행이 안되면 하나씩 고치다가 놓치는 부분이 생기는 듯. 재귀 함수 구현 시에는 구현해야 하는 것이 무엇인지 최대한 상세하게 모두 적어놓고 구현하도록 하자. + 틀렸을 때, 구현한 기능별로 어떤 역할을 하고 있는지, 놓치고 있는 부분 없는지도 적으면서 체크.
+
+// + 이 문제에서는 중간까지는 잘 체크하다가 마지막에 놓침. 틀리면 중간 단계(반복문이나 그 안의 조건문)만 보는 경향이 있는데, 처음과 마지막 조건문 체크하기.

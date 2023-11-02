@@ -1,0 +1,58 @@
+#include <iostream>
+
+using namespace std;
+    
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int a{}, b{}, tb{}, ts{}, max{1}, t{1};
+    cin >> a >> b;
+    
+    ts = a < b ? a : b;
+    tb = a > b ? a : b;
+    for(int i{1}; i <= ts; i++) {
+        if((tb%i) == 0 && (ts%i) == 0 && max < i) max = i;
+    }
+    while((tb*t)%ts) {
+        t++;
+    }
+    cout << max << "\n" << tb*t << "\n";
+    
+    return 0;
+}
+
+// a와 b 중 작은 수 찾아서 1~작은수 까지 반복해서 큰 수%n, 작은 수%n 이 모두 0인 수 중 가장 큰 수 출력. 큰 수*n을 작은 수로 나눌 수 있을 때, 큰 수 * n 출력.
+
+// 유클리드 호제법 사용하면 간단하다고 함. -> 큰 수를 작은 수로 mod 연산하고, 작은 수를 mod연산 결과와 mod연산해줌. 첫번째 결과와 두번째 결과를 mod연산 해줌... 반복하다 결과 0이 나오면 m mod n중 n이 큰 수와 작은 수의 최대공약수이다.
+// 그리고 큰 수 * 작은 수 = 최대공약수 * 최소공배수 이므로 (큰수*작은수)/최대공약수 -> 최소공배수 구할 수 있음.
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+#define MAX 1000001
+
+using namespace std;
+
+int gcd(int a, int b) {
+    if(a % b == 0) return b;
+    return gcd(b, a%b);
+}
+
+int a, b;
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> a >> b;
+        
+    cout << gcd(a, b) << '\n';
+    cout << a*b/gcd(a, b) << '\n';
+    
+    return 0;
+}
+
+// 유클리드 호제법 이용해 해결.

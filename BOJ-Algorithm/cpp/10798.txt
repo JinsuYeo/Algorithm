@@ -1,0 +1,29 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+string arr[5];
+
+int main() {
+
+	for (int i = 0; i < 5; i++) {
+		cin >> arr[i];
+	}
+
+	for (int i = 0; i < 15; i++) {
+		for (int j = 0; j < 5; j++) {
+			if (i < arr[j].length()) {
+				cout << arr[j][i];
+			}
+		}
+	}
+
+	cout << endl;
+
+	return 0;
+}
+
+// string에는 \0문자가 붙지 않는다.(
+// std::string 은 문자열을 메모리에 저장할 때 실제론 '\0' 을 포함하지만 개념상 \0 에 대한 접근을 허용하지 않는다. 또한 문자열의 길이를 이미 갖고 있기 때문에 '\0' 탐색을 통해 길이를 계산하지 않아도 문자열의 끝을 알 수 있다.)
+// -> size()와 length()값 같음.

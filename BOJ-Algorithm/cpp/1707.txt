@@ -1,0 +1,78 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+char color[20001];
+int v, e, n;
+char cur;
+string bi {"YES"};
+vector<int> arr[20001];
+
+void clear() {
+    for(int i{0}; i <= 20000; i++) {
+        color[i] = 0;
+        arr[i].clear();
+    }
+    bi = "YES";
+}
+
+void dfs(int start, char col) {
+    if(color[start] != 0)
+        return;
+    
+    color[start] = col;
+    
+    if (col == 'r') {
+        col = 'b';
+    } else {
+        col = 'r';
+    }
+    
+    for(int i{}; i < arr[start].size(); i++) {
+        int x = arr[start][i];
+        if(color[x] != 0 && color[x] == color[start]){
+            bi = "NO";
+            break;
+        } else if(color[x] == 0){
+            dfs(x, col);
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    clear();
+    cin >> n;
+    
+    for(int i{}; i < n; i++) {
+        cin >> v >> e;
+        for(int j{}; j < e; j++) {
+            int x, y;
+            cin >> x >> y;
+            arr[x].push_back(y);
+            arr[y].push_back(x);
+        }
+        for(int j{1}; j <= v; j++) {
+            if(!color[j] && !arr[j].empty()){
+                dfs(j, 'r');
+            }
+                
+        }
+        cout << bi << "\n";
+        clear();
+    }
+    
+    
+    return 0;
+}
+
+// 알고리즘은 쉽게 생각했는데 세부적인 것들 구현하지 않았거나 중간에 에러들이 있어 정답을 맞추는데는 오래 걸렸다.
+// 이분 그래프는 인접해 있는 정점을 red, blue로 나누어 칠할 수 있어야 하는데 만약 인접한 두 정점이 같은 색이라면 이분 그래프가 아니라 "NO", 인접한 모든 정점이 같은색이 아니라면 "YES" 출력하면 된다.
+// 처음에 쉽다고 생각하고 풀었는데 생각지 못한 오류들이 있었다. 큐로 색을 번갈아가면 바꿔주려 했는데 예를 들어 1, 5 2, 1 2, 1 5가 입력으로 들어왔을 때, 1->2로 갈 때 색깔이 바뀌고 2 -> 1이 안되니 다시 1로 돌아올 때 색이 변하면 안되지만 돌아가기 전에 색을 변하게 하도록 코드를 짰어서 1-> 5로 갈 때 1과 5가 같은 색으로 칠해지게 됐다. 반례 중 이런 것이 없어서 왜 오류가 발생하는지 찾는데 오래 걸렸다. 마지막에 손으로 디버깅 하면서 간신히 찾았는데, 코드를 거의 다 바꿔야해서 구현도 꽤 오래 걸렸다.
+// 재귀 함수 사용 시, 특히 반복문안에서 재귀함수 호출 시, 변수가 제대로 처리되고 있는지(한번만 처리되어야 할 게 여러번 처리 or 처리되어야 할 것이 처리 X) 잘 확인할 것.

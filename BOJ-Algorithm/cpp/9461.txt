@@ -1,0 +1,28 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+long dp[101];
+
+int main(int argc, const char * argv[]) {
+    int n{}, cn{};
+    cin >> n;
+    
+    dp[1] = 1;
+    dp[2] = 1;
+    dp[3] = 1;
+    
+    for(int i{}; i < n; i++) {
+        cin >> cn;
+        for(int j{4}; j <= cn; j++) {
+            dp[j] = dp[j-2] + dp[j-3];
+        }
+        cout << dp[cn] << endl;
+    }
+   
+    return 0;
+}
+
+// 새로운 삼각형이 생기는규칙을 보니(1, 1, 1, 2, 2, 3, 4, 5, 7, 9, 12, 16, 21, 28...) 각 변의 길이는 dp[i] = dp[i-2] + dp[i-3]; 이었음.
+// dp[]를 int형으로 선언했다가 오버플로 발생해서 long으로 변경함. 확인 항상 할 것. 이번에는 금방 발견했음.

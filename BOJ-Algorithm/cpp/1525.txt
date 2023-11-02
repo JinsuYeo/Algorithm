@@ -1,0 +1,98 @@
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <queue>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+const int target {123456789};
+
+int diry[4] = {-1, 0, 1, 0}; // 상, 좌, 하, 우
+int dirx[4] = {0, -1, 0, 1};
+
+int X, Y; // 0의 위치
+queue<int> q;
+map<int, int> visited;
+
+void bfs(){
+    while (!q.empty()) {
+        int num = q.front();
+        string s = to_string(num);
+        int index = (int)s.find('9');
+        q.pop();
+
+        if (num == target) {
+            return;
+        }
+        
+        int y = index / 3;
+        int x = index % 3;
+        
+        for (int i{}; i < 4; i++) {
+            int tx = x + dirx[i];
+            int ty = y + diry[i];
+            
+            if (tx >= 0 && tx < 3 && ty >= 0 && ty < 3) {
+                string ts = s;
+                swap(ts.at(y*3+x), ts.at(ty*3+tx));
+                
+                int next = stoi(ts);
+                if (!visited.count(next)) {
+                    q.push(next);
+                    visited[next] = visited[num] + 1;
+                }
+            }
+        }
+        
+    }
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+        
+    int start{};
+    
+    for(int i{}; i < 3; i++) {
+        for (int j{}; j < 3; j++) {
+            int t{};
+            cin >> t;
+            if (t == 0) {
+                t = 9;
+            }
+            start = start*10 + t;
+        }
+    }
+    
+    q.push(start);
+    visited[start] = 0;
+    
+    bfs();
+    
+    if (!visited.count(target)) {
+        cout << -1 << '\n';
+    } else cout << visited[target] << '\n';
+        
+    return 0;
+}
+
+// 입력된 9개의 수를
+// 1 2 3
+// 4 5 6
+// 7 8 0 의 형태로 만들기 위해 움직인 횟수 출력해야 함.
+
+// BFS 사용하여 0의 상하좌우(+ 범위 안)의 수를 큐에 넣고(숫자, count, 좌표 넣어줌) 숫자를 0의 위치와 바꿔줌.
+// 숫자가 왔다갔다 할 수 있으니 이동한 0의 좌표의 상하좌우 중 0과 자리가 바뀐 수는 큐에 넣지 않음.
+// 목표 배열과 똑같아질 때까지 반복.
+
+// 이렇게 구현했더니 무한 루프 돌아서 생각해보니 자리가 바뀐 두 수만 루프도는게 아니라 여러개의 수가 뱅뱅 돌면서 무한히 회전할 수도 있음.
+// -> 어떻게 처리할까 하다가 visited를 9개 만들어 각 수마다 방문을 체크하려고 하였으나 그래도 무한루프 돎.
+
+// 결국 다른 사람 코드 보고 풀었는데,  아마 안봤으면 평생 못풀었을 듯. 일단 사용한 자료구조를 나는 생각하지도 못했고 알고리즘은 워낙 비슷한 문제들 풀었으니 얼추 비슷했지만, 결국 가장 중요한 visited 처리 어떻게 구현할지는 생각 못했음 -> 자료구조도 생각 못하게 됨, 애초에 매일 비슷하게 풀다보니 평소에 사용하지 않던 다른 자료구조 사용할 수도 있다는 생각 못했음.
+
+// 답은 이중 배열이 아니라 int, string 이용해 목표를 생성하고, 같은지 확인하고, swap하는 것이었음. + visited처리도 평소처럼 배열이 아니라 map으로 처리. 왜냐하면 하나 하나의 수가 아니라 모든 숫자의 배치를 비교하면서 방문했는지 체크해야 하기 때문.
+// 예를 들면 123456780으로 target을 저장하고 좌표는 string의 find()이용해 0을 찾고(참고로 0이 아니라 9로 바꿔서 저장해야 에러 안남. 그 이유는 아마 문자열의 마지막에 null character(== 0) 있어서 인 듯.) 그 위치는 일차원 배열의 인덱스와 동일하므로 이차원 배열의 인덱스처럼 바꿔서 표현할 수 있음(ex) 12345678에서 6의 위치는 5, y = 5/3(1), x = 5%3(2)로 (1, 2)의 좌표 얻을 수 있음). + map에 처음 입력에서 0과 상하좌우의 숫자의 배열(문자열의 형태)을  int형으로 바꿔서 count와 함께 저장함+ 큐에 추가. 이러한 과정을 큐가 빌 때까지 반복하면서 진행한 후 visited[target]으로 저장된 count를 출력할 수 있음.
+
+//map같은 자료구조는 배우기만 했지 사용해볼 일이 잘 없어서 사용하는 예시는 처음보는 듯. 앞으로 비슷한 문제 나오면 이번에 배운 자료구조와 알고리즘 잘 기억해서 써보도록 할 것.

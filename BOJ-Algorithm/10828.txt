@@ -1,0 +1,66 @@
+package algorithm;
+
+import java.io.*;
+import java.util.*;
+
+public class Main {
+	static int[] stack = new int[10001];
+	static int size;
+	static int N;
+	
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		StringBuilder sb = new StringBuilder();
+		
+		for(int i = 0; i < N; i++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			String s = st.nextToken();
+			
+			switch(s) {
+				case "push": 
+					push(Integer.parseInt(st.nextToken()));
+					break;
+				case "pop":
+					sb.append(pop()).append("\n");
+					break;
+				case "size":
+					sb.append(size()).append("\n");
+					break;
+				case "empty":
+					sb.append(empty()).append("\n");
+					break;
+				case "top":
+					sb.append(top()).append("\n");
+					break;	
+				default: break;
+			}
+		}
+		
+		System.out.println(sb);	
+	}
+	
+	public static void push(int n) {
+		stack[++size] = n;
+	}
+	
+	public static int pop() {
+		if(size == 0) return -1;
+		return stack[size--];
+	}
+	
+	public static int size() {
+		return size;
+	}
+	
+	public static int empty() {
+		return size == 0 ? 1 : 0;
+	}
+	
+	public static int top() {
+		if(size == 0) return -1;
+		return stack[size];
+	}
+}
+
+// 자바로 푸니까 cpp 보다 구현이 훨씬 어려웠음. 아직 자바 입출력에 대한 이해와 응용이 부족한 듯. 알고리즘 푸는 것도 연습이 되겠지만 자바의 정석 공부한 것 정리하며 복습하고 웹개발 공부에 집중하고, 알고리즘은 cpp로 공부하면서 갑 다시 찾을 것.

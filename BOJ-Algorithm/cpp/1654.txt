@@ -1,0 +1,109 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+#include <array>
+
+using namespace std;
+
+int k, n;
+array<long long, 10001> arr;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> k >> n;
+    for (int i{1}; i <= k; i++) {
+        cin >> arr[i];
+    }
+    
+    long long max{}, sum{}, result{};
+    for (int i{1}; i < 32; i++) {
+        for(int j{1}; j <= k; j++) {
+            sum += (arr[j]/(pow(2, i)-1));
+        }
+        if(sum >= n && max < pow(2, i) - 1) max = pow(2, i) - 1;
+        if(sum < n) break;
+        sum = 0;
+    }
+    
+    max = result;
+    
+    while (1) {
+        bool flag = false;
+        for (int i{1}; i < 32; i++) {
+            for(int j{1}; j <= k; j++) {
+                sum += (arr[j]/(max + (pow(2, i)-1)));
+            }
+            if(sum >= n) result = max + pow(2, i) - 1;
+            if(i == 1 && sum < n) {
+                flag = true;
+                break;
+            }
+            if(sum < n) break;
+            sum = 0;
+        }
+        if (flag) {
+            break;
+        }
+        sum = 0;
+        max = result;
+    }
+    
+       
+    cout << result << "\n";
+    
+    return 0;
+}
+
+
+// 랜선의 최대 길이가 2^31 -1 이므로 (2^i-1)로 k개의 랜선 나누었을 때 몫의 합이 n이 되는 최댓값 구한 뒤, 랜선 길이 / (최댓값 + (2^i - 1))을 반복해줌 몫의 합이 n보다 작아지면 i = 1, 최댓값 = 최댓값 + 2^i-1로 갱신해서 다시 반복.
+// 처음에 시간 초과나서 원시 배열 말고 std array로 바꿨더니 틀렸습니다 나옴. -> j와 max, result, sum의 자료형 long long으로 바꾸고 다시해도 틀림. 마지막으로 반례 찾아보니 입력이 2^n-1로 나누어 떨어질 때 result 0인 채로 출력됨. -> 최댓값 + 2^i-1 하기 전에(while문 전에) result = max 로 초기화해주니 정답.
+
+
+// # 이분 탐색 이용
+#include<iostream>
+using namespace std;
+
+int K, N, ans;
+int line[10001];
+int  maxi = 0;
+long long mid, high, low;
+
+int main()
+{
+    cin >> K >> N;
+    
+    for (int i = 0; i < K; i++)
+    {
+        cin >> line[i];
+        if (maxi < line[i]) maxi = line[i];
+    }
+    low = 1;
+    high = maxi;
+    ans = 0;
+
+    while (low <= high)
+    {
+        mid = (low + high) / 2;
+        int cnt = 0;
+        for (int i = 0; i < K; i++)
+            cnt += line[i] / mid;
+
+        if (cnt >= N) {
+            low = mid + 1;
+            if (ans < mid) ans = mid;
+        }
+        else {// (cnt < N)
+            high = mid - 1;
+        }
+    }
+    
+    cout << ans;
+}
+
+// 다른 사람 코드 보고 배움. k개의 랜선 값 입력 받은 뒤 랜선의 최대 길이 max로 잡고 최소 길이 1로 잡은 뒤 이분 탐색 이용해서 k개의 랜선을 (랜선 길이 / mid)한 값의 합(몫의 합)이 n이 되는 최댓값 구함.
+
+// 코드 안봤으면 절대 생각 못했을 듯. 내가 푼 것도 나름 알고리즘 생각해서 답 맞추긴 했는데 확실히 더 정답에 가까운 풀이, 코드는 잇는 듯.
+// 아쉬운 점은 자료형 잘못 설정해서 틀린 것과 예외 생각 못했던 것(2^n-1로 나누어 떨어지는 수) 정도. 비슷한 문제 나온다면 이분 탐색 활용해서 풀 수 있다는 것 기억할 것.

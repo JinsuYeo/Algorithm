@@ -1,0 +1,120 @@
+#include <iostream>
+#include <algorithm>
+#include <array>
+#include <cstdio>
+
+using namespace std;
+
+int N, M;
+long long result;
+array<array<int, 51>, 51> rect;
+
+int rect_sum(int nstart, int mstart, int nend, int mend) {
+    int sum{};
+    for (int i{nstart}; i <= nend; i++) {
+        for (int j{mstart}; j <= mend; j++) {
+            sum += rect[i][j];
+        }
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    cin >> N >> M;
+    for(int i {}; i < N; i++) {
+        for (int j{}; j < M; j++) {
+            scanf("%1d", &rect[i][j]);
+        }
+    }
+    
+    for(int i{}; i < N-2; i++) {
+        for (int j{i+1}; j < N-1; j++) {
+            long long pd{1};
+            pd *= rect_sum(0, 0, i, M-1);
+            pd *= rect_sum(i+1, 0, j, M-1);
+            pd *= rect_sum(j+1, 0, N-1, M-1);
+            
+            result = max(result, pd);
+        }
+    }
+    
+    for (int i{}; i < M-2; i++) {
+        for (int j{i+1}; j < M-1; j++) {
+            long long pd{1};
+            pd *= rect_sum(0, 0, N-1, i);
+            pd *= rect_sum(0, i+1, N-1, j);
+            pd *= rect_sum(0, j+1, N-1, M-1);
+            
+            result = max(result, pd);
+        }
+    }
+    
+    for (int i{}; i < M-1; i++) {
+        for (int j{}; j < N-1; j++) {
+            long long pd{1};
+            pd *= rect_sum(0, 0, N-1, i);
+            pd *= rect_sum(0, i+1, j, M-1);
+            pd *= rect_sum(j+1, i+1, N-1, M-1);
+            
+            result = max(result, pd);
+        }
+    }
+       
+    for (int i{M-1}; i >= 0; i--) {
+        for (int j{}; j < N-1; j++) {
+            long long pd{1};
+            pd *= rect_sum(0, 0, j, i);
+            pd *= rect_sum(j+1, 0, N-1, i);
+            pd *= rect_sum(0, i+1, N-1, M-1);
+            
+            result = max(result, pd);
+        }
+    }
+    
+    for (int i{}; i < N-1; i++) {
+        for (int j{}; j < M-1; j++) {
+            long long pd{1};
+            pd *= rect_sum(0, 0, i, M-1);
+            pd *= rect_sum(i+1, 0, N-1, j);
+            pd *= rect_sum(i+1, j+1, N-1, M-1);
+            
+            result = max(result, pd);
+        }
+    }
+    
+    for (int i{N-1}; i >= 0; i--) {
+        for (int j{}; j < M-1; j++) {
+            long long pd{1};
+            pd *= rect_sum(0, 0, i, j);
+            pd *= rect_sum(0, j+1, i, M-1);
+            pd *= rect_sum(i+1, 0, N-1, M-1);
+            
+            result = max(result, pd);
+        }
+    }
+
+    cout << result << '\n';
+    
+    return 0;
+}
+
+// N*M크기의 직사각형에 N*M개의 수를 써놓음. -> N*M크기의 배열.
+겹치지 않는 3개의 직사각형으로 나눔. 각각의 칸 겹칠 수 없고, 하나의 직사각형만 포함. 각각의 작은 직사각형은 적어도 하나의 수 포함.
+// -> 속에 있는 수들의 함을 합으로 가짐. 3개의 직사각형의 합의 곱이 최대가 되도록 해서 출력.
+
+// 직사각형의 크기는 최대 50*50 이므로 3개로 나누는 가능한 모든 경우를 고려해서 최대값을 찾으면 됨.
+// 직사각형으로 나눠야 해서 아무렇게나 나눌수는 없음. 사각형 모양이 되도록 나누어야 함.
+
+// 그림으로 그려서 생각하다가 경우의 수가 너무 많아서 + 그 경우들을 코드로 어떻게 모두 처리할 수 있을까 고민하다 다른 사람 코드 봄.
+
+// -> 6가지의 경우로 나눠서 풂. 작게보면 무수히 많지만, 조금 더 크게보면 6가지 경우(세 직사각형의 모양)가 있고 그 안에서 더 세분화됨(각 사각형의 크기별로)
+// 그림으로 보면 이해 쉬움.
+
+// 참조) https://nim-code.tistory.com/89
+
+// 내가 너무 어렵게 생각한 것도 있고, 생각하기 어려운 문제인 것도 맞는듯. 처음에는 일단 내 생각이 정답이란 마음으로 풀어야겠음. 경우의 수가 너무 많아서 이렇게 푸는게 맞겠어? 했는데 그 경우의 수들을 계속 찾다가 큰 규칙을 발견했을 수도 있을 듯.
+
+// 코드를 대충만 보고 직접 구현해보기로 했음. 코드가 너무 길어서 처음엔 그냥 이해만 하고 넘어갈까 하다가 구현 실력이 안늘것 같아서 직접 세세하게 기능별로 나누어서 적으면서 코딩했더니 얼추 맞았음.
+// 각 직사각형의 크기(숫자의 합) 구하는 함수 만든 뒤, 직사각형을 3개로 나누는 이중 반복문을 6개 구현해서 6개의 모형을 각 사각형의 크기별로 모두 처리함.
+// 반복문의 조건 적으면서 생각한 후 코딩하니 정답 코드와 거의 똑같이 구현할 수 있었음. 마지막에 하나 실수해서 틀리고, long long이 아니라 int로 result 처리해서 몇번 틀렸지만 나름 직접 구현할 수 있었음. 확실히 적으면서 세세하게 모두 계획한 뒤 코딩하는게 좋은 듯.

@@ -1,0 +1,163 @@
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <queue>
+#include <array>
+#include <set>
+#include <vector>
+
+using namespace std;
+
+int A, B, C;
+
+typedef array<pair<int, int>, 3>  pi;
+queue<pi> q;
+set<pi> visited;
+
+void bfs(){
+    while (!q.empty()) {
+        pi cur = q.front();
+        pair<int, int> a = cur.at(0);
+        pair<int, int> b = cur.at(1);
+        pair<int, int> c = cur.at(2);
+        int pa = a.first - a.second;
+        int pb = b.first - b.second;
+        int pc = c.first - c.second;
+        q.pop();
+        
+        if (pa && c.second && c.second >= pa) {
+            pi next = {make_pair(A, A), b, make_pair(C, c.second-pa)};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+        if (pa && c.second && c.second <= pa) {
+            pi next = {make_pair(A, a.second + c.second), b, make_pair(C, 0)};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+        if (pb && c.second && c.second >= pb) {
+            pi next = {a, make_pair(B, B), make_pair(C, c.second-pb)};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+        if (pb && c.second && c.second <= pb) {
+            pi next = {a, make_pair(B, b.second + c.second), make_pair(C, 0)};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+        
+        if (pa && b.second && b.second >= pa) {
+            pi next = {make_pair(A, A),  make_pair(B, b.second-pa), c};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+        if (pa && b.second && b.second <= pa) {
+            pi next = {make_pair(A, a.second + b.second),  make_pair(B, 0), c};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+        if (pc && b.second && b.second >= pc) {
+            pi next = {a, make_pair(B, b.second-pc), make_pair(C, C)};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+        if (pc && b.second && b.second <= pc) {
+            pi next = {a, make_pair(B, 0), make_pair(C, c.second + b.second)};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+        
+        if (pb && a.second && a.second >= pb) {
+            pi next = {make_pair(A, a.second-pb), make_pair(B, B), c};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+        if (pb && a.second && a.second <= pb) {
+            pi next = {make_pair(A, 0), make_pair(B, b.second + a.second), c};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+        if (pc && a.second && a.second >= pc) {
+            pi next = {make_pair(A, a.second-pc), b, make_pair(C, C)};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+        if (pc && a.second && a.second <= pc) {
+            pi next = {make_pair(A, 0), b, make_pair(C, c.second + a.second)};
+            if (!visited.count(next)) {
+                q.push(next);
+                visited.insert(next);
+            }
+        }
+    }
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> A >> B >> C;
+    pi start = {make_pair(A, 0), make_pair(B, 0), make_pair(C, C)};
+    
+    q.push(start);
+    visited.insert(start);
+    
+    bfs();
+    vector<int> v;
+    
+    auto it = visited.begin();
+    while (it != visited.end()) {
+        if (it->at(0).second == 0) {
+            v.push_back(it->at(2).second);
+        }
+        it++;
+    }
+        
+    sort(v.begin(), v.end());
+    for (auto e: v) {
+        cout << e << " ";
+    }
+    
+    
+    return 0;
+}
+
+// A, B, C의 물통 있고, 1~200 사이의 물을 담을 수 있음(용량). 한 물통에서 다른 물통으로 옮길 수 있는데 한 물통이 비거나 한 물통이 가득 찰 때까지.
+// 처음에 C는 가득 차 있고 A, B는 비어있는 상태임.
+// 이 때, A가 비어있을 때 C에 담겨있을 수 있는 물의 양 모두 구하여 오름차 순으로 출력.
+
+// visited에 세 물통에 담긴 물의 양 저장. set 이용 해봄.
+// BFS로 반복하며 처리, pair로 세 물통의 용량과 담긴 물을 저장. -> 큐와 visited에 담아 반복, 체크에 이용.
+// A에 담긴 물이 0일 때만 vector에 따로 저장해서 정렬한 뒤 c에 담길 수 있는 물의 양 모두 출력.
+// BFS에서 조건은 c->a, b or a -> b, c or b -> a, c의 6가지의 경우.
+// 여기까지 생각하고 코드로 구현함.
+// 구현하다보니 c -> a, b의 조건에서 c에 담긴 물이 a나 b의 남은 용랼보다 작거나 클 경우로 또 나뉠 수 있다는 것 알아채고 수정하는데 너무 길고 복잡해서 이렇게 푸는게 맞나 하면서 일단 모든 조건 다 탐색하게 구현함.
+// -> 틀려서 일단 반례보니 c가 0일 경우가 출력이 안됨. 코드 살펴보니 c에 담긴 물이 a의 남은 용량과 같은 경우를 체크 안해줌. 체크하도록 조건 바꿨더니 정답.
+
+// 다른 사람 코드보니 if(a + b > B){} else {}; 처럼 구현함. B는 남은 용량, a와 b는 담긴 물의 양.
+// 훨씬 더 간결하고 이해하기도 쉽다는 생각이 듦. + visited도 3차원 배열로 처리. arr[a][b][c]처럼. 보기도, 이해하기도 쉽다는 생각이 듦.
+
+// 결국 미리 생각해놓은 알고리즘(탐색해야할 모든 경우)과 구현하면서 조금씩 수정한 생각들을 모두 구현하니 정답 처리됨. 이렇게 푸는게 맞긴 한 것 같은데 구현하다보니 코드가 너무 복잡하고 내가 쓰면서도 수정하기 어려울 정도로 보기 힘든 코드가 되었음. 앞으로 좀 더 간결하고 이해하기 쉽게 작성할 것(구현하면서 수정. 수정을 귀찮아서 안하는 안좋은 습관이 있는듯).
+// 예를들면 굳이 pair의 배열로 큐와 set을 구현 안하고 3개의 Int 담는 구조체나 클래스로 구현해도 되었음. 중간에 어차피 pair 배열에 저장한 A, B, C 사용하지 않고 전역변수 A, B, C 사용하게 된다는 것 깨달았지만 그냥 수정 안하고 맞힘. 시간 제한을 두면서 풀어서 그런것도 있지만 고쳐서 코드가 더 쉬워지는 경우에는 고치는 것도 나쁘지 않을 듯.

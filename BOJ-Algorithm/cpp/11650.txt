@@ -1,0 +1,90 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Point {
+public:
+    int x;
+    int y;
+    Point(): Point(0, 0){};
+    Point(int a, int b): x{a}, y{b}{};
+};
+
+ostream &operator<<(ostream& os, const Point &p) {
+    os << p.x << " " << p.y;
+    return os;
+}
+
+bool compare(Point &a, Point &b) {
+    if(a.x == b.x) return a.y < b.y;
+    else return a.x < b.x;
+    
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int n{}, x{}, y{};
+    cin >> n;
+    
+    vector<Point> p;
+    
+    for(int i{}; i < n; i++) {
+        cin >> x;
+        cin >> y;
+        Point point{x, y};
+        p.push_back(point);
+    }
+    
+    sort(p.begin(), p.end(), compare);
+    
+    for(int i{}; i < n; i++) {
+        cout << p.at(i) << "\n";
+    }
+    
+    return 0;
+}
+
+// class로 입력받고 sort()함수 사용하여 구현.
+// 시간초과 나서 endl을 "\n"으로 바꾸니 맞았음. cin.tie(NULL) 등의 함수 사용하니 훨씬 빨라짐.
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+bool compare(const pair<int, int>& a, const pair<int, int>& b) {
+    if(a.first == b.first) return a.second < b.second;
+    return a.first < b.first;
+}
+
+int N, x, y;
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N;
+    vector<pair<int, int>> v(N);
+    
+    for (int i{}; i < N; i++) {
+        cin >> x >> y;
+        pair<int, int> p = make_pair(x, y);
+        v[i] = p;
+    }
+    
+    sort(v.begin(), v.end(), compare);
+    
+    for (auto el : v){
+        cout << el.first << " " << el.second << '\n';
+    }
+    
+    return 0;
+}
+
+// pair 이용해 구현. 저번에 푼 것 보니 Operator overloading 이용해 출력한 것 보고 c++ 문법을 좀 까먹었다고 느낌. 
+// 그래도 꼭 필요한 부분은 아니긴 한 듯. 문제 풀면서 모르는 것 다시 공부해보는 식으로 하기.

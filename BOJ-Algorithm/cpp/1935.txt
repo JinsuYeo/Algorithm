@@ -1,0 +1,149 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <stack>
+#include <algorithm>
+#include <iomanip>
+
+using namespace std;
+
+int N;
+string S;
+stack<double> st;
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N;
+    cin >> S;
+    
+    vector<double> temp(S.length());
+
+    char c{'A'};
+    for (int i{}; i < N; i++) {
+        double t{};
+        cin >> t;
+        for (int j{}; j < S.length(); j++) {
+            if(S[j] == c) {
+                temp[j] = t;
+            }
+        }
+        c++;
+    }
+    
+    for (int i{}; i < S.length(); i++) {
+        if(S[i] >= 'A' && S[i] <= 'Z') {
+            st.push(temp[i]);
+        } else {
+            if (S[i] == '+') {
+                double calc = st.top();
+                st.pop();
+                calc += st.top();
+                st.pop();
+                st.push(calc);
+            }
+            if (S[i] == '-') {
+                double calc = st.top();
+                st.pop();
+                calc = st.top() - calc;
+                st.pop();
+                st.push(calc);
+            }
+            if (S[i] == '/') {
+                double calc = st.top();
+                st.pop();
+                calc = st.top()/calc;
+                st.pop();
+                st.push(calc);
+            }
+            if (S[i] == '*') {
+                double calc = st.top();
+                st.pop();
+                calc *= st.top();
+                st.pop();
+                st.push(calc);
+            }
+        }
+    }
+    
+    cout << fixed << setprecision(2);
+    
+    cout << st.top() << "\n";
+    
+    return 0;
+}
+
+
+// 문자열로 입력받고, 각 알파벳에 맞는 숫자들로 벡터 채워준 뒤, 문자열을 반복문 돌려서 알파벳이라면 벡터의 그 위치에 있는 숫자(double)들은 스택에 넣고 연산자가 나오면 스택의 top과 그 다음 top을 연산자에 맞게 연산(top을 사용할 때마다 pop해줌). 그 후 연산 결과를 스택에 push. 이 과정 반복하고 stack의 top을 출력 기준에 맞게(소수점 2자리) 출력.
+// 생각하지 못한 부분들(double형으로 처리, 나누기나 뺄셈은 연산 순서가 정확해야 함, 출력 형식 바꾸기 등) 많아서 푸는데 시간이 좀 걸림. 문제 읽을 때 최대한 처리해야 할 것들 생각해서 적어놓고 풀기.
+
+// 다른 사람 코드보니 switch문으로 작성했다면 더 깔끔했을 듯.
+// 참고) https://jaimemin.tistory.com/829
+
+#include <iostream>
+#include <string>
+#include <stack>
+#include <iomanip>
+
+using namespace std; 
+
+const int MAX = 26; 
+
+int alphabet[MAX];
+
+int main(void)
+{
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        int N;
+        cin >> N;
+        string str;
+        cin >> str;
+       
+        for (int i = 0; i < N; i++)
+                 cin >> alphabet[i];
+
+        stack<double> s;
+        for (int i = 0; i < str.length(); i++)
+        {
+                 //operator
+                 if (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/')
+                 {
+                         //두개의 피연산자를 꺼내고 연산
+                         double a = s.top();
+                         s.pop();
+                         double b = s.top();
+                         s.pop();
+
+                         switch (str[i])
+                         {
+                         case '+':
+                                 s.push(b + a);
+                                 break;
+                         case '-':
+                                 s.push(b - a);
+                                 break;
+                         case '*':
+                                 s.push(b * a);
+                                 break;
+                         case '/':
+                                 s.push(b / a);
+                                 break;
+                         }
+                 }
+                 //operand
+                 else
+                         s.push(alphabet[str[i] - 'A']);
+        }
+ 
+
+        double result = s.top();
+        cout << fixed;
+        cout.precision(2);
+        cout << result << "\n";
+        return 0;
+}
+
+
+출처: https://jaimemin.tistory.com/829 [꾸준함]

@@ -1,0 +1,33 @@
+#include <iostream>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+
+int arr[26];
+char carr[26] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    string s;
+    cin >> s;
+        
+    for(int i{}; i < s.length(); i++) {
+        for(int j{}; j < 26; j++) {
+            if(s.at(i) == carr[j]) arr[j]++;
+        }
+    }
+    
+    for(int i{}; i < 26; i++) {
+        cout << arr[i] << " ";
+    }
+    cout << "\n";
+   
+    return 0;
+}
+
+// 알파벳을 배열로 만들어 구현.
+// 다른 사람 코드를 보니 그냥 arr[s[i] - 97]++ 이런 식으로도 구현 가능. 아스키코드 이용해서.

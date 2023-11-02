@@ -1,0 +1,77 @@
+#include <iostream>
+
+using namespace std;
+
+typedef struct node *tree_node;
+typedef struct node {
+    char data;
+    char left, right;
+    tree_node left_node, right_node;
+} node;
+
+node nodes[27];
+
+void preorder(tree_node ptr) {
+    if(ptr) {
+        cout << ptr->data;
+        preorder(ptr->left_node);
+        preorder(ptr->right_node);
+    }
+}
+
+void inorder(tree_node ptr) {
+    if(ptr) {
+        inorder(ptr->left_node);
+        cout << ptr->data;
+        inorder(ptr->right_node);
+    }
+}
+
+void postorder(tree_node ptr) {
+    if(ptr) {
+        postorder(ptr->left_node);
+        postorder(ptr->right_node);
+        cout << ptr->data;
+    }
+}
+
+int main(){
+    int n{};
+    cin >> n;
+    
+    for (int i{1}; i <= n; i++) {
+        cin >> nodes[i].data;
+        cin >> nodes[i].left;
+        cin >> nodes[i].right;
+        nodes[i].left_node = NULL;
+        nodes[i].right_node = NULL;
+    }
+    
+    for (int i{1}; i <= n; i++) {
+        for (int j{1}; j <= n; j++) {
+            if(nodes[i].left == nodes[j].data) nodes[i].left_node = &nodes[j];
+            else if(nodes[i].right == nodes[j].data) nodes[i].right_node = &nodes[j];
+            else continue;
+        }
+    }
+    
+    preorder(&nodes[1]);
+    cout << "\n";
+    inorder(&nodes[1]);
+    cout << "\n";
+    postorder(&nodes[1]);
+    
+    return 0;
+}
+
+// 이진 트리는 기본적으로 가장 많이 사용되는 비선형 자료구조임.
+// 이진 트리는 트리 자료구조를 활용한 대표적인 예시로, 데이터의 탐색 속도 증진을 위해 사용하는 구조임.
+
+// 트리를 제대로 구현하기 위해서는 포인터 사용해 특정한 루트에서 자식 노드로 접근 가능하도록 해야함. -> 완전 이진 트리 아닌 경우 배열로 표현하기 어렵기 때문.
+
+// 이진 트리에서 데이터 순회하는 방법은 전위 순회, 중위 순회, 후위 순회가 있음.
+
+// 트리 struct와 그 pointer로 구현한 뒤 전위, 중위, 후위 순회 구현.
+
+// 다른 사람 코드보니 이중 배열로도 풀 수 있었음.
+// ex) 입력이 A~Z이기 때문에 n으로 입력받고  arr[n-'A'][0], arr[n-'A'][1]처럼 왼쪽 자식과 오른쪽 자식 노드 구현 가능.

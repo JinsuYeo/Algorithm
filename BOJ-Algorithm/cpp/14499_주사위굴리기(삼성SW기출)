@@ -1,0 +1,142 @@
+#include <iostream>
+#include <algorithm>
+#include <queue>
+
+#define WALL -1
+
+#define RIGHT 1
+#define LEFT 2
+#define UP 3
+#define DOWN 4
+
+using namespace std;
+
+struct Dice {
+    int x; int y;
+    int u;
+    int d;
+    int e;
+    int w;
+    int s;
+    int n;
+};
+
+int map[22][22];
+
+queue<int> com;
+Dice dice = {0, 0, 0, 0, 0, 0, 0, 0};
+
+int dirX[5] = {0, 0, 0, -1, 1};
+int dirY[5] = {0, 1, -1, 0, 0};
+
+int N, M, X, Y, K;
+
+void rot(int dir) {
+    if(dir == UP) {
+        int nu = dice.s;
+        int nn = dice.u;
+        int nd = dice.n;
+        int ns = dice.d;
+        
+        dice.s = ns;
+        dice.u = nu;
+        dice.n = nn;
+        dice.d = nd;
+        
+    } else if(dir == DOWN) {
+        int nd = dice.s;
+        int ns = dice.u;
+        int nu = dice.n;
+        int nn = dice.d;
+        
+        dice.s = ns;
+        dice.u = nu;
+        dice.n = nn;
+        dice.d = nd;
+        
+    } else if(dir == LEFT) {
+        int nw = dice.u;
+        int nu = dice.e;
+        int ne = dice.d;
+        int nd = dice.w;
+        
+        dice.w = nw;
+        dice.u = nu;
+        dice.e = ne;
+        dice.d = nd;
+        
+    } else if(dir == RIGHT) {
+        int ne = dice.u;
+        int nd = dice.e;
+        int nw = dice.d;
+        int nu = dice.w;
+        
+        dice.w = nw;
+        dice.u = nu;
+        dice.e = ne;
+        dice.d = nd;
+    }
+}
+
+void move(int dir) {
+    int nx = dice.x + dirX[dir];
+    int ny = dice.y + dirY[dir];
+    
+    if(map[nx][ny] == WALL) {
+        return;
+    }
+    
+    dice.x = nx;
+    dice.y = ny;
+    
+    rot(dir);
+    
+    if(!map[dice.x][dice.y]) {
+        map[dice.x][dice.y] = dice.d;
+    } else {
+        dice.d = map[dice.x][dice.y];
+        map[dice.x][dice.y] = 0;
+    }
+    
+    cout << dice.u << '\n';
+}
+
+void solution() {
+    
+    while(!com.empty()) {
+        int dir = com.front();
+        com.pop();
+        
+        move(dir);
+    }
+    
+}
+
+int main() {
+    
+    cin >> N >> M >> X >> Y >> K;
+    dice.x = X+1;
+    dice.y = Y+1;
+    
+    for (int i = 0; i <= N+1; i++) {
+        for (int j = 0; j <= M+1; j++) {
+            if(i == 0 || i == N+1 || j == 0 || j == M+1) {
+                map[i][j] = WALL;
+            } else {
+                cin >> map[i][j];
+            }
+        }
+    }
+    
+    for(int i = 0; i < K; i++) {
+        int t;
+        cin >> t;
+        com.push(t);
+    }
+    
+    solution();
+    
+    return 0;
+}
+
+// 시간복잡도와 자료구조 생각한 후 구현할 것.

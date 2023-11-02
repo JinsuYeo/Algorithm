@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+const int MAX = 1001;
+
+int T, M, idx;
+vector<int> V;
+vector<pair<int, vector<int>>> dp(MAX);
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> T;
+    vector<int> arr(T+1);
+    for (int i{1}; i <= T; i++)
+        cin >> arr[i];
+    
+    
+    dp[1] = {1,{arr[1]}};
+    M = 1;
+    V = {arr[1]};
+    for (int i{1}; i < T+1; i++) {
+        int result{};
+        vector<int> temp;
+        for (int j{1}; j < i; j++) {
+            if (arr[i] > arr[j]) {
+                result = max(result, dp[j].first + 1);
+                if(result == dp[j].first + 1) {
+                    temp = dp[j].second;
+                    temp.push_back(arr[i]);
+                }
+            }
+        }
+        if (!result) {
+            dp[i] = {1,{arr[i]}};
+        } else {
+            dp[i] = {result, temp};
+        }
+        if(result >= M) {
+            M = result;
+            V = temp;
+        }
+    }
+    
+    cout << M << '\n';
+    for (auto e: V) {
+        cout << e << " ";
+    }
+    
+    return 0;
+}
+
+
+// DP 연습 백준 14002번 가장 긴 증가하는 부분 수열 4
+
+// DP[i] = arr[j](== arr[1 ~ i-1])중 arr[i]보다 작은 수 찾고, 그 중 DP[j]가 가장 큰 것 찾아 DP[i] = DP[j]+1로 해줌. 반복해서 가장 큰 값 과 부분 수열 출력.
+// -> pair로 최대 길이와 부분수열을 int, vector<int>로 각각 저장.
+// 이 후 코딩하면서 예외나 생각하지 못했던 것들 구현해서 정답처리됨. 처음 시작할 때, 가장 긴 증가하는 부분 수열 1 풀었던 것 보고 힌트 얻음. 확실히 하루에 여러문제 풀 때보다 실력 느는게 더딘 듯. + 좀 까먹는 느낌임.

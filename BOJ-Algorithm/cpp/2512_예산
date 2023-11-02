@@ -1,0 +1,51 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+long long N, M;
+long long budget[10000];
+
+int main() {
+    
+    cin >> N;
+    
+    long long t = 0;
+    
+    for(int i = 0; i < N; i++) {
+        cin >> budget[i];
+        t = max(budget[i], t);
+    }
+    
+    cin >> M;
+    
+    long long minValue = 0;
+    long long maxValue = M;
+    
+    long long ans = 0;
+    
+    
+    while(minValue <= maxValue) {
+        long long mid = (minValue + maxValue) / 2;
+        long long sum = 0;
+                        
+        for(int i = 0; i < N; i++){
+            if(mid > budget[i]) sum += budget[i];
+            else sum += mid;
+        }
+        
+        if(sum <= M) {
+            minValue = mid + 1;
+            ans = max(ans, mid);
+        } else {
+            maxValue = mid - 1;
+        }
+    }
+    
+    if(ans > t) ans = t;
+    cout << ans;
+    
+    return 0;
+}
+
+// 초기 조건 확인 잘할 것.

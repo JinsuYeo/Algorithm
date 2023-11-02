@@ -1,0 +1,118 @@
+#include <iostream>
+#include <queue>
+#include <algorithm>
+
+#define APPLE -1
+#define EMPTY 0
+#define UP 1
+#define LEFT 2
+#define DOWN 3
+#define RIGHT 4
+#define WALL 5
+#define DUMMY -2
+
+using namespace std;
+
+struct body {
+    int x, y;
+};
+
+struct rotation {
+    int dir;
+    int count;
+};
+
+body head = {1, 1};
+body tail = {1, 1};
+int dirX[] = {DUMMY, -1, 0, 1, 0};
+int dirY[] = {DUMMY, 0, -1, 0, 1};
+
+int map[102][102];
+queue<rotation> q;
+
+int N, K, L;
+int c = 0;
+
+void move() {
+    while (!q.empty()) {
+        c++;
+        int curDir = q.front().dir;
+        if(c > q.front().count) {
+            q.pop();
+            curDir = q.front().dir;
+            map[head.x][head.y] = curDir;
+        }
+        
+        head.x += dirX[curDir];
+        head.y += dirY[curDir];
+        
+        if (map[head.x][head.y] != APPLE && map[head.x][head.y] != EMPTY) {
+            cout << c;
+            exit(0);
+        }
+        
+        if (map[head.x][head.y] == EMPTY) {
+            int tailDir = map[tail.x][tail.y];
+            map[tail.x][tail.y] = EMPTY;
+            tail.x += dirX[tailDir];
+            tail.y += dirY[tailDir];
+        }
+        
+        map[head.x][head.y] = curDir;
+    }
+}
+
+void snake() {
+    move();
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N >> K;
+    
+    for (int i = 0; i < K; i++) {
+        int r, c;
+        cin >> r >> c;
+        map[r][c] = APPLE;
+    }
+    
+    map[1][1] = RIGHT;
+    for (int i = 0; i <= N+1; i++) {
+        for (int j = 0; j <= N+1; j++) {
+            if(i == 0 || i == N+1) map[i][j] = WALL;
+            if(j == 0 || j == N+1) map[i][j] = WALL;
+        }
+    }
+    
+    cin >> L;
+    int dir = RIGHT;
+    int count = 0;
+    for (int i = 0; i < L; i++) {
+        char rot;
+        cin >> count;
+        q.push({dir, count});
+        cin >> rot;
+        if (rot == 'L') {
+            dir = dir+1 <= 4 ? dir+1 : dir - 3;
+        }
+        if (rot == 'D') {
+            dir = dir-1 >= 1 ? dir-1 : dir + 3;
+        }
+    }
+    q.push({dir, 10000});
+    
+    snake();
+    
+    return 0;
+}
+
+// 제약조건(콤이나 벽에 부딪치면 종료, 종료 시간 출력)
+// 조건 - 이동 방향 체크, 사과 존재 유무 체크
+// 
+// 반복하며 이동 방향 체크하고(queue 이용해 시간에 따른 방향 저장한 후 시간이 지나면 pop하도록 구현), 머리 이동 시 사과의 유무에 따라 꼬리 유지할지 제거할지 결정.
+// 머리 이동 시 map에 다음 이동 방향을 저장. 꼬리는 map에 저장된 이동 방향을 따라 머리를 따라오도록 구현.
+//
+// 거의 구상한대로 구현했지만 중간에 몇가지 변경 사항 존재했으나 변경 사항이 기존 구상한 코드에 어떤 영향 미치는지 생각 안하고 구현해 디버깅에 시간 오래 걸림. 앞으로는 변경 사항 발생 시 이미 구현한 코드들에 어떤 영향 미치는지 생각할 시간 가진 뒤 이어서 구현할 것.

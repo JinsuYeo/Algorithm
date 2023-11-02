@@ -1,0 +1,35 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+vector<int> v;
+vector<int> res;
+
+int main() {
+    
+    int n;
+    int t;
+    cin >> n;
+    
+    for(int i = 0; i < n; i++) {
+        cin >> t;
+        v.push_back(t);
+    }
+        
+    for(int i = 0; i < v.size(); i++) {
+        if(res.empty() || res.back() < v[i]) {
+            res.push_back(v[i]);
+        } else {
+            *lower_bound(res.begin(), res.end(), v[i]) = v[i];
+        }
+    }
+    
+    cout << res.size();
+    
+    return 0;
+}
+
+// 풀이 방법 생각 못함.
+// LIS 개념 이해.

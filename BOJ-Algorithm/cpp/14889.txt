@@ -1,0 +1,72 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <algorithm>
+
+#define MAX 21
+
+using namespace std;
+
+int N;
+int result = 1 << 30;
+int arr[MAX][MAX];
+bool check[MAX+1];
+
+void dfs(int count, int pos) {
+    if(count == N/2) {
+        int start = 0;
+        int link = 0;
+        
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= N; j++) {
+                if(check[i] && check[j]) start += arr[i][j];
+                if(!check[i] && !check[j]) link += arr[i][j];
+            }
+        }
+        
+        int t = abs(start - link);
+        if (result > t) {
+            result = t;
+        }
+        
+        return;
+    }
+    
+    for (int i = pos; i <= N; i++) {
+        check[i] = true;
+        dfs(count+1, i+1);
+        check[i] = false;
+    }
+    
+    return;
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> N;
+        
+    for (int i = 1; i <= N; i++) {
+        for (int j = 1; j <= N; j++) {
+            cin >> arr[i][j];
+        }
+    }
+    
+    dfs(0, 1);
+    
+    cout << result;
+    
+    return 0;
+}
+
+// 총 N명(항상 짝수), N/2로 나누어 팀 만들어야 함.
+// S(i, j)는 i번 사람과 j번 사람이 같은 팀에 속했을 때 더해지는 능력치 -> i번, j번이 같은 팀인 경우 S(i, j), S(j, i)가 팀에 더해지는 능력치.
+// 이 때 능력치 차이를 최소화 해야 함.
+// -> 브루트포스로 N/2 선택하고(count 변수 만들어 저장 후 체크) 능력치 총합 구한 뒤, 나머지 N/2 구하여 능력치 비교.
+// 모든 경우의 수 행별로 순차적으로 구한 뒤 map 이용해 최소값 갱신하며 저장(map에 i, j값 pair로 저장해 만약 저장되어 있다면 이미 구한 값이므로 다시 구하지 않을 것). -> 틀림. 답보고 풂.
+// 다른 사람 답보니 굳이 pair로 I, j값 한번에 저장할 필요 없었던 듯 + dfs 개념 다시 짚고 넘어가야 할 듯(구현 및 응용).
+// -> DFS로 처리, check 배열로 각 pos가 선택되었는지 체크.
+// x(count)가 N/2가 되지 않았을 경우 DFS(재귀호출, 스택)로 x가 N/2가 될때까지 셈.
+// x(count)가 N/2가 되었을 때, 체크된 pos들은 start, 체크 x된 pos들은 link라고 가정. 각 팀의 능력치 구하여 최솟값 구함.
+ 

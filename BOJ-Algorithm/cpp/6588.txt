@@ -1,0 +1,45 @@
+#include <iostream>
+
+using namespace std;
+
+int arr[1000001];
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+  
+    int n{}, t{1000000};
+    
+    arr[0] = 1;
+    arr[1] = 1;
+    
+    for(int i{2}; i <= t; i++) {
+        for (int j{i*2}; j <= t; j += i) {
+            if(arr[j] == 0) arr[j] = 1;
+        }
+    }
+    
+    while (cin >> n) {
+        if(n == 0) return 0;
+        
+        int a{}, b{};
+        for(int i{2}; i <= n; i++) {
+            if(arr[i] == 0 && arr[n-i] == 0) {
+                a = i;
+                b = n-i;
+                break;
+            }
+        }
+        
+        if(!a) cout << "Goldbach's conjecture is wrong.\n";
+        else {
+            cout << n << " = " << a << " + " << b << "\n";
+        }
+    }
+    
+    return 0;
+}
+
+// 에라토스테네스 체 이용해 소수 찾아놓은 뒤 반복문으로 소수 + 소수가 입력값이 되는 소수 중 소수 - 소수가 가장 큰 값이되는 수 찾아 출력.
+// 처음에 while문 안에 에라토스테네스의 체 구현하는 반복문 넣어서 시간초과로 틀림, 왜 틀렸는 지 찾다가 질문 검색 보고 나서야 알았음. 고친 뒤에도 틀렸는데 출력문 형식(뒤에 "\n" 안붙임) 때문에 틀렸음. 시간 복잡도와 초기 조건, 출력 형식 잘 생각하기. 특히 반복문 쓸 때 주의.

@@ -1,0 +1,40 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+long arr[100000];
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int n{}, max{1}, temp{1}, index{};
+    cin >> n;
+    for(int i{}; i < n; i++) {
+        cin >> arr[i];
+    }
+    
+    sort(arr, arr+n);
+    
+    for(int i{1}; i < n; i++) {
+        if(arr[i] == arr[i-1]){
+            temp++;
+            if(max < temp) {
+                max = temp;
+                index = i;
+            }
+        }
+        else {
+            temp = 1;
+        }
+    }
+    
+    cout << arr[index] <<"\n";
+    
+    return 0;
+}
+
+// 시간 제한 1초이므로 O(n^2)의 시간복잡도 갖는 알고리즘 사용 불가(입력 개수 100000, 숫자 크기 2^-32~2^32 라서 계수 정렬도 안됨). 이중 배열이나 이중 루프 사용x.
+// sort로 정렬한 후 붙어있는 값이 같으면 temp++하는 식으로 개수 세서 max값과 비교후 크면 max = temp로 최대개수 바꿔주고 index를 저장. 반복 후 마지막에 arr[index]로 가장 많이 가진 정수를 출력함.

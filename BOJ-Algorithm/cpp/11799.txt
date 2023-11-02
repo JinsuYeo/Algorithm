@@ -1,0 +1,34 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+
+using namespace std;
+    
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    string s;
+    cin >> s;
+    int count{}, result{};
+    
+    for(int i{}; i < s.length(); i++) {
+        if(s.at(i) == '(' && s.at(i+1) != ')') {
+            count++;
+            result++;
+        } else if(s.at(i) == '(' && s.at(i+1) == ')') {
+            result += count;
+        } else if(s.at(i) == ')' && s.length() != 0 && s.at(i-1) != '(') count--;
+    }
+    
+    cout << result << "\n";
+    
+    return 0;
+}
+
+// ()가 들어올 때('('다음 순서가 ')'이 아닌 '('의 개수) 까지 개수를 세고 결과 값도 1씩 더해줌(count++, result++ -> 자르기면 왼쪽 오른쪽으로 나뉘어서 2배가 됨. 자르기 존까지 개수 센 후 결과에 더해 주고 자르고 나서 count를 한번 더해주면 잘랐을 때 막대의 개수가 됨).
+// '()'가 들어오면(')'의 전 순서가 '('일 때) 지금까지 센 '('의 개수를 결과에 더해줌.
+// ')'가 들어오면(전 순서가 '('가 아닌) 지금까지 센 '('개수 -1해줌(막대의 중첩 개수 하나 줄어듦).
+// 규칙 알고리즘으로 구현하니 풀림. 그런데 스택 연습문제라 스택으로 구현했으면 더 좋았을 듯(count++ 대신 스택에 push해주고 size를 result에 더해주는 식으로). 그래도 정답처리 됨. + 이렇게 말고('()'아닌 '('들어올 때 count와 result에 +1씩 해주는게 아니라)  '()'아닌 ')' 들어올 떄 result++ 해줄 수도 있음(닫혀서 잘린 막대).

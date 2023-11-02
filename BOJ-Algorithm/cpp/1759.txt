@@ -1,0 +1,65 @@
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int L, C;
+string s;
+vector<char> v;
+bool isVowel[16];
+void dfs(int size, int index, int vowel, int consonant){
+    if (size == L && vowel >= 1 && consonant >= 2) {
+        cout << s << '\n';
+        return;
+    }
+    
+    for (int i{index}; i < C; i++) {
+        s += v[i];
+        if(isVowel[i]) {
+            dfs(size+1, i+1, vowel+1, consonant);
+        } else {
+            dfs(size+1, i+1, vowel, consonant+1);
+        }
+        s.pop_back();
+    }
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> L >> C;
+    for (int i{}; i < C; i++) {
+        char t;
+        cin >> t;
+        v.push_back(t);
+    }
+    
+    sort(v.begin(), v.end());
+    
+    for (int i{}; i < C; i++) {
+        int t = v[i];
+        if (t == 'a' || t == 'e' || t == 'i' || t == 'o' || t == 'u') {
+            isVowel[i] = true;
+        }
+    }
+    
+    dfs(0, 0, 0, 0);
+
+    return 0;
+}
+
+// 알파벳 C개가 입력되고 그 알파벳들로 서로 다른 L개의 알파벳 소문자들로 암호 구성.
+// 암호는 사전 순으로 정렬되어야 함.
+
+// 알파벳을 순서대로 L개 출력.
+// 벡터로 입력받아서 정렬한 뒤 L-1개 선택하고 남은 것 중 하나 선택해서 출력, L-2개 선택하고 남은 것 중 두개 선택해서 출력 ... 반복해야 한다는 건 알겠는데  구현을 어떻게 해야할 지 몰라 다른 사람 코드 보고 풂.
+// 전에 비슷한 문제 푼 적이 있는데 그때도 똑같이 푸는 방법은 알겠는데 구현을 어떻게 해야할 지 몰라 다른 사람 코드 보고 풀었었음.
+// 일단 L-1개 선택하고 남은 것 중1개 처럼 생각하는게 아니라 재귀적으로, 점화식 처럼 생각할 필요 있음. -> 정렬된 벡터에서 하나 고르고 그 다음 남은 것 중 하나 고르고 또 남은 것 중 하나고르고 ... 총 L의 길이 가질 때까지.
+// 완전 탐색은 항상 재귀함수, 특히 DFS or BFS로 풀 수있는지 생각해 볼 것.
+
+// 이번 문제는 DFS 생각하긴 했는데 재귀식 생각을 잘 못한 경우인 듯.
+
+// 이런 문제 다시 나오면 첫째로 입력 값의 배열 하나, 재귀함수 진행하며 저장할 배열 하나, check 용 배열 하나 만들 것. + 점화식 세울 것. 작은 쪽부터큰 쪽으로.

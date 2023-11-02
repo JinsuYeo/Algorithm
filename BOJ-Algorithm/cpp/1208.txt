@@ -1,0 +1,93 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N, S;
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N >> S;
+    vector<int> v(N);
+    for (int i{}; i < N; i++) {
+        cin >> v[i];
+    }
+    
+    int half {N/2};
+    
+    vector<int> first(1 << (N-half));
+    for (int i{}; i < 1 << (N-half); i++) {
+        for (int j{}; j < (N-half); j++) {
+            if (i & (1 << j)) {
+                first[i] += v[j];
+            }
+        }
+    }
+    
+    vector<int> second(1 << half);
+    for (int i{}; i < 1 << half; i++) {
+        for (int j{}; j < half; j++) {
+            if (i & (1 << j)) {
+                second[i] += v[j+(N-half)];
+            }
+        }
+    }
+    
+    sort(first.begin(), first.end());
+    sort(second.begin(), second.end(), greater<int>());
+    
+    int i1{}, i2{};
+    long long result{};
+    while (i1 < 1 << (N-half) && i2 < 1 << half) {
+        int sum = first[i1] + second[i2];
+        if (sum == S) {
+            long long cnt1 = 1, cnt2 = 1;
+            i1++;
+            i2++;
+            while (i1 < 1 << (N-half) && first[i1] == first[i1 - 1]) {
+                i1++;
+                cnt1++;
+            }
+            while (i2 < 1 << half && second[i2] == second[i2 - 1]) {
+                i2++;
+                cnt2++;
+            }
+            result += cnt1 * cnt2;
+        } else if(sum < S) {
+            i1++;
+        } else if(sum > S) {
+            i2++;
+        }
+    }
+    
+    if (S == 0) {
+        result--;
+    }
+    
+    cout << result << "\n";
+    
+    return 0;
+}
+
+// 부분수열 중 그 원소의 합이 S가 되는 경우의 수 구하기.
+// 입력 개수 N(1~40), S(-1000000~1000000).
+// dfs 사용하기에는 경우의 수가 너무 큼(40!).
+
+// 아마 정답이 따로 있는 문제인 것 같아서 바로 다른 사람 코드 보고 풂.
+
+// -> 배열을 두개로 나누어서 모든 부분집합의 합을 비트 마스킹 이용해 미리 전처리한 후 투 포인터 알고리즘 적용해야 하는 문제라고 함.
+
+// 참조)https://jaimemin.tistory.com/1107
+
+// 비트마스킹으로 부분집합의 합 구하는 부분이 이해 어려워서 한참 생각했음.
+// + 참고) [알고리즘_개념] 비트마스크 연산, 부분집합의 표현
+// https://selina-park.tistory.com/103
+
+// 마지막에 S가 0인 경우 1개 빼주는 것은 부분집합이 공집합의 경우를 빼주는 것(크기가 양수인 부분수열만 고려해야 함).
+
+// + bitset include 해서 bitset<32>()로 이진법으로 수 변환 가능(8진법과 16진법은 std::oct, std::hex).
+
+// 아마 비슷한 문제 나와도 구현하기 쉽지 않을 듯. 코드보며 이해하고, 따라치기만 해도 시간 엄청 오래걸림. 비슷한 문제 나오면 최대한 고민하면서 짜보면서 익숙해질 것.

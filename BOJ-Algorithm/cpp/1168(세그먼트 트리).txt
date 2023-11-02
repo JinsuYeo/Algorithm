@@ -1,0 +1,69 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int seg[2000000];
+
+int init(int node, int start, int end) {
+    if(start == end) return seg[node] = 1;
+    int mid = (start + end) / 2;
+    return seg[node] = init(node * 2, start, mid) + init(node*2 + 1, mid + 1, end);
+}
+
+int update(int node, int start, int end, int order) {
+    seg[node]--;
+    if(start == end) return 0;
+    else {
+        int mid = (start + end) / 2;
+        if(order <= mid) return update(2 * node, start, mid, order);
+        else return update(2 * node + 1, mid + 1, end, order);
+    }
+}
+
+int query(int node, int start, int end, int order) {
+    if (start == end) return start;
+    int mid = (start + end) / 2;
+    if(order <= seg[2 * node]) return query(2 * node, start, mid, order);
+    else return query(2 * node + 1, mid + 1, end, order - seg[2 * node]);
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int n{}, k{};
+    cin >> n >> k;
+    
+    init(1, 1, n);
+    
+    int index = 1;
+    
+    cout << "<";
+    
+    for(int i{}; i < n; i++) {
+        int size = n - i;
+        index += k - 1;
+        
+        if(index%size == 0) index = size;
+        else if(index > size) index %= size;
+        
+        int num = query(1, 1, n, index);
+        
+        update(1, 1, n, num);
+        
+        if (i == n-1) cout << num << ">";
+        else cout << num << ", ";
+    }
+    
+    
+    return 0;
+}
+
+// 요세푸스 문제를 큐가 아닌 세그먼트 트리를 이용해 구현해야 하는 문제(시간 제한이 0.15초).
+// 세그먼트 트리 공부하고 다른 사람 코드를 보고 풀었지만 거의 베끼다 싶이 하고왜 코드를 이렇게 짰는지는 이해할 수 있지만 직접 구현해서 풀라고 하면 못할 것 같음. 구현도 어렵고 생각해야 할 것이 너무 많은 느낌. 아직 이런 문제를 풀 레벨은 아닌 것 같음. 자료구조와 알고리즘 구현에 좀 더 익숫해지고 다시 풀어볼 것.
+// 세그먼트 트리는 여러개의 데이터가 연속적으로 존재할 때, 특정한 범위의 데이터 합을 구하는 방법임. -> 데이터 합을 가장 빠르고 간단하게 구할 수 있는 자료구조임(이런 문제에 세그먼트 트리를 써야겠다고 생각 잘 못할 것 같음).
+// O(logN)의 시간 복잡도 가짐. 보통 재귀적으로 구현됨.
+// https://m.blog.naver.com/ndb796/221282210534 세그먼트 트리
+// https://cocoon1787.tistory.com/433 문제 푸는 법

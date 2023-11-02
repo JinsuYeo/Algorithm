@@ -1,0 +1,71 @@
+#include <iostream>
+
+using namespace std;
+
+int arr[1000001];
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+  
+    int a{}, b{};
+    cin >> a >> b;
+    
+    arr[0] = 1;
+    arr[1] = 1;
+    
+    for(int i{2}; i <= b; i++) {
+        for(int j{i*2}; j <= b; j += i) {
+            if(arr[j] == 0) arr[j] = 1;
+        }
+    }
+    
+    for(int i{a}; i <= b; i++) {
+        if(arr[i] == 0) cout << i << "\n";
+    }
+    
+    return 0;
+}
+
+// 처음에 그냥 이중 반복문으로 n%(1~n-1) == 0으로 소수 찾으려 했는데 시간 초과가 떠서, 벡터에 소수만 찾아 집어넣고(i < v.size(), n%소수 == 0) 벡터안의 소수만 이용해 다음 소수 찾으려 했는데도 시간 초과가 났음. -> 입력값 제한인 1000000 * 소수 개수가 2억보다 큰 듯. 결국 에라토스테네스의 체를 이용하는 문제인 것 보고 그 개념이랑 다른 사람 코드보고 풀었음.
+// 에라토스테네스의 체는 소수의 배수를 모두 지운 뒤 남은 수가 소수인 것을 이용해 소수 찾는 방법으로 내가 사용한 방법은 소수만 이용해서 시간 복잡도가 훨씬 높았을 것 같음.
+// ex) 0, 1은 소수 x, 2는 소수이므로 남겨두고 배수를 모두 지움, 3은 소수이므로 남겨두고 배수 모두 지움...을 n까지 반복. 구현 방법도 어려웠는데 아마 다른 사람 코드를 보지 않았으면 구현 힘들었을 것 같음.
+// -> 배열에 0과 1은 1로 초기화(소수 x이기 때문. 이것 처리 안해서 틀렸었음). 이중 반복문으로 2~n까지  반복하면서 i 포함하지 않는 i의 배수(2와 3, 5...처럼 처음 나오는 수(제거되지 않은 수) 제외하고 그 배수들만 처리, j = i*2, j <= n, j += i 로 구현)들 1 할당해주고 반복 끝난 뒤 0이 들어간 자리의 인덱스만 출력해줘서 구현 가능.
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+#define MAX 1000001
+
+using namespace std;
+
+int a, b;
+int arr[1000001];
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    for(int i = 2; i <= MAX; i++) {
+        arr[i] = i;
+    }
+    
+    for(int i = 2; i <= MAX; i++) {
+        if(arr[i] == 0) continue;
+        for (int j = i*2; j <= MAX; j+=i) {
+            arr[j] = 0;
+        }
+    }
+    
+    cin >> a >> b;
+    
+    for (int i = a; i <= b; i++) {
+        if(arr[i]) cout << arr[i] << '\n';
+    }
+        
+    return 0;
+}
+
+// 에라토스테네스의 체 알고리즘 이용해 해결.

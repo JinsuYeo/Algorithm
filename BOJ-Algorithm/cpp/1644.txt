@@ -1,0 +1,65 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cstring>
+
+using namespace std;
+
+const int MAX{4000001};
+
+int N, result;
+bool num[MAX];
+vector<int> prime;
+
+void tp(){
+    int low{}, high{};
+    int n = (int)prime.size();
+    int sum{2};
+    
+    while (low <= high && high < n) {
+        if (sum < N) {
+            sum += prime[++high];
+        } else if(sum == N) {
+            result++;
+            sum += prime[++high];
+        } else if(sum > N) {
+            sum -= prime[low++];
+            if (low > high) {
+                high = low;
+            }
+        }
+    }
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+        
+    cin >> N;
+
+    memset(num, 1, N+1);
+    
+    num[0] = false;
+    num[1] = false;
+    for (int i{2}; i <= N; i++) {
+        if (num[i] == 0) continue;
+        for (int j{i+i}; j <= N; j+=i) {
+            num[j] = false;
+        }
+    }
+    
+    for (int i{}; i <= N; i++) {
+        if (num[i]) prime.push_back(i);
+    }
+    
+    tp();
+    
+    cout << result << '\n';
+    
+    return 0;
+}
+
+// 에라토스테네스의 체와 투 포인터 이용.
+// 소수들의 벡터 만든 뒤, 투 포인터로 구간합 구하면서 목표와 같은 값 가질 때 count++.
+
+// 계속 런타임 오류(out of bound) 나길래 이것 저것 고쳐보다 결국 안돼서 반례 찾아보니 1이 들어올 때 벡터에 아무것도 들어있지 않은데 prime[0]으로 참조해서 그런 것이었음. 어차피 prime[0]은 2이니 sum의 초기값을 2로 바꿔서 맞음. -> 계속 틀리면 첫번째 값이랑 마지막 값 정도는 체크해볼 것. 마지막 값인 4000000만 계속 체크했는데 결국 1이 반례였음.

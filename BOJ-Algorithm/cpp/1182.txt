@@ -1,0 +1,95 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int N, S;
+vector<int> v;
+int cnt;
+
+void dfs(int idx, int cur){
+    if (cur == S && idx > -1) {
+        cnt++;
+    }
+    
+    for (int i{idx+1}; i < N; i++) {
+        int next = cur + v.at(i);
+        dfs(i, next);
+    }
+    return;
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N >> S;
+    for (int i{}; i < N; i++) {
+        int t{};
+        cin >> t;
+        v.push_back(t);
+    }
+
+    dfs(-1, 0);
+    
+    cout << cnt << '\n';
+    
+    return 0;
+}
+
+// 재귀 함수로 N개의 수 중 1~N개 선택해서 더하는 모든 경우 체크해서 더한 결과가 S가 나오면 count++해서 결과를 저장한 뒤, 재귀 함수 종료 후 count를 출력.
+// 예제 입력 1개라 예외 찾기 힘들었음. 마지막으로는 질문 검색에서 반례 찾아봄.
+// -> S가 0인 경우 재귀 함수의 count 조건인 cur == S가 무조건 한번 실행됨. index를 -1부터 시작하고 그 경우 제외해 해결.
+// -> cur ==  S인 경우 count++하고 리턴해서 틀림. 더한 결과가 S라도 그 뒤에 더 더해도 S 나올 수 있음.
+// + 몇가지 인자로 전달하는 값을 잘못 설정하는 실수 등.
+// 고쳐서 정답 처리 됨.
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <string>
+#include <algorithm>
+#include <sstream>
+
+using namespace std;
+
+int N;
+int S;
+int c;
+vector<int> seq;
+
+void bf(int idx, int sum) {
+    if(sum == S && !(idx == 0 && S == 0)) {
+        c++;
+    }
+    
+    for(int i = idx; i < N; i++) {
+        bf(i+1, sum+seq[i]);
+    }
+    return;
+}
+
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N >> S;
+    
+    for (int i = 0; i < N; i++) {
+        int t;
+        cin >> t;
+        seq.push_back(t);
+    }
+    
+    bf(0, 0);
+    
+    cout << c;
+    
+    return 0;
+}
+
+// 완전 탐색으로 구현 가능(N <= 20) + |S| <= 1000000 이므로 int형 사용 가능.
+// -> 틀림 -> long long으로 궇현해봐도 틀림.
+
+// 예외(S가 0인 경우 처리 필요)가 있었음. 예외 처리해주니 통과.

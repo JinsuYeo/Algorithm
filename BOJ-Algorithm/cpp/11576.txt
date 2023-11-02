@@ -1,0 +1,43 @@
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <vector>
+
+
+using namespace std;
+   
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int a{}, b{}, n{}, sum{};
+    vector<int> v;
+    vector<int> result;
+    cin >> a >> b >> n;
+    for(int i{}; i < n; i++) {
+        int t{};
+        cin >> t;
+        v.push_back(t);
+    }
+    reverse(v.begin(), v.end());
+    
+    for(int i{}; i < n; i++) {
+        sum += v.at(i) * pow(a, i);
+    }
+    
+    while(sum != 0) {
+        result.push_back(sum%b);
+        sum /= b;
+    }
+    
+    reverse(result.begin(), result.end());
+    for(auto r: result) {
+            cout << r << " ";
+    }
+    cout << "\n";
+    
+    return 0;
+}
+
+// A진법을 a, B진법을 b, 자릿수를 n, 각 자리 별 값을 vector v로 저장. a^(n-1) * v.at(n-1) + a^(n-2) * v.at(n-2) ... a^0 * v.at(0)까지 더해서 sum에 저장(a진법 수를 10진법으로 변환). 그 후 10진법을 b진법으로 변환한 후 " "로 구분해서 출력.

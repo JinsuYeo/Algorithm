@@ -1,0 +1,65 @@
+#include <iostream>
+
+using namespace std;
+    
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int n{}, a{}, b{}, tb{}, ts{}, t{1};
+    cin >> n;
+    for(int i{}; i < n; i++) {
+        t = 1;
+        cin >> a >> b;
+        
+        if(a == b) {
+            cout << a <<"\n";
+            continue;
+        }
+        
+        ts = a < b ? a : b;
+        tb = a > b ? a : b;
+
+        while((tb*t)%ts) {
+            t++;
+        }
+        
+        cout << tb*t << "\n";
+    }
+    
+    return 0;
+}
+
+// 반복문에서 t값을 초기화 안해주어서 계속 틀렸음. 반복문에서 초기화나 예외 처리같은 것 신경쓸 것.
+
+// # 유클리드 호제법 이용
+#include <iostream>
+
+using namespace std;
+    
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    int n{}, a{}, b{};
+    cin >> n;
+    for(int i{}; i < n; i++) {
+        int gcf{}, lcm{}, t{}, at{}, bt{};
+        cin >> a >> b;
+        t = a % b;
+        at = a;
+        bt = b;
+        while(t != 0) {
+            at = bt;
+            bt = t;
+            t = at % bt;
+        }
+        gcf = bt;
+        lcm = (a*b)/gcf;
+        cout << lcm << "\n";
+    }
+    
+    return 0;
+}

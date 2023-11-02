@@ -1,0 +1,86 @@
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <string>
+
+using namespace std;
+    
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    queue<int> q;
+    int n{}, t{};
+    cin >> n >> t;
+    vector<int> v;
+    
+    for (int i{1}; i <= n; i++) {
+        q.push(i);
+    }
+    
+    while(!q.empty()) {
+        for(int i{}; i < t-1; i++) {
+            int ti{};
+            ti = q.front();
+            q.pop();
+            q.push(ti);
+        }
+        v.push_back(q.front());
+        q.pop();
+    }
+    
+    cout << "<";
+    for(int i{}; i < n - 1; i++) {
+        cout << v.at(i) << ", ";
+    }
+    cout << v.back() << ">" << "\n";
+        
+    return 0;
+}
+
+// 큐 자료구조 이용해 구현.
+// 원래 그냥 배열로 구현하려 했으나 큐 관련 문제인 것을 보고 큐로 구현. 배열로 풀려고 했다면 삽입, 삭제가 어려워 힘들었을 것 같음. 연결 리스트로는 가능할 듯. 이제 어떤 자료구조 사용할 지도 생각할 필요 있을 듯.
+// n과 t에 각각 사람 수, 몇번 째 사람을 제거할 것인지 입력받고, 반복문으로 큐를 1~n 들어가게 초기화.
+// 1~t-1까지 순서대로 큐위 뒤에 다시 넣어주고 t번 째 수 출력하고 삭제. 과정 반복하여 문제 풀었음.
+// + 원을 가정하는 문제(첫번 째 요소와 맨 마지막 요소가 연결된 상황을 가정하는 문제에는 큐 사용하면 될 듯)
+
+
+#include <iostream>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+int N, K;
+string s = "<";
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    cin >> N >> K;
+    
+    queue<int> q;
+    for (int i{1}; i < N+1; i++) {
+        q.push(i);
+    }
+    
+    while (!q.empty()) {
+        for (int i{}; i < K-1; i++) {
+            int temp = q.front();
+            q.pop();
+            q.push(temp);
+        }
+        int temp = q.front();
+        q.pop();
+        if (!q.empty()) {
+            s += to_string(temp)+ ", ";
+        } else s += to_string(temp);
+    }
+    
+    cout << s << ">";
+    
+    return 0;
+}
+
+// 
