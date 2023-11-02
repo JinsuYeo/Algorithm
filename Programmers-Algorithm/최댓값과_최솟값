@@ -1,0 +1,19 @@
+class Solution {
+    public String solution(String s) {
+        
+        String[] nums = s.split(" ");
+        
+        int min, max;
+        min = max = Integer.parseInt(nums[0]);
+        
+        for(String num : nums) {
+            int n = Integer.parseInt(num);
+            if(n < min) min = n;
+            if(n > max) max = n;
+        }
+        
+        return min + " " + max;
+    }
+}
+
+// Integer.parseInt() 메서드는 인자로 String이 들어가고(char 안됨) "-1" 과 같은 문자열도 (int)-1로 변환해준다.

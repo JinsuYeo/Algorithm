@@ -1,0 +1,30 @@
+import java.util.Stack;
+
+class Solution {
+    boolean solution(String s) {
+        boolean answer = true;
+
+        Stack<Character> st = new Stack<>();
+        for (int i = 0; i < s.length(); i++) {
+            char cur = s.charAt(i);
+
+            if (cur == '(') {
+                st.push(cur);
+                continue;
+            }
+            if (cur == ')' && st.empty()) {
+                return false;
+            } else {
+                st.pop();
+            }
+        }
+
+        if(!st.empty()) answer = false;
+
+        return answer;
+    }
+}
+
+// Java Stack
+// 처음에 시간 초과 때문에 고민하다가 조건문의 개수를 if else문을 통해 줄여 연산 횟수가 줄어서 통과했음.
+// 최근 객체 지향 원칙 때문에 if else문 사용을 피했는데 연산 횟수나 효율에 대해서도 생각하며 풀어야 할 듯.

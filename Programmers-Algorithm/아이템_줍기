@@ -1,0 +1,87 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <math.h>
+
+#define WALL -1
+#define ROAD 1
+#define ITEM 2
+
+using namespace std;
+
+int answer = 1 << 30;
+int t = 0;
+
+int map[105][105];
+bool visited[105][105];
+
+int dirX[4] = {-1, 1, 0, 0};
+int dirY[4] = {0, 0, -1, 1};
+
+void init() {
+    for(int i = 0; i <= 52; i++) {
+        for(int j = 0; j <= 52; j++) {
+            visited[i][j] = false;
+        }
+    }
+}
+
+void draw(int x1, int y1, int x2, int y2) {
+    for(int i = y1; i <= y2; i++) {
+        for(int j = x1; j <= x2; j++) {
+            if(map[i][j] == WALL) continue;
+            if(i == y1 || i == y2 || j == x1 || j == x2) {
+                map[i][j] = ROAD;
+            } else {
+                map[i][j] = WALL;
+            }
+        }
+    }
+}
+
+void dfs(int X, int Y, int length) {
+    if(map[X][Y] == ITEM) {
+        answer = min(answer, length);
+        return;
+    }
+    
+    for(int i = 0; i < 4; i++) {
+        int x = X + dirX[i];
+        int y = Y + dirY[i];
+        
+        if(map[x][y] == ROAD || map[x][y] == ITEM) {
+            if(visited[x][y]) continue;
+            visited[x][y] = true;
+            dfs(x, y, length+1);
+            visited[x][y] = false;
+        }
+    }
+    
+}
+
+int solution(vector<vector<int>> rectangle, int characterX, int characterY, int itemX, int itemY) {
+    
+    for(int i = 0; i < rectangle.size(); i++) {
+        draw(rectangle[i][0]*2, rectangle[i][1]*2, rectangle[i][2]*2, rectangle[i][3]*2);
+    }
+    
+    map[itemY*2][itemX*2] = ITEM;
+    
+    for(int i = 0; i < 4; i++) {
+        
+        int x = characterY*2 + dirX[i];
+        int y = characterX*2 + dirY[i];
+        
+        if(map[x][y] == ROAD || map[x][y] == ITEM) {
+            visited[x][y] = true;
+            dfs(x, y, 1);
+            visited[x][y] = false;
+        }
+        init();
+    }
+    
+    return answer/2;
+}
+
+// 바깥쪽 선만 따라갈 수 있는 방법 -> 네모 그리면서 안쪽 채우기.
+// 1칸 간격으로 길이 있을 경우 어느 쪽이 바깥쪽 선인지 알 수 없는 문제 발생 -> 맵 크기 2배로 그려서 해결.

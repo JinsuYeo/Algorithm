@@ -1,0 +1,29 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector<int> gnumber;
+int c = 0;
+int length;
+void bf(int idx, int cnt, int cur) {
+    if(cnt == 3 && cur == 0) {
+        c++;
+        return;
+    }
+    for(int i = idx; i < length; i++) {
+        bf(i+1, cnt+1, cur+gnumber[i]);
+    }
+}
+
+int solution(vector<int> number) {
+    length = number.size();
+    gnumber = number;
+    int answer = 0;
+    
+    bf(0, 0, 0);
+    
+    return c;
+}
+
+// 완전탐색으로 구현
