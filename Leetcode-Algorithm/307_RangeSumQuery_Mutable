@@ -1,0 +1,63 @@
+struct BIT {
+    vector<int> tree;
+
+    void init(int size) {
+        tree.resize(size+1);
+    }
+
+    void add(int pos, int delta) {
+        pos++;
+        while (pos < tree.size()) {
+            tree[pos] += delta;
+            pos += pos & -pos;
+        }
+    }
+
+    int sum(int pos) {
+        int res = 0;
+
+        pos++;
+        while (pos > 0) {
+            res += tree[pos];
+            pos &= pos - 1;
+        }
+
+        return res;
+    }
+
+    int sumRange(int left, int right) {
+        int res = sum(right);
+        if (left > 0) {
+            res -= sum(left-1);
+        }
+        return res;
+    }
+};
+
+class NumArray {
+public:
+
+    BIT bit;
+    vector<int> value;
+
+    NumArray(vector<int>& nums) {
+        bit.init(nums.size());
+        value.resize(nums.size());
+
+        for(int i = 0; i < nums.size(); i++) {
+            bit.add(i, nums[i]);
+            value[i] = nums[i];
+        }
+    }
+    
+    void update(int index, int val) {
+        bit.add(index, val - value[index]);
+        value[index] = val;
+    }
+    
+    int sumRange(int left, int right) {
+        return bit.sumRange(left, right);
+    }
+};
+
+// 값을 변경하는 경우 구간 합 -> 펜윅 트리(Binary indexed tree)로 구현.
