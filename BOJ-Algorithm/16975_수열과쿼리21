@@ -1,0 +1,90 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+struct BIT {
+    vector<long long> tree;
+    
+    void init(long long n) {
+        tree.resize(n*2);
+    }
+    
+    void update(long long pos, long long value) {
+        pos++;
+        
+        while(pos < tree.size()) {
+            tree[pos] += value;
+            pos += pos & -pos;
+        }
+    }
+    
+    long long sum(long long pos) {
+        long long res = 0;
+        
+        pos++;
+        while (pos > 0) {
+            res += tree[pos];
+            pos &= pos - 1;
+        }
+        
+        return res;
+    }
+    
+    long long sumRange(long long left, long long right) {
+        long long res = sum(right);
+        
+        if(left > 0) {
+            res -= sum(left-1);
+        }
+        
+        return res;
+    }
+};
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    long long n, m;
+    BIT bit;
+    vector<long long> value;
+    
+    cin >> n;
+    bit.init(n);
+    value.resize(n);
+    
+    for(long long i = 0; i < n; i++) {
+        long long val;
+        cin >> val;
+        value[i] = val;
+    }
+    
+    cin >> m;
+    
+    for (long long i = 0; i < m; i++) {
+        long long t;
+        cin >> t;
+        if(t == 1) {
+            long long i, j, k;
+            cin >> i >> j >> k;
+            
+            bit.update(i-1, k);
+            bit.update(j, -k);
+            
+        } else {
+            long long x;
+            cin >> x;
+            
+            cout << value[x-1] + bit.sum(x-1) << '\n';
+        }
+    }
+    
+    return 0;
+}
+
+// 펜윅 트리 사용해 구현.
+// 구간 합 + 점 쿼리
+// 참고: https://kangwlgns.tistory.com/8
