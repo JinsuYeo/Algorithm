@@ -1,0 +1,106 @@
+class Solution {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+
+        vector<vector<int>> res;
+
+        int n = nums.size();
+
+        for (int i = 0; i < (1 << n); i++) {
+            vector<int> v;
+            for (int j = 0; j < n; j++) {
+                if (i & (1 << j)) v.push_back(nums[j]);
+            }
+            res.push_back(v);
+        }
+
+        return res;
+    }
+};
+
+// bit를 이용해 구현.
+
+class Solution {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+
+        vector<vector<int>> res;
+
+        int n = nums.size();
+
+        for (int i = 0; i < (1 << n); i++) {
+            vector<int> v;
+            for (int j = 0, k = i; k; j++, k >>= 1) {
+                if (k & 1) v.push_back(nums[j]);
+            }
+            res.push_back(v);
+        }
+
+        return res;
+    }
+};
+
+// bit 이용 방법 효율 조금 증가시켜 구현.
+
+class Solution {
+public:
+
+    void rec(vector<vector<int>>& res, const vector<int>& nums, vector<int>& v, int depth) {
+        if (depth >= nums.size()) {
+            res.push_back(v);
+            return;
+        }
+
+        rec(res, nums, v, depth+1);
+        v.push_back(nums[depth]);
+        rec(res, nums, v, depth+1);
+        v.pop_back();
+    }
+
+    vector<vector<int>> subsets(vector<int>& nums) {
+
+        vector<vector<int>> res;
+        vector<int> v;
+        int n = nums.size();
+
+        rec(res, nums, v, 0);
+
+        return res;
+    }
+};
+
+// Recursive call(backtracking) 이용해 구현.
+
+class Solution {
+public:
+
+    void rec(vector<vector<int>>& res, const vector<int>& nums, vector<int>& v, int depth) {
+        if (depth >= nums.size()) {
+            res.push_back(v);
+            return;
+        }
+
+        res.push_back(v);
+
+        for (int i = depth; i < nums.size(); i++) {
+            v.push_back(nums[i]);
+            rec(res, nums, v, i+1);
+            v.pop_back(); 
+        }
+    }
+
+    vector<vector<int>> subsets(vector<int>& nums) {
+
+        vector<vector<int>> res;
+        vector<int> v;
+        int n = nums.size();
+
+        rec(res, nums, v, 0);
+
+        return res;
+    }
+};
+
+// 개선된 Recursive call 방법으로 구현.
+
+
