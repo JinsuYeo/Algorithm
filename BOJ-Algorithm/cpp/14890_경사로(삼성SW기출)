@@ -1,0 +1,174 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int res = 0;
+vector<int> r;
+
+void travel(const vector<vector<int>> map, int l) {
+    
+    for (int i = 0; i < map.size(); i++) {
+        
+        int curL = 1;
+        int preV = map[i][0];
+        
+        for (int j = 1; j < map[i].size(); j++) {
+            
+            if (map[i][j] == preV + 1) {
+                if (curL >= l) {
+                    curL = 1;
+                    preV = map[i][j];
+                    if (j == map[i].size()-1) {
+                        res++;
+                        r.push_back(j);
+                        break;
+                    }
+                    continue;
+                } else {
+                    break;
+                }
+            }
+            
+            if (map[i][j] == preV-1) {
+                bool flag = false;
+                for (int k = 1; k < l; k++) {
+                    if(j+k >= map.size()) {
+                        flag = true;
+                        break;
+                    }
+                    if(map[i][j+k] != map[i][j]) flag = true;
+                }
+                if (flag) {
+                    break;
+                } else {
+                    curL = -l+1;
+                    preV = map[i][j];
+                }
+                if (j == map[i].size()-1) {
+                    res++;
+                    r.push_back(j);
+                    break;
+                }
+                continue;
+            }
+            
+            
+            if (map[i][j] > preV+1 || map[i][j] < preV-1) {
+                break;
+            }
+            
+            if (j == map[i].size()-1) {
+                res++;
+                r.push_back(i);
+                break;
+            }
+           
+            
+            if(map[i][j] == preV) {
+                curL++;
+                continue;
+            }
+            
+           
+        }
+    }
+    
+    for (int j = 0; j < map.size(); j++) {
+        
+        int curL = 1;
+        int preV = map[0][j];
+        
+        for (int i = 1; i < map[j].size(); i++) {
+            
+            if (map[i][j] == preV + 1) {
+                if (curL >= l) {
+                    curL = 1;
+                    preV = map[i][j];
+                    if (i == map[i].size()-1) {
+                        res++;
+                        r.push_back(j);
+                        break;
+                    }
+                    continue;
+                } else {
+                    break;
+                }
+            }
+            
+            if (map[i][j] == preV-1) {
+                bool flag = false;
+                for (int k = 1; k < l; k++) {
+                    if(i+k >= map.size()) {
+                        flag = true;
+                        break;
+                    }
+                    if(map[i+k][j] != map[i][j]) flag = true;
+                }
+                if (flag) {
+                    break;
+                } else {
+                    curL = -l+1;
+                    preV = map[i][j];
+                }
+                if (i == map[i].size()-1) {
+                    res++;
+                    r.push_back(j);
+                    break;
+                }
+                continue;
+            }
+            
+            if (map[i][j] > preV+1 || map[i][j] < preV-1) {
+                break;
+            }
+            
+            if (i == map[i].size()-1) {
+                res++;
+                r.push_back(j);
+                break;
+            }
+        
+            
+            if(map[i][j] == preV) {
+                curL++;
+                continue;
+            }
+           
+        }
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    int n, l;
+    cin >> n >> l;
+    
+    vector<vector<int>> map;
+    map.resize(n, vector<int>(n));
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> map[i][j];
+        }
+    }
+    
+    travel(map, l);
+    
+//    for (int i = 0; i < r.size();i++) {
+//        cout << r[i] << " ";
+//    }
+//    cout << '\n';
+    
+    cout << res << '\n';
+    
+    return 0;
+}
+
+// 구현 문제 풀 때 요구 조건과 예외 케이스 모두 고려해서 적어놓은 뒤 풀 것. + 빠르개 구현하는 연습 필요.
+// 대충 구현하고 디버깅하니 시간 너무 오래걸리고 예외 케이스 찾기도 어려움.
+// 어떻게 풀 지 생각한 뒤에는 그 방법으로 풀었을 때 예외 상황이나 발생할 수 있는 문제 생각하고 구현할 것.
