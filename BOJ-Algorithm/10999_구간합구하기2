@@ -1,0 +1,111 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+struct BIT {
+  
+    vector<long long> tree;
+    
+    void init(int n) {
+        tree.resize(n+1);
+    }
+    
+    void add(int pos, long long val) {
+        pos++;
+        
+        while(pos < tree.size()) {
+            tree[pos] += val;
+            pos += pos & -pos;
+        }
+    }
+    
+    long long sum(int pos) {
+        long long res = 0;
+        
+        pos++;
+        while (pos > 0) {
+            res += tree[pos];
+            pos &= pos - 1;
+        }
+        
+        return res;
+    }
+    
+    long long sumRange(int left, int right) {
+        long long res = sum(right);
+        if(left > 0) res -= sum(left-1);
+        return res;
+    }
+};
+
+struct BITRange {
+    
+    BIT mulBIT;
+    BIT addBIT;
+    
+    void init(int n) {
+        mulBIT.init(n);
+        addBIT.init(n);
+    }
+    
+    void add(int x, long long d) {
+        mulBIT.add(x, d);
+        addBIT.add(x, (1-x)*d);
+    }
+    
+    void addRange(int left, int right, long long d) {
+        add(left, d);
+        add(right + 1, -d);
+    }
+    
+    long long sum(int x) {
+        
+        return mulBIT.sum(x)*x + addBIT.sum(x);
+    }
+    
+    long long sumRange(int left, int right) {
+        
+        return sum(right) - sum(left-1);
+    }
+};
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    BITRange bit;
+    BIT sum;
+    int n, m, k;
+    
+    cin >> n >> m >> k;
+    bit.init(n);
+    sum.init(n);
+    
+    for(int i = 0; i < n; i++) {
+        long long t;
+        cin >> t;
+        sum.add(i, t);
+    }
+    
+    for(int i = 0; i < m+k; i++) {
+        int a, b, c;
+        long long d;
+
+        cin >> a;
+        if (a == 1) {
+            cin >> b >> c >> d;
+            bit.addRange(b-1, c-1, d);
+        } else {
+            cin >> b >> c;
+            cout << sum.sumRange(b-1, c-1) + bit.sumRange(b-1, c-1) << '\n';
+        }
+    }
+    
+    return 0;
+}
+
+// 펜윅 트리 2개 사용해 구현.
+// Range Add & Range Sum
