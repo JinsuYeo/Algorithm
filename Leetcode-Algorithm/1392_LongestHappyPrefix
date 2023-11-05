@@ -1,0 +1,26 @@
+class Solution {
+public:
+    vector<int> prefixFunction(const string& s) {
+        vector<int> pi(s.length());
+
+        int j = 0;
+        for(int i = 1; i < s.length(); i++) {
+            while(j > 0 && s[i] != s[j]){
+                j = pi[j-1];
+            }
+
+            if(s[i] == s[j]) j++;
+
+            pi[i] = j;
+        }
+
+        return pi;
+    }
+
+    string longestPrefix(string s) {
+        vector<int> pi = prefixFunction(s);
+        return s.substr(0, pi.back());
+    }
+};
+
+// PrefixFunction 이용해 구현.
