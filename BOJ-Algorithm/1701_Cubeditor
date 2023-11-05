@@ -1,0 +1,55 @@
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <vector>
+#include <math.h>
+
+using namespace std;
+
+vector<string> sub;
+
+int prefixFunction(const string& s) {
+    int MAX = 0;
+    vector<int> pi(s.size());
+    
+    int j = 0;
+    for (int i = 1; i < int(s.length()); i++) {
+        while (j > 0 && s[i] != s[j]) {
+            j = pi[j-1];
+        }
+        
+        if (s[i] == s[j]) {
+            j++;
+        }
+        
+        pi[i] = j;
+        if (j > MAX) {
+            MAX = j;
+        }
+    }
+    return MAX;
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    string str;
+    cin >> str;
+    
+    vector<int> pi;
+
+    int MAX = 0;
+    for (int i = 0; i < str.length(); i++) {
+        MAX = max(prefixFunction(str.substr(i, str.length())), MAX);
+    }
+    
+    cout << MAX << '\n';
+        
+    return 0;
+}
+
+// KMP, Prefix Function 이용해 구현.
+// prefix와 suffix 비교하여 가장 긴 문자 길이 찾음.
+// 예외: 처음엔 전체 문자열만 prefix function 돌렸으나, 전체 문자열의 중간부터 반복되는 경우(abc가 아니라 bc만 반복되는 경우)는 탐색이 안되기 때문에 for문 이용해 모든 경우 전부 탐색하여 해결.
