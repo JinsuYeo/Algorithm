@@ -1,0 +1,77 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+struct FT {
+    vector<long long> tree;
+    
+    void init(long long n) {
+        tree.resize(n*2);
+    }
+    
+    void add(long long pos, long long val) {
+        pos++;
+        
+        while(pos < tree.size()){
+            tree[pos] += val;
+            pos += pos & -pos;
+        }
+    }
+    
+    long long sum(long long pos) {
+        long long res = 0;
+        
+        pos++;
+        while(pos > 0) {
+            res += tree[pos];
+            pos &= pos-1;
+        }
+        return res;
+    }
+    
+    long long sumRange(long long left, long long right) {
+        long long res = sum(right);
+        if(left > 0) res -= sum(left-1);
+        return res;
+    }
+};
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    long long n, m, k;
+    FT ft;
+    
+    cin >> n >> m >> k;
+    vector<long long> values(n);
+    ft.init(n);
+    
+    for(long long i = 0; i < n; i++) {
+        long long t;
+        cin >> t;
+        values[i] = t;
+        ft.add(i, t);
+    }
+    
+    for(long long i = 0; i < m+k; i++) {
+        long long a, b, c;
+        cin >> a;
+        if (a == 1) {
+            cin >> b >> c;
+            ft.add(b-1, c - values[b-1]);
+            values[b-1] = c;
+        } else {
+            cin >> b >> c;
+            cout << ft.sumRange(b-1, c-1) << '\n';
+        }
+    }
+        
+    return 0;
+}
+
+
+// 값 업데이트할 때 values도 갱신해야 함.
