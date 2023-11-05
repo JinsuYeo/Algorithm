@@ -1,0 +1,93 @@
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <string.h>
+#include <vector>
+#include <deque>
+
+#define TOP 0
+#define RIGHT 2
+#define BOTTOM 4
+#define LEFT 6
+
+using namespace std;
+
+vector<deque<int>> gears(4);
+bool visited[4];
+
+void rot(vector<deque<int>>& gears, int pos, int dir) {
+    if (pos < 0 || pos > 3) {
+        return;
+    }
+    
+    visited[pos] = true;
+    
+    int left = pos-1;
+    int right = pos+1;
+    int ndir = -dir;
+    
+    if (left >= 0) {
+        if (gears[left][RIGHT] != gears[pos][LEFT] && !visited[left]) {
+            rot(gears, left, ndir);
+        }
+    }
+    if (right < 4) {
+        if (gears[right][LEFT] != gears[pos][RIGHT] && !visited[right]) {
+            rot(gears, right, ndir);
+        }
+    }
+    
+    if (dir == -1) {
+        int top = gears[pos].front();
+        gears[pos].pop_front();
+        gears[pos].push_back(top);
+    } else {
+        int back = gears[pos].back();
+        gears[pos].pop_back();
+        gears[pos].push_front(back);
+    }
+    
+    visited[pos] = false;
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+            
+    int n = 4;
+    int k;
+    
+    for (int i = 0; i < n; i++) {
+        string s;
+        cin >> s;
+        deque<int> dq;
+        for (int j = 0; j < s.length(); j++) {
+            dq.push_back(s[j] - '0');
+        }
+        gears[i] = dq;
+    }
+    
+    cin >> k;
+    for (int i = 0; i < k; i++) {
+        int pos; int dir;
+        cin >> pos >> dir;
+        
+        rot(gears, pos-1, dir);
+    }
+    
+    int t = 1;
+    int res = 0;
+    for (int i = 0; i < 4; i++) {
+        if(gears[i].front() == 1) {
+            res += t;
+        }
+        t*=2;
+    }
+    
+    cout << res << '\n';
+    
+    return 0;
+}
+
+// 안풀리면 차근차근 생각해보기.
