@@ -1,0 +1,64 @@
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector<int> prefixFunction(const string& s) {
+    vector<int> pi(s.length());
+    
+    int j = 0;
+    for (int i = 1; i < s.length(); i++) {
+        while (j > 0 && s[i] != s[j]) {
+            j = pi[j-1];
+        }
+        
+        if (s[i] == s[j]) {
+            j++;
+        }
+        
+        pi[i] = j;
+    }
+    
+    return pi;
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    string t, p;
+    getline(cin, t);
+    getline(cin, p);
+    
+    vector<int> pi = prefixFunction(p);
+    int m = int(p.length());
+    
+    vector<int> res;
+    int j = 0;
+    for (int i = 0; i < t.length(); i++) {
+        while (j > 0 && p[j] != t[i]) {
+            j = pi[j-1];
+        }
+        
+        if (p[j] == t[i]) {
+            if (j == m-1) {
+                res.push_back(i-m+2);
+                j = pi[j];
+            } else {
+                j++;
+            }
+        }
+    }
+    
+    cout << res.size() << '\n';
+    for (int el : res) {
+        cout << el << " ";
+    }
+    
+    return 0;
+}
+
+// KMP 알고리즘 사용해 구현.
