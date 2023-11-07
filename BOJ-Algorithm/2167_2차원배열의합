@@ -1,0 +1,51 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<vector<long long>> ps;
+
+long long sum(int row1, int col1, int row2, int col2) {
+    return ps[row2][col2]
+         - ps[row2][col1-1]
+         - ps[row1-1][col2]
+         + ps[row1-1][col1-1];
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    vector<vector<long long>> matrix(n, vector<long long>(m));
+    ps.resize(n+1, vector<long long>(m+1));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cin >> matrix[i][j];
+        }
+    }
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            ps[i+1][j+1] = matrix[i][j]
+                        + ps[i][j+1]
+                        + ps[i+1][j]
+                        - ps[i][j];
+        }
+    }
+    
+    int k;
+    cin >> k;
+    for (int i = 0; i < k; i++) {
+        int r1, c1, r2, c2;
+        cin >> r1 >> c1 >> r2 >> c2;
+        cout << sum(r1, c1, r2, c2) << '\n';
+    }
+    
+    return 0;
+}
+
+// 2D Prefix SUm
