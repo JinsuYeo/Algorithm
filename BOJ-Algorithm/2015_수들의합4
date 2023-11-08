@@ -1,0 +1,112 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+typedef long long ll;
+
+struct SegTree {
+    ll N;
+    vector<ll> tree;
+    
+    void build(vector<ll>& nums) {
+        N = nums.size();
+        tree.resize(N*4);
+        
+        buildRec(nums, 1, 0, N-1);
+    }
+    
+    ll merge(ll left, ll right) {
+        return left + right;
+    }
+    
+    ll buildRec(vector<ll>& nums, ll node, ll nodeLeft, ll nodeRight) {
+        if(nodeLeft == nodeRight) {
+            return tree[node] = nums[nodeLeft];
+        }
+        
+        ll mid = nodeLeft + (nodeRight-nodeLeft)/2;
+        ll leftVal = buildRec(nums, node*2, nodeLeft, mid);
+        ll rightVal = buildRec(nums, node*2+1, mid+1, nodeRight);
+        
+        return tree[node] = merge(leftVal, rightVal);
+    }
+    
+    void update(ll idx, ll newVal) {
+        updateRec(idx, newVal, 1, 0, N-1);
+    }
+    
+    ll updateRec(ll idx, ll newVal, ll node, ll nodeLeft, ll nodeRight) {
+        if (idx < nodeLeft || nodeRight < idx) {
+            return tree[node];
+        }
+        
+        if(nodeLeft == nodeRight) {
+            return tree[node] = newVal;
+        }
+        
+        ll mid = nodeLeft + (nodeRight-nodeLeft)/2;
+        ll leftVal = updateRec(idx, newVal, node*2, nodeLeft, mid);
+        ll rightVal = updateRec(idx, newVal, node*2+1, mid+1, nodeRight);
+        
+        return tree[node] = merge(leftVal, rightVal);
+    }
+    
+    ll query(ll left, ll right) {
+        return queryRec(left, right, 1, 0, N-1);
+    }
+    
+    ll queryRec(ll left, ll right, ll node, ll nodeLeft, ll nodeRight) {
+        if (nodeRight < left || right < nodeLeft) {
+            return 0;
+        }
+        
+        if (left <= nodeLeft && nodeRight <= right) {
+            return tree[node];
+        }
+        
+        ll mid = nodeLeft + (nodeRight-nodeLeft)/2;
+        ll leftVal = queryRec(left, right, node*2, nodeLeft, mid);
+        ll rightVal = queryRec(left, right, node*2+1, mid+1, nodeRight);
+        
+        return merge(leftVal, rightVal);
+    }
+};
+
+int main() {
+    
+    iostream::sync_with_stdio();
+    cin.tie(NULL);
+    
+    ll n, k;
+    cin >> n >> k;
+    vector<ll> nums(n);
+    
+    for(ll i = 0; i < n; i++) {
+        cin >> nums[i];
+    }
+    
+    SegTree st;
+    st.build(nums);
+    
+    map<ll, ll> map;
+    
+    ll res = 0;
+    map[0] = 1;
+    for (ll i = 0; i < nums.size(); i++) {
+        ll sum = st.query(0, i);
+        
+        res += map[sum - k];
+        
+        map[sum]++;
+    }
+    
+    cout << res << '\n';
+    
+    return 0;
+}
+
+// 세그먼트 트리와 map 이용해 구현. 
+// https://dev-minji.tistory.com/102 참조.
