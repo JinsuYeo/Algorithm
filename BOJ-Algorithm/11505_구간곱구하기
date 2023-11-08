@@ -1,0 +1,104 @@
+#include <iostream>
+#include <vector>
+#include <math.h>
+
+using namespace std;
+
+struct SegTree {
+    int N;
+    vector<long long> tree;
+    
+    void build(vector<long long>& nums) {
+        N = int(nums.size());
+        tree.resize(N*4);
+        
+        buildRec(nums, 1, 0, N-1);
+    }
+    
+    long long merge(long long left, long long right) {
+        return (left * right)%1000000007;
+    }
+    
+    long long buildRec(vector<long long>& nums, int node, int nodeLeft, int nodeRight) {
+        if (nodeLeft == nodeRight) {
+            return tree[node] = nums[nodeLeft];
+        }
+        
+        int mid = nodeLeft + (nodeRight-nodeLeft)/2;
+        long long leftVal = buildRec(nums, node*2, nodeLeft, mid);
+        long long rightVal = buildRec(nums, node*2+1, mid+1, nodeRight);
+        
+        return tree[node] = merge(leftVal, rightVal);
+    }
+    
+    void update(int idx, int newVal) {
+        updateRec(idx ,newVal, 1, 0, N-1);
+    }
+    
+    long long updateRec(int idx, int newVal, int node, int nodeLeft, int nodeRight) {
+        if (idx < nodeLeft || nodeRight < idx) {
+            return tree[node];
+        }
+        
+        if (nodeLeft == nodeRight) {
+            return tree[node] = newVal;
+        }
+        
+        int mid = nodeLeft + (nodeRight-nodeLeft)/2;
+        long long leftVal = updateRec(idx, newVal, node*2, nodeLeft, mid);
+        long long rightVal = updateRec(idx, newVal, node*2+1, mid+1, nodeRight);
+        
+        return tree[node] = merge(leftVal, rightVal);
+    }
+    
+    long long query(int left, int right) {
+        return queryRec(left, right, 1, 0, N-1);
+    }
+    
+    long long queryRec(int left, int right, int node, int nodeLeft, int nodeRight) {
+        if(right < nodeLeft || nodeRight < left) {
+            return 1;
+        }
+        
+        if (left <= nodeLeft && nodeRight <= right) {
+            return tree[node];
+        }
+        
+        int mid = nodeLeft + (nodeRight-nodeLeft)/2;
+        long long leftVal = queryRec(left, right, node*2, nodeLeft, mid);
+        long long rightVal = queryRec(left, right, node*2+1,mid+1, nodeRight);
+        
+        return merge(leftVal, rightVal);
+    }
+};
+
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    int n, m, k;
+    cin >> n >> m >> k;
+    vector<long long> values(n);
+    for (int i = 0; i < n; i++) {
+        cin >> values[i];
+    }
+    
+    SegTree segTree;
+    segTree.build(values);
+    
+    for (int i = 0; i < m+k; i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        if (a == 1) {
+            segTree.update(b-1, c);
+        } else {
+            cout << segTree.query(b-1, c-1) << '\n';
+        }
+    }
+    
+    return 0;
+}
+
+// 세그먼트 트리 이용해 구현.
