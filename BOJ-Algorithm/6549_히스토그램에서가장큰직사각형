@@ -1,0 +1,94 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <map>
+#include <math.h>
+
+using namespace std;
+
+typedef long long ll;
+const ll INF = 2000000000;
+ll MAX = 0;
+ll N;
+vector<ll> tree(1000001);
+vector<ll> nums;
+
+ll merge(ll left, ll right) {
+    return nums[left] > nums[right] ? right : left;
+}
+
+ll buildRec(ll node, ll nodeLeft, ll nodeRight) {
+    if(nodeLeft == nodeRight) {
+        return tree[node] = nodeLeft;
+    }
+    
+    ll mid = nodeLeft + (nodeRight-nodeLeft)/2;
+    ll leftIdx = buildRec(node*2, nodeLeft, mid);
+    ll rightIdx = buildRec(node*2+1, mid+1, nodeRight);
+    
+    return tree[node] = merge(leftIdx, rightIdx);
+}
+
+
+ll queryRec(ll left, ll right, ll node, ll nodeLeft, ll nodeRight) {
+    if (nodeRight < left || right < nodeLeft) {
+        return INF;
+    }
+    
+    if (left <= nodeLeft && nodeRight <= right) {
+        return tree[node];
+    }
+    
+    ll mid = nodeLeft + (nodeRight-nodeLeft)/2;
+    ll leftIdx = queryRec(left, right, node*2, nodeLeft, mid);
+    ll rightIdx = queryRec(left, right, node*2+1, mid+1, nodeRight);
+    
+    if (leftIdx == INF) {
+        return rightIdx;
+    } else if (rightIdx == INF) {
+        return leftIdx;
+    } else {
+        return merge(leftIdx, rightIdx);
+    }
+}
+
+void solution(ll left, ll right) {
+    if(left > right) {
+        return;
+    }
+    
+    ll minIdx = queryRec(left, right, 1, 0, N-1);
+    MAX = max(nums[minIdx] * (right-left+1), MAX);
+    
+    solution(left, minIdx-1);
+    solution(minIdx+1, right);
+}
+
+
+int main() {
+    
+    iostream::sync_with_stdio();
+    cout.tie(NULL);
+    cin.tie(NULL);
+    
+    ll n;
+
+    while(cin >> n && n != 0) {
+        N = n;
+        MAX = 0;
+        nums.resize(n);
+        for (int i = 0; i < n; i++) {
+            cin >> nums[i];
+        }
+        
+        buildRec(1, 0, N-1);
+        solution(0, n-1);
+        cout << MAX << '\n';
+    }
+
+    return 0;
+}
+
+// 세그먼트 트리 구조체로 구현 시 시간 초과 -> 배열 입력 될 때마다 tree와 nums를 초기화해서 그런 듯. + 함수에 인자도 더 많아짐.
+// 세그먼트 트리를 이용한다는 풀이 방법은 생각했으나 build와 query시 value가 아니라 index 리턴하는 방식 생각하지 못했음.
+// https://cocoon1787.tistory.com/314 참고.
