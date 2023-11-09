@@ -1,0 +1,43 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    int n;
+    
+    cin >> n;
+    
+    int res = 0;
+    int t = 0;
+    int tres = -1;
+    
+    while(n-5 >= 0) {
+        if(n % 3 == 0) {
+            t = n;
+            tres = res;
+        }
+        n -= 5;
+        res++;
+    }
+    
+    if(n > 0 && n%3 != 0) {
+        res = tres;
+        n = t;
+    }
+    
+    while(n-3 >= 0) {
+        n -= 3;
+        res++;
+    }
+    
+    if(n == 0) cout << res << '\n';
+    else cout << -1 << '\n';
+    
+    return 0;
+}
