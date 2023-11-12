@@ -1,0 +1,23 @@
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int n = int(s.length());
+
+        int res = 0;
+
+        vector<int> cnt(256);
+        for(int L = 0, R = 0; R < n; R++) {
+            cnt[s[R]]++;
+
+            while(cnt[s[R]] > 1) {
+                cnt[s[L++]]--;
+            }
+
+            res = max(res, R-L+1);
+        }
+
+        return res;
+    }
+};
+
+// Sliding Window 이용해 구현.
