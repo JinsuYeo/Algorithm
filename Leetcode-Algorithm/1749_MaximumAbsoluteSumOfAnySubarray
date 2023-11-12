@@ -1,0 +1,21 @@
+class Solution {
+public:
+    int maxAbsoluteSum(vector<int>& nums) {
+        int n = int(nums.size());
+
+        int res = abs(nums[0]);
+        int maxValue = nums[0];
+        int minValue = nums[0];
+
+        for(int i = 1; i < n; i++) {
+            maxValue = max(maxValue + nums[i], nums[i]);
+            minValue = min(minValue + nums[i], nums[i]);
+
+            res = max(max(res, abs(maxValue)), abs(minValue));
+        }
+
+        return res;
+    }
+};
+
+// DP, Kadane's algorithm 이용해 구현.
