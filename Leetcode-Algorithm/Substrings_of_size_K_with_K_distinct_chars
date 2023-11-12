@@ -1,0 +1,57 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <set>
+#include <string>
+
+using namespace std;
+
+vector<string> solution(string s, int k) {
+    
+    set<string> res;
+    vector<int> cnt(256);
+    
+    for(int L = 0, R = 0; R < s.length(); R++) {
+        
+        cnt[s[R]]++;
+        
+        while(cnt[s[R]] > 1 || R - L + 1 > k) {
+            cnt[s[L++]]--;
+        }
+
+        if(R-L+1 == k) {
+            res.insert(s.substr(L, k));
+        }
+    }
+    
+    return vector<string>(res.begin(), res.end());
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    vector<string> res1 = solution("abcabc", 3);
+    for(string s : res1) {
+        cout << s << " ";
+    }
+    cout << '\n';
+
+    vector<string> res2 = solution("abacab", 3);
+    for(string s : res2) {
+        cout << s << " ";
+    }
+    cout << '\n';
+
+    vector<string> res3 = solution("awaglknagawunagwkwagl", 4);
+    for(string s : res3) {
+        cout << s << " ";
+    }
+    cout << '\n';
+    
+    return 0;
+}
+
+// Amazon | OA 2019 | Substrings of size K with K distinct chars
+// Sliding Window로 구현.
