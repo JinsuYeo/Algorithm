@@ -1,0 +1,41 @@
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        
+        int reqCount = 0;
+        vector<int> req(256);
+
+        for(char c : t) {
+            if(++req[c] == 1) reqCount++;
+        }
+
+        int cntCount = 0;
+        vector<int> cnt(256);
+
+        string res = "";
+
+        for(int L = 0, R = 0; R < s.length(); R++) {
+
+            if(++cnt[s[R]] == req[s[R]]) cntCount++;
+
+            if(cntCount == reqCount) {
+
+                do {
+                    int c = s[L++];
+                    
+                    if(--cnt[c] < req[c]) cntCount--;
+                    
+                } while(cntCount == reqCount);
+
+                int len = R - L + 2;
+                if(res.empty() || res.length() > len) {
+                    res = s.substr(L-1, len);
+                }
+            }
+        }
+
+        return res;
+    }
+};
+
+// Sliding Window 이용해 구현.
