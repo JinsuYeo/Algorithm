@@ -109,3 +109,124 @@ int main() {
 
 // 펜윅 트리 2개 사용해 구현.
 // Range Add & Range Sum
+
+
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+typedef long long ll;
+
+vector<ll> tree;
+vector<ll> nums;
+vector<bool> lazyExist;
+vector<ll> lazyVal;
+
+void pushDown(ll newVal, ll node, ll nodeLeft, ll nodeRight) {
+    if (nodeLeft == nodeRight) {
+        tree[node] += newVal;
+        return;
+    }
+    lazyExist[node] = true;
+    lazyVal[node] += newVal;
+    tree[node] += newVal*(nodeRight-nodeLeft+1);
+}
+
+ll build(ll node, ll nodeLeft, ll nodeRight) {
+    if (nodeLeft == nodeRight) {
+        return tree[node] = nums[nodeLeft];
+    }
+    
+    ll mid = nodeLeft + (nodeRight-nodeLeft)/2;
+    ll leftVal = build(node*2, nodeLeft, mid);
+    ll rightVal = build(node*2+1, mid+1, nodeRight);
+    
+    return tree[node] = leftVal + rightVal;
+}
+
+ll update(ll left, ll right, ll newVal, ll node, ll nodeLeft, ll nodeRight) {
+    if (right < nodeLeft || nodeRight < left) {
+        return tree[node];
+    }
+    
+    if (nodeLeft == nodeRight) {
+        return tree[node] += newVal;
+    }
+    
+    if (left <= nodeLeft && nodeRight <= right) {
+        lazyExist[node] = true;
+        lazyVal[node] += newVal;
+        return tree[node] += newVal*(nodeRight-nodeLeft+1);
+    }
+    
+    ll mid = nodeLeft + (nodeRight-nodeLeft)/2;
+    if (lazyExist[node]) {
+        lazyExist[node] = false;
+        pushDown(lazyVal[node], node*2, nodeLeft, mid);
+        pushDown(lazyVal[node], node*2+1, mid+1, nodeRight);
+        lazyVal[node] = 0;
+    }
+    
+    ll leftVal = update(left, right, newVal, node*2, nodeLeft, mid);
+    ll rightVal = update(left, right, newVal, node*2+1, mid+1, nodeRight);
+    
+    return tree[node] = leftVal + rightVal;
+}
+
+ll query(ll left, ll right, ll node, ll nodeLeft, ll nodeRight) {
+    if (right < nodeLeft || nodeRight < left) {
+        return 0;
+    }
+    
+    if (left <= nodeLeft && nodeRight <= right) {
+        return tree[node];
+    }
+    
+    ll mid = nodeLeft + (nodeRight-nodeLeft)/2;
+    if (lazyExist[node]) {
+        lazyExist[node] = false;
+        pushDown(lazyVal[node], node*2, nodeLeft, mid);
+        pushDown(lazyVal[node], node*2+1, mid+1, nodeRight);
+        lazyVal[node] = 0;
+    }
+    return query(left, right, node*2, nodeLeft, mid) + query(left, right, node*2+1, mid + 1, nodeRight);
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    ll n, m, k;
+    cin >> n >> m >> k;
+    
+    tree.resize(n*4);
+    lazyExist.resize(n*4);
+    lazyVal.resize(n*4);
+    nums.resize(n);
+    
+    for (ll i = 0; i < n; i++) {
+        cin >> nums[i];
+    }
+    
+    build(1, 0, n-1);
+
+    for (ll i = 0; i < m+k; i++) {
+        ll t;
+        ll a, b, c;
+        cin >> t;
+        if (t == 1) {
+            cin >> a >> b >> c;
+            update(a-1, b-1, c, 1, 0, n-1);
+        } else {
+            cin >> a >> b;
+            cout << query(a-1, b-1, 1, 0, n-1) << '\n';
+        }
+    }
+    
+    return 0;
+}
+
+// Segment tree - lazy propagation 이용해 구현.
