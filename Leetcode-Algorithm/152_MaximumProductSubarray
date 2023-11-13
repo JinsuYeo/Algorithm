@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int n = int(nums.size());
+        
+        int maxProd = nums[0];
+        int minProd = nums[0];
+        int res = nums[0];
+
+        for(int i = 1; i < n; i++) {
+            int t = maxProd;
+            maxProd = max(nums[i], max(maxProd*nums[i], minProd*nums[i]));
+            minProd = min(nums[i], min(t*nums[i], minProd*nums[i]));
+
+            res = max(res, maxProd);
+        }
+
+        return res;
+    }
+};
+
+// DP, Kadane's algorithm 이용해 구현.
