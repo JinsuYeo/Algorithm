@@ -1,0 +1,125 @@
+#include <algorithm>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+typedef long long ll;
+
+int bs(const vector<ll>& A, int lo, int hi, ll t) {
+    
+    while (lo <= hi) {
+        int mid = (lo + hi)/2;
+
+        if (A[mid] <= t) {
+            hi = mid-1;
+        } else {
+            lo = mid + 1;
+        }
+    }
+    
+    if (A[lo] == t) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    int n, m;
+    cin >> n;
+    vector<ll> A(n);
+    
+    for (int i = 0; i < n; i++) {
+        cin >> A[i];
+    }
+    sort(A.begin(), A.end(), greater<>());
+    
+    cin >> m;
+    for (int i = 0; i < m; i++) {
+        ll t = 0;
+        cin >> t;
+        
+        cout << bs(A, 0, n-1, t) << '\n';
+    }
+    
+    return 0;
+}
+
+// Binary search - lower bound 구현.
+
+#include <algorithm>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+typedef long long ll;
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    int n, m;
+    cin >> n;
+    vector<ll> A(n);
+    
+    for (int i = 0; i < n; i++) {
+        cin >> A[i];
+    }
+    sort(A.begin(), A.end(), less<>());
+    
+    cin >> m;
+    for (int i = 0; i < m; i++) {
+        ll t = 0;
+        cin >> t;
+        
+        cout << (lower_bound(A.begin(), A.end(), t) != A.end() && *lower_bound(A.begin(), A.end(), t) == t ? 1 : 0) << '\n';
+    }
+    
+    return 0;
+}
+
+// STL lower_bound() 이용해 구현.
+
+#include <algorithm>
+#include <vector>
+#include <unordered_map>
+#include <iostream>
+
+using namespace std;
+
+typedef long long ll;
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    int n, m;
+    cin >> n;
+    unordered_map<ll, int> map;
+    
+    for (int i = 0; i < n; i++) {
+        int t = 0;
+        cin >> t;
+        map[t]++;
+    }
+    
+    cin >> m;
+    for (int i = 0; i < m; i++) {
+        ll t = 0;
+        cin >> t;
+        
+        cout << (map[t] > 0 ? 1 : 0) << '\n';
+    }
+    
+    return 0;
+}
+
+// map 이용해 구현.
