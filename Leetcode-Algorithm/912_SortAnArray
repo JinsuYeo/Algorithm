@@ -1,0 +1,43 @@
+class Solution {
+public:
+    void merge(vector<int>& nums, int lo, int mid, int hi, vector<int>& aux) {
+        if(nums[mid] < nums[mid+1]) {
+            return;
+        }
+
+        for(int i = lo; i <= mid; i++) {
+            aux[i] = nums[i];
+        }
+
+        int i = lo, j = mid+1, k = lo;
+        while(i <= mid && j <= hi) {
+            if(aux[i] <= nums[j]) {
+                nums[k++] = aux[i++];
+            } else {
+                nums[k++] = nums[j++];
+            }
+        }
+
+        while(i <= mid) {
+            nums[k++] = aux[i++];
+        }
+    }
+
+    void sort(vector<int>& nums, int lo, int hi, vector<int>& aux) {
+        if(lo < hi) {
+            int mid = lo + (hi-lo)/2;
+            sort(nums, lo, mid, aux);
+            sort(nums, mid+1, hi, aux);
+            merge(nums, lo, mid, hi, aux);
+        }
+    }
+
+    vector<int> sortArray(vector<int>& nums) {
+        int n = int(nums.size());
+        vector<int> aux(n);
+        sort(nums, 0, n-1, aux);
+        return nums;
+    }
+};
+
+// Merge sort 구현.
