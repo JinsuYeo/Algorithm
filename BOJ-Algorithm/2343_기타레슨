@@ -1,0 +1,58 @@
+#include <algorithm>
+#include <vector>
+#include <iostream>
+#include <math.h>
+
+using namespace std;
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    int maxValue = 0;
+    int sum = 0;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) {
+        cin >> nums[i];
+        maxValue = max(nums[i], maxValue);
+        sum += nums[i];
+    }
+    
+    int lo = maxValue;
+    int hi = sum;
+    
+    while(lo <= hi) {
+        int mid = lo + (hi-lo)/2;
+        
+        int cnt = 0;
+        int sum = 0;
+        for(int i = 0; i < n; i++) {
+            sum += nums[i];
+            if(sum > mid) {
+                cnt++;
+                sum = nums[i];
+            }
+        }
+        
+        if (sum > 0) {
+            cnt++;
+        }
+        
+        if(cnt > m) {
+            lo = mid + 1;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    
+    cout << lo << '\n';
+    
+    return 0;
+}
+
+// Binary search 이용해 구현. 
+// https://velog.io/@961230/%EB%B0%B1%EC%A4%80-2343%EA%B8%B0%ED%83%80-%EB%A0%88%EC%8A%A8-C 참고.
