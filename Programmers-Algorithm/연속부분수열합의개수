@@ -1,0 +1,29 @@
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <map>
+
+
+using namespace std;
+
+int solution(vector<int> elements) {
+    map<int, int> map;
+    int c = 0;
+    int answer = 0;
+    int n = int(elements.size());
+    
+    for(int i = 1; i <= n; i++) {
+        for(int j = 0; j < n; j++) {
+            int sum = 0;
+            for(int k = j, count = 0; count < i; count++, k = (k+1)%n) {
+                sum += elements[k];
+            }
+            if(!map[sum]) {
+                c++;
+                map[sum]++;
+            }
+        }
+    }
+    
+    return c;
+}
