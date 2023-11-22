@@ -1,0 +1,44 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <math.h>
+
+using namespace std;
+
+typedef long long ll;
+
+bool check(const vector<int>& stones, ll mid, int k) {
+    int count = 0;
+    for(int i = 0; i < stones.size(); i++) {
+        if(stones[i] <= mid) count++;
+        else {
+            count = 0;
+        }
+        
+        if(count >= k) return true;
+    }
+    
+    return false;
+}
+
+int solution(vector<int> stones, int k) {
+    int answer = 0;
+    
+    int n = int(stones.size());
+    
+    ll lo = 1, hi = 200000000;
+    while(lo <= hi) {
+        ll mid = lo + (hi-lo)/2;
+        
+        if(check(stones, mid, k)) {
+            hi = mid - 1;
+        } else {
+            lo = mid + 1;
+        }  
+    }
+    
+    return lo;
+}
+
+// 처음에 DP 이용 -> 최악의 경우 O(N^2)이라 효율성 테스트 통과 X(n/2 * n/2 의 경우 인 듯).
+// 이분 탐색(Decision Problem)으로 구현(생각하다가 강을 건널 수 있는 경우 or 건너지 못하는 경우로 나뉜다는 것 발견 -> 건너지 못하는 첫번째 경우(mid 값이 true가 되는 경우)를 찾는 lower bound 구현).
