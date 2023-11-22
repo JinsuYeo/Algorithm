@@ -1,0 +1,53 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <stdlib.h>
+#include <algorithm>
+#include <map>
+
+using namespace std;
+
+bool cmp(vector<int> v1, vector<int> v2) {
+    return v1.size() < v2.size();
+}
+
+vector<int> solution(string s) {
+    vector<int> answer;
+    vector<vector<int>> tuple;
+
+    vector<int> v;
+    string t = "";
+    for(int i = 0; i < s.length(); i++) {
+        if(s[i] == '}') {
+            if(!t.empty()) {
+                v.push_back(stoi(t));
+                t = "";
+            }
+            if(!v.empty()) {
+                tuple.push_back(v);
+                v.clear();
+            }
+            
+        }
+        else if(isdigit(s[i])) {
+            t += s[i];
+        }
+        else if(s[i] == ',' && !t.empty()) {
+            v.push_back(stoi(t));
+            t = "";
+        }
+    }
+    
+    map<int, int> map;
+    sort(tuple.begin(), tuple.end(), cmp);
+    for(int i = 0; i < tuple.size(); i++) {
+        for(int j = 0; j < tuple[i].size(); j++) {
+            if(!map[tuple[i][j]]) {
+                answer.push_back(tuple[i][j]);
+                map[tuple[i][j]]++;
+            }
+        }
+    }
+        
+    return answer;
+}
