@@ -1,0 +1,53 @@
+#include <string>
+#include <vector>
+#include <stack>
+#include <deque>
+
+using namespace std;
+
+bool check(deque<char>& dq) {
+    
+    stack<char> st;
+    
+    for(int i = 0; i < dq.size(); i++) {
+        if(dq[i] == '{' || dq[i] == '[' || dq[i] == '(') {
+            st.push(dq[i]);
+        } else {
+            if(st.empty()) {
+                return false;
+            }
+            if(dq[i] == '}' && st.top() != '{') {
+                return false;
+            } else if(dq[i] == ')' && st.top() != '(') {
+                return false;
+            } else if(dq[i] == ']' && st.top() != '[') {
+                return false;
+            }
+            st.pop();
+}
+    }
+    
+    if(st.empty()) return true;
+    return false;
+}
+
+void rot(deque<char>& dq) {
+    char c = dq.front();
+    dq.pop_front();
+    dq.push_back(c);
+}
+
+int solution(string s) {
+    int answer = 0;
+    
+    deque<char> dq(s.begin(), s.end());
+    
+    for(int i = 0; i < dq.size(); i++) {
+        if(check(dq)) {
+            answer++;
+        }
+        rot(dq);
+    }
+    
+    return answer;
+}
