@@ -1,0 +1,72 @@
+#include <string>
+#include <vector>
+#include <queue>
+#include <algorithm>
+#include <math.h>
+
+using namespace std;
+
+typedef long long ll;
+
+int solution(vector<int> queue1, vector<int> queue2) {
+    
+    ll sum1 = 0;
+    ll sum2 = 0;
+    
+    int res = 0;
+    
+    queue<int> q1;
+    queue<int> q2;
+    
+    int maxValue = -1;
+    
+    for(int i = 0; i < queue1.size(); i++) {
+        sum1 += queue1[i];
+        q1.push(queue1[i]);
+        maxValue = max(maxValue, queue1[i]);
+    }
+    
+    for(int i = 0; i < queue2.size(); i++) {
+        sum2 += queue2[i];
+        q2.push(queue2[i]);
+        maxValue = max(maxValue, queue2[i]);
+    }
+    
+    ll req = (sum1 + sum2)/2;
+    
+    if(maxValue > req || (sum1 + sum2) % 2) {
+            res = -1;
+            return res;
+        }
+        
+    while(sum1 != sum2) {
+        
+        if(q1.empty() || q2.empty()) {
+            res = -1;
+            break;
+        }
+        
+        ll t;
+        if(sum1 < req) {
+            t = q2.front();
+            q1.push(t);
+            q2.pop();
+            sum1 += t;
+            sum2 -= t;
+        } else if (sum2 < req) {
+            t = q1.front();
+            q2.push(t);
+            q1.pop();
+            sum2 += t;
+            sum1 -= t;
+        }
+        
+        if(res > 300000) {
+            return -1;
+        }
+        
+        res++;
+    }
+    
+    return res;
+}
