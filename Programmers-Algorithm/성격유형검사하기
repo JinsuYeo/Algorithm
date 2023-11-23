@@ -1,0 +1,40 @@
+#include <string>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+string solution(vector<string> survey, vector<int> choices) {
+    string answer = "";
+    
+    map<char, int> map;
+    
+    for(int i = 0; i < survey.size(); i++) {
+        
+        char c1 = survey[i][0];
+        char c2 = survey[i][1];
+        
+        int n = choices[i];
+        
+        if(n > 4) {
+            map[c2] += n-4;
+        }
+        if(n < 4) {
+            map[c1] += -1*(n-4);
+        }
+    }
+    
+    if(map['R'] >= map['T']) answer += "R";
+    if(map['R'] < map['T']) answer += "T";
+    
+    if(map['C'] >= map['F']) answer += "C";
+    if(map['C'] < map['F']) answer += "F";
+    
+    if(map['J'] >= map['M']) answer += "J";
+    if(map['J'] < map['M']) answer += "M";
+    
+    if(map['A'] >= map['N']) answer += "A";
+    if(map['A'] < map['N']) answer += "N";
+    
+    return answer;
+}
