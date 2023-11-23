@@ -1,0 +1,77 @@
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+typedef long long ll;
+
+ll merge(vector<int>& nums, int l, int mid,  int r, vector<int>& aux) {
+    if(nums[mid] <= nums[mid+1]) return 0;
+    
+    for(int i = l; i <= mid; i++) {
+        aux[i] = nums[i];
+    }
+    
+    int i = l; int j = mid+1;
+    int k = l;
+    ll res = 0;
+    ll cnt = 0;
+    
+    while(i <= mid && j <= r) {
+        if(aux[i] <= nums[j]) {
+            nums[k++] = aux[i++];
+            res += cnt;
+        } else {
+            nums[k++] = nums[j++];
+            cnt++;
+        }
+    }
+    
+    while(i <= mid) {
+        nums[k++] = aux[i++];
+        res += cnt;
+    }
+    
+    return res;
+}
+
+ll rec(vector<int>& nums, int l, int r, vector<int>& aux) {
+    ll res = 0;
+
+    if(l < r) {
+        int mid = l + (r-l)/2;
+        res += rec(nums, l, mid, aux);
+        res += rec(nums, mid+1, r, aux);
+        res += merge(nums, l, mid, r, aux);
+        return res;
+    }
+    
+    return res;
+}
+
+ll sort(vector<int>& nums) {
+    int n = int(nums.size());
+    vector<int> aux(n);
+    ll res = rec(nums, 0, n-1, aux);
+    return res;
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    int n;
+    cin >> n;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) {
+        cin >> nums[i];
+    }
+    
+    cout << sort(nums) << '\n';
+    
+    return 0;
+}
+
+// Merge sort 이용해 Counting Inversions 구현.
