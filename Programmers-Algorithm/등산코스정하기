@@ -1,0 +1,94 @@
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <math.h>
+
+using namespace std;
+
+int res = 1 << 30;
+int resDest = 0;
+int N;
+map<int, int> starts;
+map<int, int> dests;
+vector<int> dist;
+
+void dijkstra(int start, vector<vector<pair<int, int>>>& edge) {
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+    pq.emplace(0, start);
+    
+
+    vector<int> visited(N+1);
+    dist[start] = 0;
+    
+    while(!pq.empty()) {
+        int w = pq.top().first;
+        int u = pq.top().second;
+                
+        pq.pop();
+
+        if(dests[u] || (u != start && starts[u])) continue;
+                
+        for(int i = 0; i < edge[u].size(); i++) {
+            int v = edge[u][i].first;
+            int nw = edge[u][i].second;
+            
+            if(dist[u] < w) continue;
+            
+            if(dist[v] > max(w, nw)) {
+                dist[v] = max(w, nw);
+                pq.push(make_pair(dist[v], v));
+            }
+        }
+    }
+}
+
+vector<int> solution(int n, vector<vector<int>> paths, vector<int> gates, vector<int> summits) {
+    vector<int> answer;
+    N = n;
+    dist.assign(N+1, 1<<30);
+    
+    vector<vector<pair<int, int>>> edge(n+1);
+    
+    for(int i = 0; i < paths.size(); i++) {
+        int from, to, cost;
+        from = paths[i][0];
+        to = paths[i][1];
+        cost = paths[i][2];
+        edge[from].emplace_back(to, cost);
+        edge[to].emplace_back(from, cost);
+    }
+    
+    for(int i = 0; i < gates.size(); i++) {
+        starts[gates[i]]++;
+    }
+    
+    for(int i = 0; i < summits.size(); i++) {
+        dests[summits[i]]++;
+    }
+    
+    for(int i = 0; i < gates.size(); i++) {
+        dijkstra(gates[i], edge);
+    }
+    
+    for(int j = 0; j < summits.size(); j++) {
+        if(res >= dist[summits[j]]) {
+            if(res == dist[summits[j]]) {
+                if(resDest < summits[j]) continue;
+            }
+            res = dist[summits[j]];
+            resDest = summits[j];
+        }
+    }
+    
+    answer.push_back(resDest);
+    answer.push_back(res);
+    
+    return answer;
+}
+
+// 구현했던 다익스트라 변형해서 구현.
+// 조건 처리 미흡, 시간 복잡도 줄이지 못해 통과하지 못하다가 모두 해결하니 통과.
+// 구현하면서 해결 방법 떠오르기도 하니 포기하지 말고 천천히 해결 방법 찾기.
