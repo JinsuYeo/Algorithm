@@ -1,0 +1,64 @@
+typedef long long ll;
+
+class Solution {
+    
+public:
+    void merge(vector<pair<int, int>>& nums, int l, int mid,  int r, vector<pair<int, int>>& aux, vector<int>& cnts) {
+        if(nums[mid] <= nums[mid+1]) return;
+    
+        for(int i = l; i <= mid; i++) {
+            aux[i] = nums[i];
+        }
+    
+        int i = l; int j = mid+1;
+        int k = l;
+        ll cnt = 0;
+    
+        while(i <= mid && j <= r) {
+            if(aux[i].first <= nums[j].first) {
+                nums[k] = aux[i++];
+                cnts[nums[k++].second] += cnt;
+            } else {
+                nums[k++] = nums[j++];
+                cnt++;
+            }
+        }
+    
+        while(i <= mid) {
+            nums[k] = aux[i++];
+            cnts[nums[k++].second] += cnt;        
+        }
+    }
+
+    void rec(vector<pair<int, int>>& nums, int l, int r, vector<pair<int, int>>& aux, vector<int>& cnts) {
+
+        if(l < r) {
+            int mid = l + (r-l)/2;
+            rec(nums, l, mid, aux, cnts);
+            rec(nums, mid+1, r, aux, cnts);
+            merge(nums, l, mid, r, aux, cnts);
+        }
+    }
+
+    void sort(vector<int>& nums, vector<int>& cnts) {
+        int n = int(nums.size());
+        vector<pair<int, int>> aux(n);
+        cnts.resize(n);
+
+        vector<pair<int, int>> t;
+        for(int i = 0; i < n; i++) {
+            t.emplace_back(nums[i], i);
+        }
+
+        rec(t, 0, n-1, aux, cnts);
+    }
+
+    vector<int> countSmaller(vector<int>& nums) {
+        vector<int> cnts;
+        sort(nums, cnts);
+        
+        return cnts;
+    }
+};
+
+// Merge sort 이용, Counting inversions 응용해 구현.
