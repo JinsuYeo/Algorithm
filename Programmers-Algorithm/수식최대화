@@ -1,0 +1,92 @@
+#include <string>
+#include <vector>
+#include <stack>
+#include <iostream>
+#include <map>
+#include <math.h>
+
+using namespace std;
+
+typedef long long ll;
+
+ll calc(map<char, int> priority, string s) {
+    
+    stack<ll> nums;
+    stack<char> ops;
+    
+    string t = "";
+    char op;
+    for(int i = 0; i < s.length(); i++) {
+        if(s[i] == '+' || s[i] == '-' || s[i] == '*') {
+            nums.push(stoll(t));
+            t = "";
+            while(!ops.empty() && priority[ops.top()] >= priority[s[i]]) {
+                op = ops.top();
+                ops.pop();
+                
+                ll num1 = nums.top();
+                nums.pop();
+                
+                ll num2 = nums.top();
+                nums.pop();
+                
+                if(op == '+') {
+                    nums.push(num2 + num1);
+                }
+                
+                if(op == '-') {
+                    nums.push(num2 - num1);
+                }
+                
+                if(op == '*') {
+                    nums.push(num2 * num1);
+                }
+            } 
+            ops.push(s[i]);
+            
+            continue;
+        }
+        
+        t += s[i];
+    }
+    
+    nums.push(stoll(t));
+    
+    while(!ops.empty()) {
+        op = ops.top();
+        ops.pop();
+                
+        ll num1 = nums.top();
+        nums.pop();
+                
+        ll num2 = nums.top();
+        nums.pop();
+        
+        if(op == '+') {
+            nums.push(num2 + num1);
+        }
+                
+        if(op == '-') {
+            nums.push(num2 - num1);
+        }
+                
+        if(op == '*') {
+            nums.push(num2 * num1);
+        }
+    }
+    
+    return nums.top();
+}
+
+long long solution(string expression) {
+    long long answer = 0;
+    
+    answer = max(abs(calc({{'*', 3}, {'+', 2}, {'-', 1}}, expression)), answer);
+    answer = max(abs(calc({{'*', 3}, {'+', 1}, {'-', 2}}, expression)), answer);
+    answer = max(abs(calc({{'*', 2}, {'+', 1}, {'-', 3}}, expression)), answer);
+    answer = max(abs(calc({{'*', 2}, {'+', 3}, {'-', 1}}, expression)), answer);
+    answer = max(abs(calc({{'*', 1}, {'+', 2}, {'-', 3}}, expression)), answer);
+    answer = max(abs(calc({{'*', 1}, {'+', 3}, {'-', 2}}, expression)), answer);
+    
+    return answer;
+}
