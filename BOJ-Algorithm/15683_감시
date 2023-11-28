@@ -1,0 +1,126 @@
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+#include <math.h>
+
+using namespace std;
+
+struct Camera {
+    int x; int y;
+    int kind;
+};
+
+int N, M;
+int dirX[4] = {-1, 0, 1, 0};
+int dirY[4] = {0, 1, 0, -1};
+
+int res = 1<<30;
+
+void check(const vector<vector<int>>& map) {
+    int cnt = 0;
+    for(int i = 0; i < N; i++) {
+        for(int j = 0; j < M; j++) {
+            
+            if(map[i][j] == 0) {
+                cnt++;
+            }
+        }
+    }
+    res = min(res, cnt);
+}
+
+void monitor(vector<vector<int>>& map, int x, int y, int dir) {
+    int nx = x + dirX[dir];
+    int ny = y + dirY[dir];
+    
+    while(nx >= 0 && nx < N && ny >= 0 && ny < M && map[nx][ny] != 6) {
+        map[nx][ny] = 7;
+        nx += dirX[dir];
+        ny += dirY[dir];
+    }
+}
+
+void dfs(const vector<vector<int>>& map, vector<Camera> cameras, int cnt) {
+
+    if(cnt >= cameras.size()) {
+        check(map);
+        return;
+    }
+    
+    // 방향 회전
+    for(int i = 0; i < 4; i++) { 
+        vector<vector<int>> aux(map.begin(), map.end());
+
+        int kind = cameras[cnt].kind;
+        int x = cameras[cnt].x;
+        int y = cameras[cnt].y;
+        
+	// 감시 카메라 종류별로 가능한 모든 방향 탐색.
+        if(kind == 1) {
+            monitor(aux, x, y, i);
+        } else if(kind == 2) {
+            monitor(aux, x, y, i);
+            monitor(aux, x, y, (i+2)%4);
+        } else if(kind == 3) {
+            monitor(aux, x, y, i);
+            monitor(aux, x, y, (i+1)%4);
+        } else if(kind == 4) {
+            monitor(aux, x, y, i);
+            monitor(aux, x, y, (i+1)%4);
+            monitor(aux, x, y, (i+2)%4);
+        } else if(kind == 5) {
+            monitor(aux, x, y, i);
+            monitor(aux, x, y, (i+1)%4);
+            monitor(aux, x, y, (i+2)%4);
+            monitor(aux, x, y, (i+3)%4);
+        }
+        
+        dfs(aux, cameras, cnt+1);
+        
+        vector<vector<int>>().swap(aux);
+    }
+    
+}
+
+void solve(const vector<vector<int>>& map, const vector<Camera>& cameras) {
+    
+    vector<vector<int>> aux(map.begin(), map.end());
+    
+    // dfs 이용해 감시 카메라의 모든 조합 탐색.
+    dfs(aux, cameras, 0);
+}
+
+int main() {
+
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    cin >> N >> M;
+    vector<vector<int>> map(N, vector<int>(M));
+    vector<Camera> cameras;
+    
+    for(int i = 0; i < N; i++) {
+        for(int j = 0; j < M; j++) {
+            cin >> map[i][j];
+            if(map[i][j] >= 1 && map[i][j] <= 5) {
+                cameras.push_back({i, j, map[i][j]});
+            }
+        }
+    }
+    
+    solve(map, cameras);
+    
+    cout << res << '\n';
+    
+    return 0;
+}
+
+// 접근 방법 생각하고 풀기. 
+// 배열 크기와 감시 카메라 개수가 매우 작으므로 완전 탐색 + dfs로 구현.
+// 
+// 1. 모든 감시 카메라가 감지 가능한 칸을 '#'로 채우기.
+// 2. 회전하며 모든 경우에 1을 반복.
+// 3. 1을 마친 후, 0의 개수 세서 최소값 갱신.
+//
+// 1번과 2번(모든 감시 카메라 + 감시 가능한 모든 방향)을 동시에 구현하기가 어려웠으나 천천히 생각하고 디버깅하며 구현할 수 있었음.
