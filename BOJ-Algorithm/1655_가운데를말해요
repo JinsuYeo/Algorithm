@@ -1,0 +1,52 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <queue>
+#include <math.h>
+
+using namespace std;
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    int n;
+    cin >> n;
+    
+    priority_queue<int, vector<int>, less<>> pq1;
+    priority_queue<int, vector<int>, greater<>> pq2;
+    
+    for (int i = 0; i < n; i++) {
+        int t;
+        cin >> t;
+        
+        if(pq1.empty() || pq1.top() > t) {
+            pq1.push(t);
+        } else {
+            pq2.push(t);
+        }
+        
+        if(pq1.size() > pq2.size() + 1) {
+            int t = pq1.top();
+            pq1.pop();
+            pq2.push(t);
+        }
+        if (pq1.size() < pq2.size()) {
+            int t = pq2.top();
+            pq2.pop();
+            pq1.push(t);
+        }
+        
+        cout << pq1.top() << '\n';
+    }
+    
+    return 0;
+}
+
+// O(n log n)의 시간복잡도를 가져야 하기 때문에 sort를 반복할 수 없다고 생각(O(n * n log n)).
+// 처음에 binary search tree를 생각 -> Balanced binary search tree(AVL tree)를 구현하여 풀려고 생각했으나 너무 구현 어려워 이 방법이 아닐 것이라 생각.
+// 알고리즘 분류가 우선순위 큐인 것을 보고 나서야 우선순위 큐 2개를 이용하면 AVL tree의 기능을 비슷하게 구현할 수 있을 것이라 생각. -> 구현하여 통과.
+// binary search tree와 AVL tree의 차이, 우선순위 큐를 2개 이용해 AVL tree의 기능을 수행할 수 있음을 알게 되었음. 
+
