@@ -1,0 +1,61 @@
+#include <iostream>
+#include <algorithm>
+#include <math.h>
+#include <vector>
+
+#define MOD 1000000007
+
+using namespace std;
+
+typedef long long ll;
+
+ll power(ll a, ll m) {
+    if (m == 0) {
+        return 1;
+    }
+    
+    ll t = power(a, m/2) % MOD;
+    if (m%2) {
+        return (t * t % MOD) * a % MOD;
+    } else {
+        return t * t % MOD;
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    int n, m;
+    
+    cin >> n >> m;
+    
+    ll A = 1;
+    ll B = 1;
+    
+    for (int i = 0; i < m; i++) {
+        A = (A*(n-i))%MOD;
+    }
+    
+    for (int i = m; i > 0; i--) {
+        B = (B*i)%MOD;
+    }
+    
+    
+
+    cout << A % MOD * power(B, MOD-2) %  MOD << '\n';
+    
+    return 0;
+}
+
+// 일반적인 Combination 계산으로 구현했으나 틀림.
+// -> Modular 연산은 더하기나 곱하기에서는 분배가 가능하지만, 나눗셈에서는 분배할 수 없다.
+// 따라서 '페르마의 소정리'를 이용해야 함(B^(P-2)는 B^-1(mod P)와 합동).
+// 즉, (A/B)%P는 (A*B^(P-2))%P와 같음.
+
+// 그러나 A^1000000007의 지수(power or exponent)와 결과가 너무 크기 때문에 거듭제곱을 Divide & Conquer로 구현해야 함.
+// -> '큰 수의 거듭제곱'(BOJ 1629번 참고)이 필요.
+// a^m = a^(m/2)*a^(m/2)임을 이용.
+
+// https://velog.io/@junttang/BOJ-11401-%EC%9D%B4%ED%95%AD-%EA%B3%84%EC%88%98-3-%ED%95%B4%EA%B2%B0-%EC%A0%84%EB%9E%B5-C 참조
