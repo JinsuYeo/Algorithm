@@ -1,0 +1,85 @@
+#include <iostream>
+#include <algorithm>
+#include <math.h>
+#include <vector>
+
+using namespace std;
+
+int map[101][101];
+int res = 0;
+
+int dirY[4] = {0, -1, 0, 1};
+int dirX[4] = {1, 0, -1, 0};
+
+void draw(int x, int y, int d, int g) {
+    
+    vector<int> dirs;
+    
+    map[y][x] = 1;
+    
+    int nx = x + dirX[d];
+    int ny = y + dirY[d];
+    if (nx >= 0 && nx <= 100 && ny >= 0 && ny <= 100) {
+        map[ny][nx] = 1;
+    }
+    
+    dirs.push_back(d);
+    
+    for(int i = 0; i < g; i++) {
+        int n = int(dirs.size()-1);
+        
+        for(int j = n; j >= 0; j--) {
+            int dir = (dirs[j]+1)%4;
+            nx += dirX[dir];
+            ny += dirY[dir];
+            
+            dirs.push_back(dir);
+
+            if (nx < 0 || nx > 100 || ny < 0 || ny > 100) {
+                continue;
+            }
+            
+            map[ny][nx] = 1;
+        }
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    int n;
+    cin >> n;
+    
+    for (int i = 0; i < n; i++) {
+        int x, y, d, g;
+        cin >> x >> y >> d >> g;
+        draw(x, y, d, g);
+    }
+    
+    for (int i = 0; i < 100; i++) {
+        for (int j = 0; j < 100; j++) {
+            if(map[i][j] && map[i+1][j] && map[i][j+1] && map[i+1][j+1]) {
+                res++;
+            }
+        }
+    }
+    
+    cout << res << '\n';
+    
+    return 0;
+}
+
+// 1. 드래곤 커브를 만드는 기능.
+// -> vector 이용해 방향을 저장(삽입 O(1), 접근 O(1)).
+// 현재 위치를 기준으로 저장된 방향 반대로 돌리고  시계방향으로 회전하여 전진하며 map과 vector에 추가.
+// 위 과정을 반복하여 주어진 모든 드래곤 커브를 map에 표시.
+// 2. map(2차원 배열)을 탐색하며 (I, j), (I+1, j), (I, j+1), (I+1, j+1)이 모두 체크되었다면 count++.
+//
+// 구현 과정에서 습관대로 x가 행, y가 열로 구현하였으나 문제에서는 x가 열, y가 행이었다는 것 깨달음.
+// map[x][y] -> map[y][x]로 축 바꾸고, (dir+3)%4 -> (dir+1)%4로 회전 방향 수정.
+// 이후 통과.
+//
+// 이해, 계획, 검증은 잘 수행했으나, 재정의와 구현단계에서 실수하여 시간을 소비함. 
+// vector 사용하여 지나온 방향 저장하고 활용한 것은 좋은 접근이었던 듯.
