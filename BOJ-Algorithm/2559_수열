@@ -1,0 +1,39 @@
+#include <algorithm>
+#include <iostream>
+#include <vector>
+#include <math.h>
+
+using namespace std;
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    int n, k;
+    cin >> n >> k;
+    vector<int> nums(n);
+    
+    for (int i = 0; i < n; i++) {
+        cin >> nums[i];
+    }
+    
+    int res = -(1 << 30);
+    int sum = 0;
+    for (int L = 0, R = 0; R < n; R++) {
+        sum += nums[R];
+        
+        if(R-L+1 >= k) {
+            res = max(res, sum);
+            sum -= nums[L++];
+        }
+    }
+    
+    cout << res << '\n';
+    
+    return 0;
+}
+
+// Sliding window를 이용해 구현.
+// 처음에 R-L+1 > k인 경우 L을 증가시킨 후 값을 업데이트 하도록 구현해서 n == k인 경우 -(1<<30)이 res로 출력됨.
+// R-L+1 >= k인 경우 값을 업데이트하고 L을 증가시키도록 수정해 통과.
