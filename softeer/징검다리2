@@ -1,0 +1,60 @@
+#include<iostream>
+#include <algorithm>
+#include <vector>
+#include <math.h>
+#include <map>
+
+using namespace std;
+
+typedef long long ll;
+
+int main(int argc, char** argv)
+{
+
+  int n;
+  cin >> n;
+
+  vector<ll> nums(n);
+  for(int i = 0; i < n; i++) {
+    cin >> nums[i];
+  }
+
+  vector<ll> lis;
+  map<ll, int> cnt;
+
+  for(int i = 0; i < n; i++) {
+    if(lower_bound(lis.begin(), lis.end(), nums[i]) == lis.end()) {
+      lis.push_back(nums[i]);
+    } else {
+      *lower_bound(lis.begin(), lis.end(), nums[i]) = nums[i];
+    }
+    cnt[nums[i]] += (lower_bound(lis.begin(), lis.end(), nums[i]) - lis.begin()) + 1;
+
+  }
+
+  vector<ll>().swap(lis);
+  
+  for(int i = n-1; i >= 0; i--) {
+    if(lower_bound(lis.begin(), lis.end(), nums[i]) == lis.end()) {
+      lis.push_back(nums[i]);
+    } else {
+      *lower_bound(lis.begin(), lis.end(), nums[i]) = nums[i];
+    }
+    cnt[nums[i]] += (lower_bound(lis.begin(), lis.end(), nums[i]) - lis.begin());
+  }
+
+  int res = 1;
+  for(int i = 0; i < n; i++) {
+    res = max(res, cnt[nums[i]]);
+  }
+
+  cout << res;
+  
+   return 0;
+}
+
+// DP나 완전 탐색을 사용 시 시간 초과가 발생할 것이기에 O(log n)의 시간복잡도를 갖는 lower_bound()를 이용, n번 반복해 O(n log n)의 시간복잡도를 갖도록 구현.
+// 
+// 이해, 계획 과정은 잘 했으나 이번에도 재정의, 구현 과정에서 실수하여 시간을 많이 잡아먹음(lower_bound() 사용하는 조건 잘못 생각하여, nums[i] > nums[i-1]일 떄 Push, 아닐 때 lower_bound로 찾은 위치에 nums[I]로 교체하도록 구현했으나, 원래는 nums[i] > lis.back()일 때 push하도록 했어야 함).
+// -> 앞으로 LIS 문제를 풀기 위해 lower_bound() 사용 시 위 구현처럼 조건문 체크를 lower_bound() != lis.end()로 하여 에러 줄일 것.
+// + 최근 알고리즘 풀 때 가장 많이 실수하는 것은 계획은 잘 했으나, 구현 시 이상한 실수를 해서 디버깅에도 시간이 걸리는 것임. -> 구현 과정과 검증 단계에서 급하지 않게 천천히 문제에서 구해야 할 것(미지의 것), 조건, 자료를 살펴보며 구현, 검증할 것. 특히 당연히 맞았다고 생각하지 말고 습관적으로 작성한 코드도 흐름과 기능을 살펴보며 집중해서 디버깅 해볼 것(특히 조건문의 조건 실수가 잦음).
