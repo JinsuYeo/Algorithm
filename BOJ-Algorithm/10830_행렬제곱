@@ -1,0 +1,70 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <math.h>
+
+using namespace std;
+
+typedef long long ll;
+
+void mul(vector<vector<ll>>& A, vector<vector<ll>>& B) {
+    vector<vector<ll>> t(A.size(), vector<ll>(A[0].size(), 0));
+    
+    for (int i = 0; i < A.size(); i++) {
+        for (int j = 0; j < B[0].size(); j++) {
+            for (int k = 0; k < A[0].size(); k++) {
+                t[i][j] += A[i][k] * B[k][j];
+            }
+            t[i][j] %= 1000;
+        }
+    }
+    
+    return t.swap(A);
+}
+
+ostream& operator<< (ostream& os, const vector<vector<ll>> v) {
+    for (int i = 0; i < v.size(); i++) {
+        for (int j = 0; j < v[i].size(); j++) {
+            os << v[i][j] << " ";
+        }
+        os << '\n';
+    }
+    return os;
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    ll n, b;
+    cin >> n >> b;
+    
+    vector<vector<ll>> A(n, vector<ll>(n));
+    vector<vector<ll>> unit(n, vector<ll>(n));
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> A[i][j];
+            if(i == j) unit[i][j] = 1;
+        }
+    }
+    
+    while(b > 0) {
+        
+        if(b%2) {
+            mul(unit, A);
+        }
+        mul(A, A);
+        b /= 2;
+    }
+    
+    cout << unit;
+    
+    return 0;
+}
+
+// 행렬 곱셈과 큰 수의 거듭 제곱을 이용해 구현.
+// 지수의 크기가 너무 크기 때문에 분할 정복을 이용해 구현(b/2가 나누어 떨어지면 A = A*A, 나누어 떨어지지 않는다면 정답이 될 unit에 A를 미리 곱해둠, b == 1일 떄 반드시 한번은 만들어진 unit에 구해진 A가 곱해지므로 unit이 정답이 됨).
+//
+// 행렬의 곱셈 구현 과정과, 자료형 선정에서 실수 있었음. 문제 단계 손으로 풀어보며 검증 과정 거칠 것.
