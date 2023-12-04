@@ -1,0 +1,80 @@
+#include <algorithm>
+#include <iostream>
+#include <vector>
+#include <math.h>
+
+using namespace std;
+
+typedef pair<int, int> Cord;
+
+int n, m;
+vector<vector<int>> map;
+vector<Cord> house;
+vector<Cord> chicken;
+int total = 0;
+
+int res = 1 << 30;
+
+int dist(Cord a, Cord b) {
+    return abs(a.first - b.first) + abs(a.second - b.second);
+}
+
+void compare(const vector<Cord>& chosen) {
+    int sum = 0;
+    for(int i = 0; i < house.size(); i++) {
+        int minV = 1<<30;
+        for (int j = 0; j < chosen.size(); j++) {
+            minV = min(minV, dist(house[i], chosen[j]));
+        }
+        sum += minV;
+    }
+    res = min(res, sum);
+}
+
+void choose(int idx, vector<Cord>& chosen) {
+
+    if(chosen.size() >= m) {
+        compare(chosen);
+        return;
+    }
+    
+    for(int i = idx; i < chicken.size(); i++){
+        chosen.push_back(chicken[i]);
+        choose(i+1, chosen);
+        chosen.pop_back();
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    cin >> n >> m;
+    map.resize(n, vector<int>(n));
+    
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            cin >> map[i][j];
+            if(map[i][j] == 1) {
+                house.emplace_back(i,j);
+            }
+            if(map[i][j] == 2) {
+                chicken.emplace_back(i,j);
+            }
+        }
+    }
+    vector<Cord> chosen;
+    choose(0, chosen);
+    cout << res << '\n';
+
+    return 0;
+}
+
+// 1. 치킨집을 m개 골라야 함. -> 최대 13Cm
+// 2. 집에서 치킨집까지의 최소거리를 구해야 함.
+// 3. 모든 집-치킨집 거리를 구하고 총합이 가장 작은 경우의 거리를 저장해야 함.
+//
+// 처음에 시간초과 -> 재귀함수 호출 인자로 i+1(choose(i+1, chosen))을 넣어줘야 하는데 idx를 넣어줘서 반복된 것이었음.
+// 이해->계획->검증까지 잘했으나 구현 시 실수 줄이기.
+// 틀렸을 때, 계획과 검증 단계의 오류 찾기보다 먼저 구현 코드의 흐름 파악하며 디버깅해볼 것.
