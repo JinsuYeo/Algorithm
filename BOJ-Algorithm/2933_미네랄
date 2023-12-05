@@ -1,0 +1,190 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <math.h>
+#include <queue>
+
+using namespace std;
+
+typedef pair<int, int> Cord;
+
+int R, C;
+vector<vector<char>> map;
+vector<vector<bool>> ciaMap;
+
+int dirX[4] = {-1, 0, 1, 0};
+int dirY[4] = {0, -1, 0, 1};
+
+bool cmp(Cord cord1, Cord cord2) {
+    return cord1.first > cord2.first;
+}
+
+void throwSprear(int h, int order) {
+    int x = R-h;
+    if(order == 0) {
+        for(int y = 0; y < C; y++) {
+            if(map[x][y] == 'x') {
+                map[x][y] = '.';
+                return;
+            }
+        }
+    } else {
+        for(int y = C-1; y >= 0; y--) {
+            if(map[x][y] == 'x') {
+                map[x][y] = '.';
+                return;
+            }
+        }
+    }
+    
+    return;
+}
+
+void bfs(int x, int y, vector<vector<bool>>& visited) {
+    
+    queue<Cord> q;
+    q.emplace(x, y);
+    visited[x][y] = true;
+    
+    while (!q.empty()) {
+        int x = q.front().first;
+        int y = q.front().second;
+        visited[x][y] = true;
+        q.pop();
+        
+        for(int i = 0; i < 4; i++) {
+            int nx = x + dirX[i];
+            int ny = y + dirY[i];
+            
+            if(nx < 0 || nx >= R || ny < 0 || ny >= C) continue;
+            
+            if(!visited[nx][ny] && map[nx][ny] == 'x') {
+                visited[nx][ny] = true;
+                q.emplace(nx, ny);
+            }
+        }
+    }
+}
+
+void findClusterInAir(vector<Cord>& clusterInAir) {
+    vector<vector<bool>> visited(R, vector<bool>(C));
+    
+    for(int i = 0; i < C; i++) {
+        if(map[R-1][i] == 'x' && !visited[R-1][i]) {
+            bfs(R-1, i, visited);
+        }
+    }
+    
+    for(int i = 0; i < R; i++) {
+        for (int j = 0; j < C; j++) {
+            if(map[i][j] == 'x' && !visited[i][j]) {
+                clusterInAir.emplace_back(i, j);
+                ciaMap[i][j] = true;
+            }
+        }
+    }
+    
+    vector<vector<bool>>().swap(visited);
+}
+
+int findMinHeight(vector<Cord>& clusterInAir) {
+    
+    int res = 1<<30;
+    
+    for(int j = 0; j < C; j++) {
+        
+        int cnt = 0;
+        
+        for(int i = R-1; i >= 0; i--) {
+            
+            if(map[i][j] == '.') {
+                cnt++;
+            } else if(map[i][j] == 'x') {
+                if(ciaMap[i][j]) {
+                    ciaMap[i][j] = false;
+                    res = min(res, cnt);
+                } else {
+                    cnt = 0;
+                }
+            }
+        }
+    }
+    
+    return res;
+}
+
+void takeDown(vector<Cord>& clusterInAir) {
+    int h = findMinHeight(clusterInAir);
+    
+    sort(clusterInAir.begin(), clusterInAir.end(), cmp);
+
+    for(int i = 0; i < clusterInAir.size(); i++) {
+        int x = clusterInAir[i].first;
+        int y = clusterInAir[i].second;
+        
+        map[x+h][y] = 'x';
+        map[x][y] = '.';
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    cin >> R >> C;
+    map.resize(R, vector<char>(C));
+    ciaMap.resize(R, vector<bool>(C));
+    
+    for (int i = 0; i < R; i++) {
+        for (int j = 0; j < C; j++) {
+            cin >> map[i][j];
+        }
+    }
+    
+    int n;
+    cin >> n;
+    for(int i = 0; i < n; i++) {
+        int h;
+        cin >> h;
+        throwSprear(h, i%2);
+        vector<Cord> clusterInAir;
+        
+        findClusterInAir(clusterInAir);
+        takeDown(clusterInAir);
+        
+        vector<Cord>().swap(clusterInAir);
+    }
+    
+    for(int i = 0; i < R; i++) {
+        for(int j = 0; j < C; j++) {
+            cout << map[i][j];
+        }
+        cout << '\n';
+    }
+    
+    return 0;
+}
+
+// 1. 막대 던져 미네랄 파괴하는 기능.
+// 2. 미네랄 파괴된 후, 클러스터가 분리되었는지 확인하는 기능(분리되지 않았다면 공중에 떠있지 않을 것). -> 클러스터 별로 다른 숫자로 채움.
+// 3. 분리되었다면 공중에 떠있는지 확인하는 기능.(바닥 or 다른 클러스터로부터 클러스터의 밑면 사이에 '.'이 몇개 존재하는지 확인).
+// 4. 바닥 or 다른 클러스터가 공중에 뜬 클러스터의 바닥에 닿을 때까지 떨어지는 기능(위에서 확인한 '.'의 개수만큼 밑면부터 아래로 이동).
+//
+// visited와 cluster를 분류하는 숫자를 이용해 구현.
+// -> 파괴된 위치의 상하좌우 돌며 dfs 돌려서 visited가 안된 클러스터가 있다면 분리된 것.
+// 클러스터를 다른 숫자로 채우고 위에서 찾아낸 2개의 클러스터 중, 공중에 뜬 클러스터를 찾아 바닥으로 내려주어 구현.
+// -> 시간 초과
+//
+// 이유는 DFS 구현 실수(visitedStack은 cycle을 찾기 위한 것. 평소에는 사용할 필요 x. 복잡하거나 대규모의 그래프 탐색 시 BFS 사용하는 것이 디버깅과 구현에 유리할 듯) + 만약 바닥에 붙어있는 클러스터만이 파괴된다면, 클러스터가 공중에 뜨더라도 클러스터가 2개로 나뉘지 않아 기능이 정상 동작하지 않았음.
+// + 바닥에서부터 '.'의 개수를 셀 때, 공중에 뜨지 않은 다른 클러스터가 중간에 나올 경우 '.'의 개수를 초기화해주어야 했음(이것을 구현하기 위해서는 공중에 뜬 클러스터와 공중에 뜨지 않은 클러스터로 나누어야 했으나 처음 계획할 때 생각하지 못했음). -> 억지로 고치면서 구현했으나 여러가지 변수들이 생겨 포기.
+//
+// 따라서 계획과 검증 단계에서, 분리되면 떨어진다는 접근이 틀림. -> "공중에 뜨면 떨어지는 것"이라는 접근이 올바른 접근.
+// 즉,
+// 1. 미네랄 파괴 기능
+// 2. 파괴 후, 공중에 뜬 클러스터를 찾는 기능.
+// 3. 공중에 뜬 클러스터를 내리는 기능.
+// 위 3단계로 첫 접근법보다 더 효율적이고 간단하게 구현 가능.
+//
+// 계획 시 불필요하거나 중복되는 조건을 제거하기 위해 문제와 자료, 조건을 완벽히 이해한 후, 구해야하는 미지의 것을 재정의하는 과정이 필요하다는 것을 느낌. + 구현 시에도 중복되거나 불필요한 코드를 최대한 제거하여 간결하게 구현할 수 있도록 할 것.
+// 구현이 너무 복잡해지면 보통 더 좋은 방법이 있거나 잘목된 접근법을 사용하고 있을 수 있음.
