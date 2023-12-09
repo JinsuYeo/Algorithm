@@ -1,0 +1,51 @@
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector<int> prefix(string s) {
+    int n = int(s.size());
+    
+    vector<int> pi(n);
+    
+    int j = 0;
+    for (int i = 1; i < n; i++) {
+        while(j > 0 && s[i] != s[j]) {
+            j = pi[j-1];
+        }
+        if(s[i] == s[j]) {
+            j++;
+        }
+        
+        pi[i] = j;
+    }
+    
+    return pi;
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    int n;
+    string s;
+    cin >> n >> s;
+    
+    vector<int> pi = prefix(s);
+    
+    cout << n -  pi[n-1] << '\n';
+    
+    return 0;
+}
+
+// 전광판의 크기 <= 1000000이므로 O(n log n) 이하의 시간복잡도 가져야 함.
+// 전광판의 크기가 문자열의 길이보다 클 경우 그 차이만큼 prefix가 sufix로 이동하게 됨.
+// -> aabaaa를 만들 수 있는 가장 짧은 문자열의 길이는 4인데, aa가 prefix이면서 sufix인 가장 긴 문자열이기 때문에 aabaaa에서 aa를 빼면 aaba가 되기 때문(or abaa or baaa). => 6-2 = 4
+// 따라서,
+// 1. prefix와 같은 sufix의 개수를 구하는 기능.
+// -> prefix function 이용해 구현(O(n)).
+// 2. 1에서 구한 개수를 n에서 빼준 결과를 출력.
+
