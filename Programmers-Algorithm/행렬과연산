@@ -1,0 +1,95 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <deque>
+
+using namespace std;
+
+void shiftRow(deque<int>& l, deque<int>& r, int& topIdx) {
+    int size = int(l.size());
+    topIdx = (topIdx+size-1) % size;
+    
+    int t = l.back();
+    l.pop_back();
+    l.push_front(t);
+    
+    t = r.back();
+    r.pop_back();
+    r.push_front(t);
+}
+
+void rotate(deque<int>& l, deque<int>& r, vector<deque<int>>& rows, int& topIdx) {
+    
+    int size = int(l.size());
+    int botIdx = (topIdx+size-1)%size;
+    
+    int t = l.front();
+    l.pop_front();
+    
+    if(rows[topIdx].size() > 0) {
+        l.push_back(rows[botIdx].front());
+        rows[botIdx].pop_front();
+        
+        rows[botIdx].push_back(r.back());
+        r.pop_back();
+        
+        r.push_front(rows[topIdx].back());
+        rows[topIdx].pop_back();
+        
+        rows[topIdx].push_front(t);
+    } else {
+        l.push_back(r.back());
+        r.pop_back();
+        
+        r.push_front(t);
+    }
+}
+
+vector<vector<int>> solution(vector<vector<int>> rc, vector<string> operations) {
+    vector<vector<int>> answer(rc.size(), vector<int>());
+    
+    deque<int> l;
+    deque<int> r;
+    vector<deque<int>> rows(rc.size());
+    
+    int topIdx = 0;
+    
+    for(int i = 0; i < rc.size(); i++) {
+        l.push_back(rc[i].front());
+        r.push_back(rc[i].back());
+    }
+    
+    for (int i = 0; i < rc.size(); i++) {
+        for (int j = 1; j < rc[i].size()-1; j++) {
+            rows[i].push_back(rc[i][j]);
+        }
+    }
+    
+    for (int i = 0; i < operations.size(); i++) {
+        string s = operations[i];
+        if (s == "ShiftRow") {
+            shiftRow(l, r, topIdx);
+        } else {
+            rotate(l, r, rows, topIdx);
+        }
+    }
+    
+    for (int i = 0; i < rc.size(); i++) {
+        for (int j = 0; j < rc[i].size(); j++) {
+            if(j == 0) {
+                answer[i].push_back(l.front());
+                l.pop_front();
+            } else if(j == rc[i].size()-1) {
+                answer[i].push_back(r.front());
+                r.pop_front();
+            } else {
+                answer[i].push_back(rows[(topIdx+i)%rc.size()].front());
+                rows[(topIdx+i)%rc.size()].pop_front();
+            }
+        }
+    }
+    
+    return answer;
+}
+
+// https://jsyeo.tistory.com/6
