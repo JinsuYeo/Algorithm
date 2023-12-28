@@ -1,0 +1,50 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    vector<int> dp(5001);
+    
+    for (int i = 2; i <= 5000; i++) {
+        int sum = 0;
+        bool flag = true;
+        for (int j = 1; j < i; j++) {
+            if(i%j == 0) {
+                sum += j;
+                if(dp[j]) {
+                    flag = false;
+                }
+            }
+        }
+        if (sum > i) {
+            if (flag) {
+                dp[i] = 2;
+            } else {
+                dp[i] = 1;
+            }
+        }
+    }
+    
+    int n;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        int num;
+        cin >> num;
+        if(dp[num] == 2) {
+            cout << "Good Bye" << '\n';
+        } else {
+            cout << "BOJ 2022" << '\n';
+        }
+    }
+    
+    return 0;
+}
+
+
+// https://jsyeo.tistory.com/manage/posts/
