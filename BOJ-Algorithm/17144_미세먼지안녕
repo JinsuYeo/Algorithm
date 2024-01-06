@@ -1,0 +1,146 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int R, C, T;
+vector<vector<int>> map;
+
+int upX; int upY;
+int downX; int downY;
+
+int dirX[4] = {-1, 0, 1, 0};
+int dirY[4] = {0, -1, 0, 1};
+
+void spread() {
+    vector<vector<int>> aux(R, vector<int>(C));
+    
+    for (int i = 0; i < R; i++) {
+        for (int j = 0; j < C; j++) {
+            
+            if(map[i][j]) {
+                
+                int sum = 0;
+                int quantity = map[i][j]/5;
+                
+                for (int dir = 0; dir < 4; dir++) {
+                    int nx = i + dirX[dir];
+                    int ny = j + dirY[dir];
+                    
+                    if(nx < 0 || nx >= R || ny < 0 || ny >= C) continue;
+                    if(nx == upX && ny == upY) continue;
+                    if(nx == downX && ny == downY) continue;
+                    
+                    aux[nx][ny] += quantity;
+                    sum += quantity;
+                }
+                
+                aux[i][j] += map[i][j] - sum;
+            }
+        }
+    }
+    aux.swap(map);
+    aux.clear();
+}
+
+void clean() {
+    
+    int prev = map[upX][upY];
+    for (int i = 1; i < C; i++) {
+        int t = map[upX][i];
+        map[upX][i] = prev;
+        prev = t;
+    }
+    for(int i = upX-1; i > 0; i--) {
+        int t = map[i][C-1];
+        map[i][C-1] = prev;
+        prev = t;
+    }
+    for (int i = C-1; i >= 0; i--) {
+        int t = map[0][i];
+        map[0][i] = prev;
+        prev = t;
+    }
+    for (int i = 1; i < upX; i++) {
+        int t = map[i][0];
+        map[i][0] = prev;
+        prev = t;
+    }
+    
+    prev = map[downX][downY];
+    for (int i = 1; i < C; i++) {
+        int t = map[downX][i];
+        map[downX][i] = prev;
+        prev = t;
+    }
+    for(int i = downX+1; i < R-1; i++) {
+        int t = map[i][C-1];
+        map[i][C-1] = prev;
+        prev = t;
+    }
+    for (int i = C-1; i >= 0; i--) {
+        int t = map[R-1][i];
+        map[R-1][i] = prev;
+        prev = t;
+    }
+    for (int i = R-2; i > downX; i--) {
+        int t = map[i][0];
+        map[i][0] = prev;
+        prev = t;
+    }
+    
+    map[upX][upY] = 0;
+    map[downX][downY] = 0;
+}
+
+void solve() {
+    
+    while(T--) {
+        
+        spread();
+        clean();
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    cin >> R >> C >> T;
+    
+    map.resize(R, vector<int>(C));
+    
+    for (int i = 0; i < R; i++) {
+        for (int j = 0; j < C; j++) {
+            cin >> map[i][j];
+            if(map[i][j] == -1) {
+                map[i][j] = 0;
+                
+                if(upX) {
+                    downX = i;
+                    downY = j;
+                } else {
+                    upX = i;
+                    upY = j;
+                }
+            }
+        }
+    }
+    
+    solve();
+    
+    int res = 0;
+    for (int i = 0; i < R; i++) {
+        for (int j = 0; j < C; j++) {
+            res += map[i][j];
+        }
+    }
+    
+    cout << res << '\n';
+    
+    return 0;
+}
+
+// https://jsyeo.tistory.com/11
