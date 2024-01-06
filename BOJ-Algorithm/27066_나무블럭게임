@@ -1,0 +1,36 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    int n;
+    cin >> n;
+    vector<double> A(n);
+    for (int i = 0; i < n; i++) {
+        cin >> A[i];
+    }
+    
+    sort(A.begin(), A.end());
+    
+    double res = 0;
+    double sum = 0;
+    for (int i = 0; i < n; i++) {
+        sum += A[i];
+    }
+    res = sum/n;
+    res = max(res, A[n-2]);
+    
+    cout << fixed;
+    cout.precision(6);
+    cout << res << '\n';
+    
+    return 0;
+}
+
+// https://jsyeo.tistory.com/9
