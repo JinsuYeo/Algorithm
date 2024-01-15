@@ -1,0 +1,122 @@
+#include <iostream>
+#include <algorithm>
+#include <math.h>
+#include <vector>
+#include <deque>
+
+#define X first
+#define Y second
+
+using namespace std;
+
+typedef pair<int, int> Cord;
+
+int T, R, C;
+vector<vector<char>> board;
+vector<vector<vector<int>>> dist;
+deque<Cord> pos;
+
+int dirX[4] = {-1, 1, 0, 0};
+int dirY[4] = {0, 0, -1, 1};
+
+void bfs() {
+    
+    // 3명에 대해 BFS 수행(상근, 죄수1, 죄수2)
+    for(int i = 0; i < 3; i++) {
+        int x = pos.front().X;
+        int y = pos.front().Y;
+        pos.pop_front();
+        
+        // 0-1 BFS
+        deque<Cord> dq;
+        dq.emplace_back(x, y);
+        dist[i][x][y] = 0;
+        
+        while (!dq.empty()) {
+            x = dq.front().X;
+            y = dq.front().Y;
+            dq.pop_front();
+            
+            for (int dir = 0; dir < 4; dir++) {
+                int nx = x + dirX[dir];
+                int ny = y + dirY[dir];
+                
+                if(nx < 0 || nx > R+1 || ny < 0 || ny > C+1) continue;
+                if(dist[i][nx][ny] >= 0 || board[nx][ny] == '*') continue;
+                
+                // 0-1 BFS
+                if(board[nx][ny] == '.') {
+                    dist[i][nx][ny] = dist[i][x][y];
+                    dq.emplace_front(nx, ny);
+                } else {
+                    dist[i][nx][ny] = dist[i][x][y] + 1;
+                    dq.emplace_back(nx, ny);
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    cin >> T;
+    while (T--) {
+        cin >> R >> C;
+        board.resize(R+2, vector<char>(C+2));
+        dist.assign(3, vector<vector<int>>(R+2, vector<int>(C+2, -1)));
+        
+        for (int i = 0; i <= R+1; i++) {
+            for (int j = 0; j <= C+1; j++) {
+                if (i == 0 || i == R+1 || j == 0 || j == C+1) {
+                    board[i][j] = '.';
+                    continue;
+                }
+                cin >> board[i][j];
+                if(board[i][j] == '$') {
+                    board[i][j] = '.';
+                    // 죄수의 위치
+                    pos.emplace_back(i, j);
+                }
+            }
+        }
+        // 상근이의 위치
+        pos.emplace_back(0, 0);
+        
+        bfs();
+        
+        int res = 1<<30;
+        
+        for (int i = 0; i <= R+1; i++) {
+            if(res == 0) break;
+            for (int j = 0; j <= C+1; j++) {
+                // 벽으로 둘러쌓여 방문하지 못한 곳 제외
+                if(dist[0][i][j] == -1 || dist[1][i][j] == -1 || dist[2][i][j] == -1) continue;
+                
+                // 문을 열지 않아도 탈출 할 수 있다면 문을 연 횟수는 0
+                if(dist[0][i][j] == 0 && dist[1][i][j] == 0 && dist[2][i][j] == 0) {
+                    res = 0;
+                    break;
+                }
+                
+                // 문이 아닌 다른 좌표는 정확하게 중복 처리 불가능하기 때문에 문이 있는 좌표가 최소값일 것임.
+                if(board[i][j] != '#') continue;
+                
+                // 문은 3명이 중복되어 열기 때문에 1명만 연 것으로 처리
+                int t = dist[0][i][j] + dist[1][i][j] + dist[2][i][j] - 2;
+                res = min(res, t);
+            }
+        }
+        
+        cout << res << '\n';
+        
+        vector<vector<char>>().swap(board);
+        vector<vector<vector<int>>>().swap(dist);
+    }
+    
+    return 0;;
+}
+
+// https://jsyeo.tistory.com/14
