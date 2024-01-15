@@ -1,0 +1,131 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <queue>
+#include <math.h>
+
+#define EMPTY 0
+#define WALL 1
+#define VIRUS 2
+
+using namespace std;
+
+const int INF = 1<<30;
+
+struct Cord {
+    int x; int y;
+    int dist;
+    
+    Cord(int x, int y, int dist) : x(x), y(y), dist(dist) {}
+    Cord(const Cord& cord) : x(cord.x), y(cord.y), dist(cord.dist) {}
+};
+
+struct cmp {
+    bool operator()(const Cord& cord1, const Cord& cord2){
+        return cord1.dist > cord2.dist;
+    }
+};
+
+int N, M;
+vector<vector<int>> board;
+vector<Cord> cords;
+
+int dirX[4] = {-1, 0, 1, 0};
+int dirY[4] = {0, -1, 0, 1};
+
+int res = INF;
+
+void bfs(vector<Cord>& choice, vector<vector<int>>& virus) {
+    
+    priority_queue<Cord, deque<Cord>, cmp> pq;
+    for (int i = 0; i < int(choice.size()); i++) {
+        pq.emplace(choice[i]);
+        virus[choice[i].x][choice[i].y] = 0;
+    }
+
+    while (!pq.empty()) {
+
+        int x = pq.top().x;
+        int y = pq.top().y;
+        int dist = pq.top().dist;
+        pq.pop();
+
+        for (int dir = 0; dir < 4; dir++) {
+            int nx = x + dirX[dir];
+            int ny = y + dirY[dir];
+
+            if(nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+            if(board[nx][ny] == WALL || virus[nx][ny] >= 0) continue;
+
+            pq.emplace(nx, ny, dist+1);
+           
+            virus[nx][ny] = dist+1;
+        }
+    }
+}
+
+void check(vector<vector<int>>& virus) {
+    
+    int maxValue = -1;
+    
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if(board[i][j] != WALL) {
+                if(board[i][j] == VIRUS) virus[i][j] = 0;
+                if(virus[i][j] == -1) {
+                    return;
+                }
+                maxValue = max(maxValue, virus[i][j]);
+            }
+        }
+    }
+    
+    res = min(res, maxValue);
+}
+
+void rec(int idx, vector<Cord>& choice) {
+    if(int(choice.size()) == M) {
+        vector<vector<int>> virus(N, vector<int>(N, -1));
+        bfs(choice, virus);
+        check(virus);
+        vector<vector<int>>().swap(virus);
+    }
+    
+    for (int i = idx; i < int(cords.size()); i++) {
+        choice.emplace_back(cords[i]);
+        rec(i+1, choice);
+        choice.pop_back();
+    }
+}
+
+void solve() {
+    vector<Cord> choice;
+    rec(0, choice);
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    cin >> N >> M;
+    board.resize(N, vector<int>(N));
+    
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            cin >> board[i][j];
+            if(board[i][j] == 2) {
+                cords.emplace_back(i, j, 0);
+            }
+        }
+    }
+    
+    solve();
+    
+    if(res == INF) cout << -1 << '\n';
+    else cout << res << '\n';
+    
+    return 0;
+}
+
+// https://jsyeo.tistory.com/15
