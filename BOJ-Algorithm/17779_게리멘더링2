@@ -1,0 +1,123 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <queue>
+#include <math.h>
+
+using namespace std;
+
+int N;
+vector<vector<int>> A;
+
+int dirX[4] = {-1, 1, 0, 0};
+int dirY[4] = {0, 0, -1, 1};
+
+int res = 1<<30;
+
+void border(vector<vector<int>>& area, int x, int y, int d1, int d2) {
+    for(int i = 0; i <= d1; i++) {
+        area[x+i][y-i] = 5;
+    }
+    
+    for(int i = 0; i <= d2; i++) {
+        area[x+i][y+i] = 5;
+    }
+    
+    for(int i = 1; i <= d2; i++) {
+        area[x+d1+i][y-d1+i] = 5;
+    }
+    
+    for(int i = 1; i <= d1; i++) {
+        area[x+d2+i][y+d2-i] = 5;
+    }
+}
+
+void calc(vector<vector<int>>& area, int x, int y, int d1, int d2) {
+    
+    int a1, a2, a3, a4, a5;
+    a1 = a2 = a3 = a4 = a5 = 0;
+    
+    for(int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if(area[i][j] == 5) {
+                int t = j;
+                while (++t < N) {
+                    if(area[i][t]) {
+                        while(j < t) {
+                            area[i][j++] = 5;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    for(int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if(area[i][j] == 5) {
+                a5 += A[i][j];
+            } else if(i < x+d1 && j <= y) {
+                area[i][j] = 1;
+                a1 += A[i][j];
+            } else if(i <= x+d2 && y < j) {
+                area[i][j] = 2;
+                a2 += A[i][j];
+            } else if(x+d1 <= i && j < y-d1+d2) {
+                area[i][j] = 3;
+                a3 += A[i][j];
+            } else if(x+d2 < i && y-d1+d2 <= j) {
+                area[i][j] = 4;
+                a4 += A[i][j];
+            } else {
+                area[i][j] = 5;
+                a5 += A[i][j];
+            }
+        }
+    }
+    
+    
+    int maxV = max(a1, max(a2, max(a3, max(a4, a5))));
+    int minV = min(a1, min(a2, min(a3, min(a4, a5))));
+    
+    res = min(res, maxV-minV);
+}
+
+void solve() {
+    
+    for(int x = 0; x < N; x++) {
+        for (int y = 0; y < N; y++) {
+            for (int d1 = 1; d1 < N; d1++) {
+                for (int d2 = 1; d2 < N; d2++) {
+                    if(x+d1+d2 >= N || y-d1 < 0 || y+d2 >= N) continue;
+                    
+                    vector<vector<int>> area(N, vector<int>(N));
+                    border(area, x, y, d1, d2);
+                    calc(area, x, y, d1, d2);
+                    vector<vector<int>>().swap(area);
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    cin >> N;
+    A.resize(N, vector<int>(N));
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            cin >> A[i][j];
+        }
+    }
+    
+    solve();
+    
+    cout << res << '\n';
+    
+    return 0;
+}
+
+// https://jsyeo.tistory.com/19
