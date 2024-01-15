@@ -1,0 +1,113 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <math.h>
+
+using namespace std;
+
+int R, C, K;
+int res;
+
+vector<vector<int>> A;
+
+void sortRow(vector<vector<int>>& A) {
+    vector<vector<int>> aux(A.size(), vector<int>());
+    int maxSize = 0;
+    
+    for (int i = 0; i < A.size(); i++) {
+        
+        sort(A[i].begin(), A[i].end());
+        vector<pair<int, int>> v;
+        
+        int t;
+        for (auto it = A[i].begin(); it != A[i].end(); it = upper_bound(A[i].begin(), A[i].end(), t)) {
+            
+            int idx = int(it - A[i].begin());
+            t = A[i][idx];
+            
+            if(t == 0) continue;
+            
+            int cnt = int(upper_bound(A[i].begin(), A[i].end(), t) - lower_bound(A[i].begin(), A[i].end(), t));
+            
+            v.emplace_back(cnt, t);
+        }
+        
+        sort(v.begin(), v.end());
+        for (int j = 0; j < v.size(); j++) {
+            aux[i].push_back(v[j].second);
+            aux[i].push_back(v[j].first);
+        }
+        
+        maxSize = max(maxSize, int(aux[i].size()));
+    }
+    
+    for (int i = 0; i < aux.size(); i++) {
+        while (aux[i].size() < maxSize) {
+            aux[i].push_back(0);
+        }
+        if(aux[i].size() > 100) aux[i].resize(100);
+    }
+    
+    A.swap(aux);
+    aux.clear();
+}
+
+void sortColumn() {
+    vector<vector<int>> transA(A[0].size(), vector<int>(A.size()));
+    
+    for (int i = 0; i < A.size(); i++) {
+        for (int j = 0; j < A[i].size(); j++) {
+            transA[j][i] = A[i][j];
+        }
+    }
+    
+    sortRow(transA);
+    
+    A.resize(transA[0].size(), vector<int>(transA.size()));
+    for (int i = 0; i < A.size(); i++) {
+        for (int j = 0; j < A[i].size(); j++) {
+            A[i][j] = transA[j][i];
+        }
+    }
+    transA.clear();
+}
+
+void solve() {
+   
+    while (res <= 100) {
+        if(R < A.size() && C < A[0].size() && A[R][C] == K) return;
+        res++;
+        
+        if (A.size() >= A[0].size()) {
+            sortRow(A);
+        } else {
+            sortColumn();
+        }
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+
+    cin >> R >> C >> K;
+    R--; C--;
+    
+    A.resize(3, vector<int>(3));
+    
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            cin >> A[i][j];
+        }
+    }
+    
+    solve();
+    
+    if(res > 100) cout << -1 << '\n';
+    else cout << res << '\n';
+    
+    return 0;
+}
+
+// https://jsyeo.tistory.com/13
