@@ -1,0 +1,139 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+typedef pair<int, int> Horse;
+
+vector<int> board[4] = {
+    {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 0},
+    {0, 2, 4, 6, 8, 10, 13, 16, 19, 25, 30, 35, 40, 0},
+    {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 25, 30, 35, 40, 0},
+    {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 28, 27, 26, 25, 30, 35, 40, 0}
+};
+vector<bool> visited[4];
+int dice[10];
+
+map<Horse, vector<Horse>> common;
+vector<Horse> horses = {make_pair(0, 0), make_pair(0, 0), make_pair(0, 0), make_pair(0, 0)};
+
+int res;
+
+void init() {
+    
+    common[make_pair(0, 5)] = common[make_pair(1, 5)] = common[make_pair(2, 5)] = common[make_pair(3, 5)] = {make_pair(0, 5), make_pair(1, 5), make_pair(2, 5), make_pair(3, 5)};
+    
+    common[make_pair(0, 10)] = common[make_pair(1, 10)] = common[make_pair(2, 10)] = common[make_pair(3, 10)] = {make_pair(0, 10), make_pair(1, 10), make_pair(2, 10), make_pair(3, 10)};
+    
+    common[make_pair(0, 15)] = common[make_pair(1, 15)] = common[make_pair(2, 15)] = common[make_pair(3, 15)] = {make_pair(0, 15), make_pair(1, 15), make_pair(2, 15), make_pair(3, 15)};
+    
+    common[make_pair(0, 20)] = common[make_pair(1, 12)] = common[make_pair(2, 16)] = common[make_pair(3, 22)] = {make_pair(0, 20), make_pair(1, 12), make_pair(2, 16), make_pair(3, 22)};
+    
+    for(int i = 0; i < 3; i++) {
+        vector<Horse> t;
+        t.push_back(make_pair(1, 9+i));
+        t.push_back(make_pair(2, 13+i));
+        t.push_back(make_pair(3, 19+i));
+        
+        for(int j = 0; j < t.size(); j++) {
+            common[t[j]] = t;
+        }
+        
+        vector<Horse>().swap(t);
+    }
+    
+    for (int i = 0; i < 4; i++) {
+        visited[i].resize(board[i].size());
+    }
+    
+    for (int i = 0; i < 10; i++) {
+        cin >> dice[i];
+    }
+}
+
+void solve(int cnt, int score) {
+    if(cnt >= 10) {
+        if(res < score) {
+            res = score;
+        }
+        return;
+    }
+    
+    for(int i = 0; i < 4; i++) {
+        
+        int road = horses[i].first;
+        int pos = horses[i].second;
+        
+        if(pos == int(board[road].size()) - 1) continue;
+        
+        int nRoad = road;
+        int nPos = pos + dice[cnt];
+        
+        if(road == 0) {
+            if(pos == 5) {
+                nRoad = 1;
+            } else if(pos == 10) {
+                nRoad = 2;
+            } else if(pos == 15) {
+                nRoad = 3;
+            }
+        }
+        
+        int maxPos = int(board[nRoad].size())-1;
+        if(nPos > maxPos) nPos = maxPos;
+        
+        if(nPos != maxPos && visited[nRoad][nPos]) {
+            continue;
+        }
+        
+        vector<Horse> commons = common[make_pair(road, pos)];
+        vector<Horse> nCommons = common[make_pair(nRoad, nPos)];
+        if(!commons.empty()) {
+            for (int i = 0; i < commons.size(); i++) {
+                visited[commons[i].first][commons[i].second] = false;
+            }
+        } else visited[road][pos] = false;
+        if(!nCommons.empty()) {
+            for (int i = 0; i < nCommons.size(); i++) {
+                visited[nCommons[i].first][nCommons[i].second] = true;
+            }
+        } else visited[nRoad][nPos] = true;
+        
+        horses[i].first = nRoad;
+        horses[i].second = nPos;
+        solve(cnt+1, score+board[nRoad][nPos]);
+        horses[i].first = road;
+        horses[i].second = pos;
+        
+        if(!commons.empty()) {
+            for (int i = 0; i < commons.size(); i++) {
+                visited[commons[i].first][commons[i].second] = true;
+            }
+        } else visited[road][pos] = true;
+        if(!nCommons.empty()) {
+            for (int i = 0; i < nCommons.size(); i++) {
+                visited[nCommons[i].first][nCommons[i].second] = false;
+            }
+        } else visited[nRoad][nPos] = false;
+        
+        vector<Horse>().swap(commons);
+        vector<Horse>().swap(nCommons);
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    init();
+    
+    solve(0, 0);
+    
+    cout << res << '\n';
+    
+    return 0;
+}
+// https://jsyeo.tistory.com/25
