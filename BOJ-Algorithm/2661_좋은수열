@@ -1,0 +1,55 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+int N;
+string num[3] = {"1", "2", "3"};
+string res;
+
+void rec(string& str) {
+    
+    if(res.length() >= N) {
+        return;
+    }
+    if(str.length() >= N) {
+        res = str;
+        return;
+    }
+    
+    
+    for (int j = 0; j < 3; j++) {
+        string t = str + num[j];
+        bool flag = false;
+        for(int k = 1; k < t.length(); k++) {
+            if(t.length() >= 2*k && t.substr(t.length()-k) == t.substr(t.length()-k-k, k)) {
+                flag = true;
+                break;
+            }
+        }
+        if(!flag) rec(t);
+    }
+}
+
+void solve() {
+    
+    string str = "";
+    rec(str);
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    cin >> N;
+
+    solve();
+
+    cout << res << '\n';
+    
+    return 0;
+}
+// https://jsyeo.tistory.com/29
