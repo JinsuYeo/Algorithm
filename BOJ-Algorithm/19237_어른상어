@@ -1,0 +1,203 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+struct Shark {
+    int num;
+    int x; int y;
+    int dir;
+    vector<vector<int>> priority;
+    bool removed;
+};
+
+int N, M, K;
+
+int dirX[4] = {-1, 1, 0, 0};
+int dirY[4] = {0, 0, -1, 1};
+
+vector<vector<int>> board;
+vector<vector<int>> smell;
+vector<vector<int>> timeLeft;
+vector<Shark> sharks;
+
+int res;
+
+void move() {
+    
+    vector<vector<int>> aux(board.begin(), board.end());
+    for (int idx = 1; idx < int(sharks.size()); idx++) {
+        
+        if(sharks[idx].removed) continue;
+        
+        int x = sharks[idx].x;
+        int y = sharks[idx].y;
+        int dir = sharks[idx].dir;
+        
+        int nx = 0;
+        int ny = 0;
+        int nDir = 0;
+        
+        bool moved = false;
+        
+        // 냄새가 없는 인접한 칸을 상어가 바라보는 방향의 우선순위 순서로 탐색
+        for(int i = 0; i < 4; i++) {
+            nDir = sharks[idx].priority[dir][i];
+            nx = x + dirX[nDir];
+            ny = y + dirY[nDir];
+            
+            if(nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+            
+            if(!smell[nx][ny]) {
+                moved = true;
+                break;
+            }
+        }
+        
+        if(moved) {
+            if(aux[nx][ny]) {
+                if(aux[nx][ny] > idx) {
+                    sharks[aux[nx][ny]].removed = true;
+                } else {
+                    sharks[idx].removed = true;
+                    aux[x][y] = 0;
+                    continue;
+                }
+            }
+        } else {
+            
+            // 자기 냄새가 있는 인접한 칸을 상어가 바라보는 방향의 우선순위 순서로 탐색
+            for(int i = 0; i < 4; i++) {
+                nDir = sharks[idx].priority[dir][i];
+                nx = x + dirX[nDir];
+                ny = y + dirY[nDir];
+                
+                if(nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+                
+                if(smell[nx][ny] == idx) {
+                    moved = true;
+                    break;
+                }
+            }
+            
+            if(aux[nx][ny]) {
+                if(aux[nx][ny] > idx) {
+                    sharks[aux[nx][ny]].removed = true;
+                } else {
+                    sharks[idx].removed = true;
+                    aux[x][y] = 0;
+                    continue;
+                }
+            }
+        }
+        
+        aux[nx][ny] = idx;
+        aux[x][y] = 0;
+        sharks[idx].x = nx;
+        sharks[idx].y = ny;
+        sharks[idx].dir = nDir;
+    }
+    
+    aux.swap(board);
+    vector<vector<int>>().swap(aux);
+}
+
+void updateSmell() {
+    
+    for(int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if(smell[i][j]) {
+                timeLeft[i][j]--;
+                if(!timeLeft[i][j]) smell[i][j] = 0;
+            }
+        }
+    }
+    
+    for(int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if(board[i][j]) {
+                smell[i][j] = board[i][j];
+                timeLeft[i][j] = K;
+            }
+        }
+    }
+}
+
+int countShark() {
+    
+    int cnt = 0;
+    
+    for(int i = 1; i < int(sharks.size()); i++) {
+        if(!sharks[i].removed) cnt++;
+    }
+    
+    return cnt;
+}
+
+void solve() {
+    
+    while (countShark() > 1) {
+        
+        res++;
+        
+        move();
+        updateSmell();
+        
+        if(res > 1000) {
+            res = -1;
+            return;
+        }
+    }
+    
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    cin >> N >> M >> K;
+    board.resize(N, vector<int> (N));
+    smell.resize(N, vector<int> (N));
+    timeLeft.resize(N, vector<int> (N));
+    sharks.resize(M+1);
+    
+    for(int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            cin >> board[i][j];
+            if(board[i][j]) {
+                smell[i][j] = board[i][j];
+                timeLeft[i][j] = K;
+                
+                Shark shark = {board[i][j], i, j, 0, vector<vector<int>>(4, vector<int>(4)), false};
+                sharks[board[i][j]] = shark;
+            }
+        }
+    }
+    
+    for(int i = 1; i <= M; i++) {
+        cin >> sharks[i].dir;
+        sharks[i].dir--;
+    }
+    
+    for (int i = 1; i <= M; i++) {
+        for (int j = 0; j < 4; j++) {
+            for(int k = 0; k < 4; k++) {
+                int dir;
+                cin >> dir;
+                dir--;
+                
+                sharks[i].priority[j][k] = dir;
+            }
+        }
+    }
+    
+    solve();
+    
+    cout << res << '\n';
+    
+    return 0;
+}
+
+// https://jsyeo.tistory.com/28
