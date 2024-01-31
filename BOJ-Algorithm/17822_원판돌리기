@@ -1,0 +1,127 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <deque>
+
+using namespace std;
+
+int N, M, T;
+vector<deque<int>> plates;
+
+int dirX[4] = {-1, 1, 0, 0};
+int dirY[4] = {0, 0, -1, 1};
+
+void rotateClock(int idx, int k){
+    while(k--) {
+        int t = plates[idx].back();
+        plates[idx].pop_back();
+        plates[idx].push_front(t);
+    }
+}
+
+void rotateReverse(int idx, int k){
+    while(k--) {
+        int t = plates[idx].front();
+        plates[idx].pop_front();
+        plates[idx].push_back(t);
+    }
+}
+
+void check() {
+    int sum = 0;
+    int flag = true;
+    int cnt = 0;
+    vector<deque<int>> aux(plates.begin(), plates.end());
+    
+    for(int i = 1; i <= N; i++) {
+        for(int j = 0; j < M; j++) {
+            if(plates[i][j] == 0) continue;
+            sum += plates[i][j];
+            cnt++;
+            
+            for(int dir = 0; dir < 4; dir++) {
+                int nx = i + dirX[dir];
+                int ny = j + dirY[dir];
+
+                if(nx <= 0 || nx > N) continue;
+                if(ny < 0) ny = M-1;
+                if(ny >= M) ny = 0;
+                if(plates[i][j] == plates[nx][ny]) {
+                    aux[i][j] = 0;
+                    aux[nx][ny] = 0;
+                    flag = false;
+                }
+            }
+        }
+        
+    }
+    
+    if(flag) {
+        
+        double avg = (double)sum/cnt;
+        
+        for(int i = 1; i <= N; i++) {
+            for(int j = 0; j < M; j++) {
+                if(aux[i][j] == 0) continue;
+                
+                if((double)plates[i][j] < avg) {
+                    aux[i][j] += 1;
+                } else if ((double)plates[i][j] > avg) {
+                    aux[i][j] -= 1;
+                }
+            }
+        }
+    }
+    
+    aux.swap(plates);
+    vector<deque<int>>().swap(aux);
+}
+
+void solve() {
+    
+    while(T--) {
+        int x, d, k;
+        cin >> x >> d >> k;
+        void (*rotate[2])(int, int);
+        rotate[0] = rotateClock;
+        rotate[1] = rotateReverse;
+        
+        for(int i = x; i <= N; i+=x) {
+            rotate[d](i, k);
+            
+        }
+        
+        check();
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    cin >> N >> M >> T;
+    plates.resize(N+1, deque<int>());
+    
+    int t;
+    for(int i = 1; i <= N; i++) {
+        for(int j = 0; j < M; j++) {
+            cin >> t;
+            plates[i].push_back(t);
+        }
+    }
+    
+    solve();
+    
+    int res = 0;
+
+    for(int i = 1; i <= N; i++) {
+        for (int j = 0; j < M; j++) {
+            res += plates[i][j];
+        }
+    }
+    cout << res << '\n';
+    
+    return 0;
+}
+// https://jsyeo.tistory.com/23
