@@ -1,0 +1,153 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <math.h>
+
+#define SHARK 17
+
+using namespace std;
+
+struct Fish {
+    int r; int c;
+    int dir; bool eaten;
+};
+
+struct Shark {
+    int r; int c;
+    int dir; int sum;
+};
+
+int dirR[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+int dirC[8] = {0, -1, -1, -1, 0, 1, 1, 1};
+
+
+int res;
+
+void rec(vector<vector<int>>& board, vector<Fish>& _fish, Shark& shark) {
+    
+    vector<vector<int>> aux(board.begin(), board.end());
+    vector<Fish> fish(_fish.begin(), _fish.end());
+    
+    for (int size = 1; size <= 16; size++) {
+        
+        // 이미 먹힌 물고기 생략
+        if(fish[size].eaten) continue;
+        
+        int r = fish[size].r;
+        int c = fish[size].c;
+        int dir = fish[size].dir;
+        
+        // 이동 가능한 방향을 바라보도록 반시계 방향으로 회전
+        for (int i = 0; i < 8; i++) {
+            int nr = r + dirR[dir];
+            int nc = c + dirC[dir];
+            
+            if(nr < 0 || nr >= 4 || nc < 0 || nc >= 4) {
+                dir = (dir+1)%8;
+            }
+            else if(aux[nr][nc] == SHARK) dir = (dir+1)%8;
+            else break;
+        }
+        fish[size].dir = dir;
+        int nr = r + dirR[dir];
+        int nc = c + dirC[dir];
+        
+        // 이동 불가능한 경우 이동하지 않는다.
+        if(nr < 0 || nr >= 4 || nc < 0 || nc >= 4) continue;
+        else if(aux[nr][nc] == SHARK) continue;
+        
+        // 물고기 이동할 칸에 물고기가 있다면 위치 교환,
+        // 물고기 이동할 칸에 물고기가 없다면 위치 갱신
+        if(aux[nr][nc] != 0) {
+            aux[r][c] = aux[nr][nc];
+            fish[aux[r][c]].r = r;
+            fish[aux[r][c]].c = c;
+        } else {
+            aux[r][c] = 0;
+        }
+        
+        aux[nr][nc] = size;
+        fish[size].r = nr;
+        fish[size].c = nc;
+    }
+    
+    
+    int dir = shark.dir;
+    int r = shark.r;
+    int c = shark.c;
+    int nr = r + dirR[dir];
+    int nc = c + dirC[dir];
+    
+    // 상어가 이동하는 모든 경우 탐색
+    while(true) {
+        if (nr < 0 || nr >= 4 || nc < 0 || nc >= 4) {
+            break;
+        }
+        if(aux[nr][nc]) {
+    
+            // 이동할 위치의 물고기를 먹고 상어의 위치와 방향, 먹은 물고기 크기의 합을 갱신
+            int eatenSize = aux[nr][nc];
+            fish[eatenSize].eaten = true;
+            
+            aux[nr][nc] = SHARK;
+            aux[r][c] = 0;
+            
+            shark.r = nr;
+            shark.c = nc;
+            shark.dir = fish[eatenSize].dir;
+            shark.sum += eatenSize;
+            res = max(res, shark.sum);
+            
+            rec(aux, fish, shark);
+            
+            aux[r][c] = SHARK;
+            aux[nr][nc] = eatenSize;
+            
+            shark.r = r;
+            shark.c = c;
+            shark.dir = dir;
+            shark.sum -= eatenSize;
+            
+            fish[eatenSize].eaten = false;
+        }
+        nr += dirR[dir];
+        nc += dirC[dir];
+    }
+    
+    vector<Fish>().swap(fish);
+    vector<vector<int>>().swap(aux);
+}
+
+void solve(vector<vector<int>>& board, vector<Fish>& fish) {
+    fish[board[0][0]].eaten = true;
+    Shark shark = {0, 0, fish[board[0][0]].dir, board[0][0]};
+    board[0][0] = SHARK;
+    
+    rec(board, fish, shark);
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    vector<vector<int>> board(4, vector<int>(4));
+    vector<Fish> fish(17);
+    
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            int size, dir;
+            cin >> size >> dir;
+            dir--;
+            board[i][j] = size;
+            fish[size] = {i, j, dir, false};
+        }
+    }
+    
+    solve(board, fish);
+    
+    cout << res << '\n';
+    
+    return 0;
+}
+// https://jsyeo.tistory.com/27
