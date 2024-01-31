@@ -1,0 +1,149 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+
+#define MAX 12
+
+#define WHITE 0
+#define RED 1
+#define BLUE 2
+
+using namespace std;
+
+struct Horse {
+    int r; int c;
+    int dir;
+};
+
+int N, K;
+vector<vector<int>> colors;
+string board[MAX][MAX];
+vector<Horse> horse;
+
+int res;
+bool flag = false;
+
+int dirR[4] = {0, 0, -1, 1};
+int dirC[4] = {1, -1, 0, 0};
+
+void move() {
+    
+    for(int i = 0; i < horse.size(); i++) {
+        
+        int k = i;
+        int r = horse[i].r;
+        int c = horse[i].c;
+        int dir = horse[i].dir;
+        
+        int nr = r + dirR[dir];
+        int nc = c + dirC[dir];
+
+        int color;
+        if(nr < 0 || nr >= N || nc < 0 || nc >= N) color = BLUE;
+        else color = colors[nr][nc];
+        
+        if(color == WHITE) {
+            
+            auto it = board[r][c].find(to_string(k));
+            string movingHorse = board[r][c].substr(it);
+            board[r][c] = board[r][c].substr(0, it);
+            board[nr][nc] += movingHorse;
+            
+        } else if(color == RED) {
+            
+            auto it = board[r][c].find(to_string(k));
+            string movingHorse = board[r][c].substr(it);
+            reverse(movingHorse.begin(), movingHorse.end());
+            board[r][c] = board[r][c].substr(0, it);
+            board[nr][nc] += movingHorse;
+            
+        } else if(color == BLUE) {
+            
+            if(dir == 0 || dir == 2) dir += 1;
+            else dir = (dir+3)%4;
+            horse[k].dir = dir;
+            
+            nr = r + dirR[dir];
+            nc = c + dirC[dir];
+            
+            int color;
+            if(nr < 0 || nr >= N || nc < 0 || nc >= N) color = BLUE;
+            else color = colors[nr][nc];
+            
+            if(color == WHITE) {
+                
+                auto it = board[r][c].find(to_string(k));
+                string movingHorse = board[r][c].substr(it);
+                board[r][c] = board[r][c].substr(0, it);
+                board[nr][nc] += movingHorse;
+                
+            } else if(color == RED) {
+                
+                auto it = board[r][c].find(to_string(k));
+                string movingHorse = board[r][c].substr(it);
+                reverse(movingHorse.begin(), movingHorse.end());
+                board[r][c] = board[r][c].substr(0, it);
+                board[nr][nc] += movingHorse;
+                
+            } else if(color == BLUE) {
+                nr = r;
+                nc = c;
+            }
+        }
+        
+        if(board[nr][nc].length() >= 4) {
+            flag = true;
+            return;
+        }
+        
+        for(int j = 0; j < board[nr][nc].length(); j++) {
+            int k = (board[nr][nc][j] - '0');
+            horse[k].r = nr;
+            horse[k].c = nc;
+        }
+    }
+}
+
+void solve() {
+    
+    while(res <= 1000) {
+        
+        if(flag) break;
+
+        move();
+        
+        res++;
+    }
+}
+
+int main() {
+    
+    iostream::sync_with_stdio(0);
+    cin.tie(0);
+    
+    cin >> N >> K;
+    
+    colors.resize(N, vector<int>(N));
+    
+    for(int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            cin >> colors[i][j];
+        }
+    }
+    
+    for(int k = 0; k < K; k++) {
+        int r, c, d;
+        cin >> r >> c >> d;
+        horse.push_back({r-1, c-1, d-1});
+        board[r-1][c-1] += to_string(k);
+    }
+    
+    solve();
+    
+    if(res > 1000) cout << -1 << '\n';
+    else cout << res << '\n';
+    
+    return 0;
+}
+// https://jsyeo.tistory.com/22
